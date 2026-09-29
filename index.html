@@ -218,6 +218,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 .st-link{background:none;border:0;color:#fff;opacity:.85;font-weight:700;margin:10px auto 0;padding:12px;font-size:15px}
 .st-inst{display:block;width:100%;margin-top:14px;background:rgba(255,255,255,.1);color:#fff;border:1px dashed rgba(255,255,255,.45);border-radius:14px;padding:13px;font-weight:700;font-size:15px}
 .st-hint{margin-top:14px;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45;opacity:.9}
+.st-upd{margin-top:8px;background:rgba(255,255,255,.12);color:#fff;border:0;border-radius:20px;padding:7px 14px;font-size:12.5px;font-weight:700}
 .st-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:12px;opacity:.5}
 .logo{cursor:pointer}
 /* Διαφήμιση Δρομολογίου */
@@ -232,6 +233,28 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 .dad.mini img,.dad.mini span:first-child{width:38px;height:38px;border-radius:10px;font-size:24px}
 .dad.mini span{flex:1}.dad.mini b{display:block;font-size:14.5px}.dad.mini small{color:var(--mute);font-size:12.5px}.dad.mini em{font-style:normal;font-size:22px;color:var(--mute)}
 .seg.role button{display:flex;flex-direction:column;gap:3px;text-align:center;padding:12px 8px}.seg.role b{font-size:14.5px}.seg.role small{font-size:12px;opacity:.8;font-weight:400}
+/* Κλειστή περιοχή, ιδρυτικά, προσκλήσεις, διαχείριση */
+#soon{position:absolute;left:12px;right:12px;top:12px;z-index:560;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:14px;border:2px solid var(--accent);max-width:460px;margin:0 auto}
+#soon[hidden]{display:none}
+.soon-on .legend{display:none}
+.soon-t{font-size:15.5px;line-height:1.35}.soon-n{margin-top:6px;font-size:14px;color:var(--mute)}.soon-n b{color:var(--ink)}
+.soon-bar{height:10px;border-radius:10px;background:var(--bg);overflow:hidden;margin:8px 0 4px;border:1px solid var(--line)}
+.soon-bar i{display:block;height:100%;background:linear-gradient(90deg,#F2B632,#E0A21B);border-radius:10px}
+.soon-s{font-size:12.5px;color:var(--mute)}
+.soon-b{display:flex;gap:6px;margin-top:10px}.soon-b button{flex:1;font-size:13px;font-weight:700;padding:10px 6px;border-radius:12px}
+#soonJoin{background:var(--accent);color:var(--onaccent);border:0}
+.fbadge{position:absolute;bottom:-4px;left:-8px;font-size:13px;line-height:1;background:#fff;border-radius:50%;width:19px;height:19px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.badge.found{background:#8B5E00;color:#fff}
+.inv{margin-top:14px;background:var(--bg);border-radius:14px;padding:12px}
+.inv-t{font-weight:800;font-size:15.5px}.inv-n{margin-top:6px;font-size:14px}
+.inv-b{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px}
+.inv-b a{text-align:center;text-decoration:none;color:#fff;font-weight:700;padding:10px 4px;border-radius:10px;font-size:13.5px}
+.inv-b .viber{background:#7360F2}.inv-b .msg{background:#0A7CFF}.inv-b .wa{background:#1DA955}
+.inv-c{width:100%;margin-top:6px;border-radius:10px;font-weight:600}
+.adm-r{border-top:1px solid var(--line);padding:10px 0}.adm-h{display:flex;justify-content:space-between;align-items:center}
+.adm-c{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13.5px}.adm-c input{width:80px;padding:6px 8px}.adm-c button{font-size:12.5px;padding:6px 10px}
+.st-prog{margin-top:6px;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45}
+.st-prog .soon-bar{background:rgba(255,255,255,.15);border:0}
 /* Ψηφιακή κάρτα */
 .tradebtn{width:100%;text-align:left;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;border-radius:12px;background:var(--bg);font-weight:600}.tradebtn span{color:var(--mute)}
 .cardcv{width:100%;height:auto;border-radius:14px;box-shadow:var(--sh);margin:12px 0 4px;display:block;background:#fff}
@@ -268,6 +291,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
     <span><i style="background:var(--accent)"></i>Προνομιακοί</span>
   </div>
   <div id="pickPin" hidden><svg width="44" height="54" viewBox="0 0 28 34" style="display:block"><path d="M14 1a13 13 0 0 1 13 13c0 10-13 19-13 19S1 24 1 14A13 13 0 0 1 14 1z" fill="#F2B632" stroke="#17324D" stroke-width="1.5"/><circle cx="14" cy="14" r="5" fill="#17324D"/></svg></div>
+  <div id="soon" hidden></div>
   <button id="btnLoc" class="fab" title="Η θέση μου"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
 </div>
 
@@ -294,7 +318,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 "use strict";
-const VERSION = "1.12";
+const VERSION = "1.14";
 document.getElementById("ver").textContent = "έκδ. " + VERSION;
 
 /* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
@@ -436,13 +460,65 @@ const FIREBASE_CONFIG = {
   appId: "1:443144986743:web:10afb2a6536bbc1551a672"
 };
 const ADMIN_EMAIL = "aglentzakis.apps@gmail.com";
-const COL = {p:"kontamou_profiles", ph:"kontamou_photos", r:"kontamou_reviews", rep:"kontamou_reports"};
-const Cloud = {on:false, db:null, auth:null, user:null, profiles:[], reviews:[]};
+const COL = {reg:"kontamou_regions", st:"kontamou_stats", ph:"kontamou_photos", r:"kontamou_reviews", rep:"kontamou_reports", ref:"kontamou_refs"};
+const Cloud = {on:false, db:null, auth:null, user:null, profiles:[], reviews:[], stats:{}, byRegion:{}, subs:{}, mine:null, mineSub:null, refs:[]};
 const MAX_PHOTOS = 4;
 const isAdmin = () => !!(Cloud.on && Cloud.user && ADMIN_EMAIL && Cloud.user.email === ADMIN_EMAIL);
-const PROFILE_KEYS = ["type","name","trades","customName","area","lat","lng","approx","radius","job","years","phone","hidePhone","email","desc","featured","verified","fromDromologio","updated"];
+const PROFILE_KEYS = ["type","name","trades","customName","area","lat","lng","approx","radius","job","years","phone","hidePhone","email","desc","featured","verified","fromDromologio","updated","created","region","founder","refBy","lic","hidden","dromoAt"];
 function cleanProfile(p){ const o = {}; PROFILE_KEYS.forEach(k => { if (p[k] !== undefined && p[k] !== null && p[k] !== "") o[k] = p[k]; }); return JSON.parse(JSON.stringify(o)); }
 function loadScript(src){ return new Promise((ok, bad) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); }); }
+
+/* ---------- Περιοχές: ο χάρτης κάθε περιοχής ανοίγει όταν δηλωθούν αρκετοί μάστορες ---------- */
+const REGIONS = [
+  {id:"attiki",       name:"Αττική",          goal:100, box:[37.60,23.30,38.40,24.10]},
+  {id:"thessaloniki", name:"Θεσσαλονίκη",     goal:30,  box:[40.35,22.70,40.95,23.45]},
+  {id:"patra",        name:"Πάτρα",           goal:20,  box:[38.10,21.60,38.35,21.90]},
+  {id:"irakleio",     name:"Ηράκλειο",        goal:20,  box:[35.20,24.95,35.45,25.40]},
+  {id:"larisa",       name:"Λάρισα",          goal:15,  box:[39.55,22.30,39.75,22.55]},
+  {id:"allo",         name:"Υπόλοιπη Ελλάδα", goal:50,  box:null}
+];
+function regionOf(lat, lng){ const r = REGIONS.find(r => r.box && lat >= r.box[0] && lat <= r.box[2] && lng >= r.box[1] && lng <= r.box[3]); return r ? r.id : "allo"; }
+const regName = id => (REGIONS.find(r => r.id === id) || {}).name || id;
+const regionOpen = rid => !Cloud.on || !!(Cloud.stats[rid] && Cloud.stats[rid].open);
+const regDoc = (rid, uid) => Cloud.db.collection(COL.reg).doc(rid).collection("profiles").doc(uid);
+const statsDoc = rid => Cloud.db.collection(COL.st).doc(rid);
+
+/* ---------- Κλειδί «Pro» του Δρομολογίου (ίδιος κανόνας με το Δρομολόγιο) ---------- */
+const LIC_SALT = "dromologio-2026-kleidi";
+const licNorm = s => String(s||"").toUpperCase().replace(/\s+/g,"").replace(/[^A-Z0-9ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆΈΉΊΌΎΏ]/g,"");
+function licHash(str){ let h = 2166136261>>>0; for (let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h,16777619)>>>0; } return h>>>0; }
+const lic36 = (n,len) => n.toString(36).toUpperCase().padStart(len,"0").slice(-len);
+function licMake(name, until){
+  const base = licNorm(name) + "|" + until + "|" + LIC_SALT;
+  const d = until.slice(2,4) + until.slice(5,7) + until.slice(8,10);
+  return "DR-" + d + "-" + lic36(licHash(base),6) + "-" + lic36(licHash(base + "#2"),4);
+}
+function licCheck(name, key){
+  const k = String(key||"").toUpperCase().replace(/\s+/g,"");
+  const m = /^DR-(\d{6})-([0-9A-Z]{6})-([0-9A-Z]{4})$/.exec(k);
+  if (!m) return "";
+  const until = "20" + m[1].slice(0,2) + "-" + m[1].slice(2,4) + "-" + m[1].slice(4,6);
+  return licMake(name, until) === k ? until : "";
+}
+const todayISO = () => new Date().toISOString().slice(0,10);
+const licActive = p => !!(p && p.lic && p.lic.key && licCheck(p.lic.name, p.lic.key) === p.lic.until && p.lic.until >= todayISO());
+
+/* ---------- «Φέρε έναν συνάδελφο»: 1 μήνας προνομιακής προβολής για κάθε συνάδελφο ---------- */
+function refInfo(uid){
+  const mine = Cloud.refs.filter(r => r.by === uid).sort((a,b) => (a.at||0) - (b.at||0));
+  let end = 0; const MONTH = 30*864e5;
+  mine.forEach(r => { end = Math.max(end, r.at || 0) + MONTH; });
+  return {n: mine.length, until: end};
+}
+const refActive = uid => Cloud.on && refInfo(uid).until > Date.now();
+const YEAR = 365*864e5;
+const founderBoost = p => !!(p.founder && Date.now() - (p.created || 0) < YEAR);
+function captureRef(){
+  const r = new URLSearchParams(location.search).get("ref");
+  if (r) try { localStorage.setItem("km_ref", r); } catch(e){}
+}
+const pendingRef = () => { try { return localStorage.getItem("km_ref") || ""; } catch(e){ return ""; } };
+
 async function cloudInit(){
   if (!FIREBASE_CONFIG) return false;
   const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
@@ -452,15 +528,57 @@ async function cloudInit(){
     firebase.initializeApp(FIREBASE_CONFIG);
     Cloud.auth = firebase.auth(); Cloud.db = firebase.firestore(); Cloud.on = true;
     try { await Cloud.auth.getRedirectResult(); } catch(e){}
-    Cloud.auth.onAuthStateChanged(u => { Cloud.user = u; render(false); });
     let first; const ready = new Promise(r => first = r);
-    Cloud.db.collection(COL.p).onSnapshot(snap => {
-      Cloud.profiles = snap.docs.map(d => ({...d.data(), id:d.id})); first(); reload();
+    Cloud.db.collection(COL.st).onSnapshot(snap => {
+      Cloud.stats = {}; snap.docs.forEach(d => Cloud.stats[d.id] = d.data());
+      regionFeed(); first(); render(false);
     }, () => { first(); toast("Δεν υπάρχει σύνδεση με την κοινή βάση"); });
     Cloud.db.collection(COL.r).onSnapshot(snap => { Cloud.reviews = snap.docs.map(d => d.data()); render(false); }, () => {});
+    Cloud.db.collection(COL.ref).onSnapshot(snap => { Cloud.refs = snap.docs.map(d => ({...d.data(), id:d.id})); render(false); }, () => {});
+    Cloud.auth.onAuthStateChanged(u => { Cloud.user = u; regionFeed(); findMine(); if (isAdmin()) adminInitStats(); render(false); });
     await Promise.race([ready, new Promise(r => setTimeout(r, 7000))]);
     return true;
   } catch(e){ Cloud.on = false; toast("Δεν φορτώθηκε η κοινή βάση — λειτουργία στη συσκευή"); return false; }
+}
+/* Διαβάζει μόνο τις ανοιχτές περιοχές (ο διαχειριστής όλες) */
+function regionFeed(){
+  REGIONS.forEach(({id}) => {
+    const want = isAdmin() || regionOpen(id);
+    if (want && !Cloud.subs[id]){
+      Cloud.subs[id] = Cloud.db.collection(COL.reg).doc(id).collection("profiles").onSnapshot(snap => {
+        Cloud.byRegion[id] = snap.docs.map(d => ({...d.data(), id:d.id, region:id})); mergeCloud();
+      }, () => { Cloud.byRegion[id] = []; });
+    } else if (!want && Cloud.subs[id]){ Cloud.subs[id](); delete Cloud.subs[id]; Cloud.byRegion[id] = []; mergeCloud(); }
+  });
+}
+/* Το δικό σου προφίλ φαίνεται σε σένα ακόμα κι αν η περιοχή σου είναι κλειστή */
+async function findMine(){
+  if (Cloud.mineSub){ Cloud.mineSub(); Cloud.mineSub = null; }
+  Cloud.mine = null;
+  if (!Cloud.user){ mergeCloud(); return; }
+  const uid = Cloud.user.uid;
+  for (const {id} of REGIONS){
+    try { const d = await regDoc(id, uid).get(); if (d.exists){ watchMine(id); return; } } catch(e){}
+  }
+  mergeCloud();
+}
+function watchMine(rid){
+  if (Cloud.mineSub) Cloud.mineSub();
+  Cloud.mineSub = regDoc(rid, Cloud.user.uid).onSnapshot(d => {
+    Cloud.mine = d.exists ? {...d.data(), id:d.id, region:rid} : null; mergeCloud(); syncFromDromologio();
+  }, () => {});
+}
+function mergeCloud(){
+  const all = [].concat(...Object.values(Cloud.byRegion));
+  if (Cloud.mine && !all.some(p => p.id === Cloud.mine.id)) all.push(Cloud.mine);
+  Cloud.profiles = all; reload();
+}
+/* Ο διαχειριστής φτιάχνει μόνος του τους μετρητές που λείπουν */
+async function adminInitStats(){
+  for (const r of REGIONS){
+    if (Cloud.stats[r.id]) continue;
+    try { await statsDoc(r.id).set({name:r.name, goal:r.goal, count:0, open:false}); } catch(e){}
+  }
 }
 /* Σύνδεση με λογαριασμό Google — χρειάζεται μόνο για να γράψεις (προφίλ, κριτική, αναφορά) */
 function requireLogin(then){
@@ -473,7 +591,7 @@ function requireLogin(then){
   $("gCancel").onclick = closeModal;
   $("gLogin").onclick = async () => {
     const prov = new firebase.auth.GoogleAuthProvider();
-    try { await Cloud.auth.signInWithPopup(prov); Cloud.user = Cloud.auth.currentUser; closeModal(); then(); }
+    try { await Cloud.auth.signInWithPopup(prov); Cloud.user = Cloud.auth.currentUser; await findMine(); closeModal(); then(); }
     catch(e){
       if (/popup-blocked|operation-not-supported|web-storage/.test(e.code||"")) { try { await Cloud.auth.signInWithRedirect(prov); } catch(e2){ toast("Η σύνδεση απέτυχε"); } }
       else if (!/popup-closed|cancelled-popup/.test(e.code||"")) toast("Η σύνδεση απέτυχε");
@@ -500,20 +618,44 @@ const Store = {
   async upsert(p){
     if (Cloud.on){
       if (!Cloud.user) return false;
-      const uid = Cloud.user.uid, cur = Cloud.profiles.find(x => x.id === uid), o = cleanProfile({...p, updated:Date.now()});
-      o.uid = uid;
-      if (!isAdmin()){ o.featured = !!(cur && cur.featured); o.verified = !!(cur && cur.verified); }
-      try {
-        await Cloud.db.collection(COL.p).doc(uid).set(o);
-        if (p.photos !== undefined) await Cloud.db.collection(COL.ph).doc(uid).set({uid, photos: o.featured ? (p.photos || []).slice(0, MAX_PHOTOS) : []});
-        return true;
-      } catch(e){ toast("Η αποθήκευση απέτυχε: " + (e.code || "σφάλμα")); return null; }
+      const db = Cloud.db, uid = Cloud.user.uid, prev = Cloud.mine, rid = regionOf(p.lat, p.lng);
+      const st = Cloud.stats[rid], open = !!(st && st.open), moved = !!(prev && prev.region !== rid);
+      const o = cleanProfile({...p}); o.uid = uid; o.region = rid; o.updated = Date.now(); o.created = (prev && prev.created) || Date.now();
+      if (!isAdmin() || !prev){
+        const keep = prev && !moved;
+        o.featured = !!(keep && prev.featured); o.verified = !!(keep && prev.verified);
+      }
+      o.founder = prev ? (!!prev.founder && (!moved || !open)) : !open;           // ιδρυτικό: όσοι γράφτηκαν πριν ανοίξει η περιοχή
+      o.refBy = prev ? (prev.refBy || "") : (pendingRef() !== uid ? pendingRef() : "");
+      if (!o.refBy) delete o.refBy;
+      const b = db.batch(), inc = firebase.firestore.FieldValue.increment;
+      b.set(regDoc(rid, uid), o);
+      if (moved) b.delete(regDoc(prev.region, uid));
+      const wasPro = !!(prev && prev.type === "pro"), isPro = o.type === "pro";
+      if (wasPro && (moved || !isPro) && Cloud.stats[prev.region]) b.update(statsDoc(prev.region), {count: inc(-1)});
+      const added = isPro && (!wasPro || moved);
+      if (added && st) b.update(statsDoc(rid), {count: inc(1)});
+      if (!prev && o.refBy && !Cloud.refs.some(r => r.id === uid)) b.set(db.collection(COL.ref).doc(uid), {by:o.refBy, region:rid, at:Date.now()});
+      if (p.photos !== undefined) b.set(db.collection(COL.ph).doc(uid), {uid, photos: isFeat({...o, id:uid}) ? (p.photos || []).slice(0, MAX_PHOTOS) : []});
+      try { await b.commit(); }
+      catch(e){ toast("Η αποθήκευση απέτυχε: " + (e.code || "σφάλμα")); return null; }
+      Cloud.mine = {...(prev || {}), ...o, id:uid, region:rid}; mergeCloud();      // να φαίνεται αμέσως, πριν απαντήσει η βάση
+      if (!prev || moved) watchMine(rid);
+      /* Αυτόματο άνοιγμα της περιοχής όταν πιάσει τον στόχο */
+      if (added && st && !st.open && (st.count || 0) + 1 >= (st.goal || 1e9)){
+        try { await statsDoc(rid).update({open:true}); toast(`🎉 Ο χάρτης της περιοχής ${regName(rid)} άνοιξε!`); } catch(e){}
+      }
+      return true;
     }
     const d = this.load(); d.profiles = (d.profiles||[]).filter(x => x.id !== p.id); d.profiles.push(p); d.myId = p.id; return this.save(d);
   },
   async remove(id){
     if (Cloud.on){
-      try { await Cloud.db.collection(COL.p).doc(id).delete(); await Cloud.db.collection(COL.ph).doc(id).delete(); } catch(e){ toast("Η διαγραφή απέτυχε"); }
+      const p = state.all.find(x => x.id === id) || Cloud.mine; if (!p || !p.region) return;
+      const b = Cloud.db.batch();
+      b.delete(regDoc(p.region, id)); b.delete(Cloud.db.collection(COL.ph).doc(id));
+      if (p.type === "pro" && Cloud.stats[p.region]) b.update(statsDoc(p.region), {count: firebase.firestore.FieldValue.increment(-1)});
+      try { await b.commit(); if (Cloud.user && id === Cloud.user.uid){ Cloud.mine = null; mergeCloud(); } } catch(e){ toast("Η διαγραφή απέτυχε"); }
       return;
     }
     const d = this.load(); d.profiles = (d.profiles||[]).filter(x => x.id !== id); if (d.myId === id) delete d.myId; this.save(d);
@@ -531,7 +673,7 @@ const Store = {
     const d = this.load(); d.reviews = d.reviews || {}; (d.reviews[id] = d.reviews[id] || []).unshift(r); return this.save(d);
   },
   myId(){
-    if (Cloud.on) return Cloud.user && Cloud.profiles.some(x => x.id === Cloud.user.uid) ? Cloud.user.uid : null;
+    if (Cloud.on) return Cloud.user && Cloud.mine ? Cloud.user.uid : null;
     return this.load().myId;
   },
   samples(){ const v = this.load().samples; return v === undefined ? !Cloud.on : v !== false; },
@@ -620,7 +762,7 @@ function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show
 function phoneIntl(p){ let d=String(p||"").replace(/\D/g,""); if(!d) return ""; if(d.startsWith("00")) d=d.slice(2); if(d.length===10) d="30"+d; return d; }
 function phoneNice(p){ const d=String(p||"").replace(/\D/g,"").replace(/^0030|^30(?=\d{10}$)/,""); return d.length===10 ? `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6)}` : String(p||""); }
 const typeName = t => t==="pro" ? "Επαγγελματίας" : "Ζητά εργασία";
-const isFeat = p => p.type==="pro" && !!p.featured;
+const isFeat = p => p.type==="pro" && (!!p.featured || licActive(p) || refActive(p.id));
 const initials = n => String(n||"").trim().split(/\s+/).slice(0,2).map(w=>w.charAt(0)).join("").toUpperCase() || "?";
 const avgOf = r => r.length ? r.reduce((s,x)=>s+(+x.stars||0),0)/r.length : 0;
 const starStr = n => { const k = Math.round(n); return "★".repeat(k) + "☆".repeat(5-k); };
@@ -676,7 +818,8 @@ function filtered(type = state.type){
     .filter(p => !state.specs.size || tradesOf(p).some(t => state.specs.has(t)))
     .filter(p => !q || norm([p.name,specTxt(p),p.area,p.desc,...tradesOf(p).map(t=>catName((profById(t)||{}).c))].join(" ")).includes(q))
     .filter(p => !state.radius || p.dist <= state.radius)
-    .sort((a,b) => (isFeat(b)-isFeat(a)) || (a.dist-b.dist));
+    .filter(p => !p.hidden || p.id === Store.myId())
+    .sort((a,b) => (isFeat(b)-isFeat(a)) || (founderBoost(b)-founderBoost(a)) || (a.dist-b.dist));
 }
 
 function render(pins = true){
@@ -686,7 +829,7 @@ function render(pins = true){
     const ms = res.map(p => {
       const f = isFeat(p);
       const ic = L.divIcon({className:"",iconSize:f?[40,40]:[30,30],iconAnchor:f?[20,48]:[15,36],   // η μύτη της σταγόνας είναι στο μισό + μισή διαγώνιο
-        html:`<div class="pinwrap"><div class="pin ${p.type}${f?" feat":""}${p.id===mine?" mine":""}"><span class="ic">${ico(mainTrade(p))}</span></div>${f?'<b class="fstar">★</b>':""}</div>`});
+        html:`<div class="pinwrap"><div class="pin ${p.type}${f?" feat":""}${p.id===mine?" mine":""}"><span class="ic">${ico(mainTrade(p))}</span></div>${f?'<b class="fstar">★</b>':""}${p.founder?'<b class="fbadge">🏅</b>':""}</div>`});
       return L.marker([p.lat,p.lng],{icon:ic,zIndexOffset:f?1000:0,kind:p.type,feat:f}).on("click",()=>openProfile(p.id));
     });
     if (layer.addLayers) layer.addLayers(ms); else ms.forEach(m => layer.addLayer(m));
@@ -714,7 +857,7 @@ function render(pins = true){
   $("chkIcons").onchange = e => { Store.flag("listIcons", e.target.checked); render(false); };
   $("chkSamples").onchange = async e => { Store.setSamples(e.target.checked); await reload(); };
   $("navMeTxt").textContent = mine ? "Το προφίλ μου" : "Προφίλ";
-  specLabel();
+  specLabel(); updateSoon();
 }
 async function reload(){ state.all = await Store.list(); render(); }
 
@@ -742,7 +885,7 @@ async function doInstall(){
 addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; if (!$("start").hidden) openStart(); });
 addEventListener("appinstalled", () => { installEvt = null; });
 if ("serviceWorker" in navigator && window.isSecureContext && location.protocol !== "file:"){
-  navigator.serviceWorker.register("sw.js", {updateViaCache:"none"}).catch(() => {});
+  navigator.serviceWorker.register("sw.js", {updateViaCache:"none"}).then(r => r.update()).catch(() => {});
   let reloaded = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => { if (reloaded) return; reloaded = true; if ($("start") && !$("start").hidden && $("modal").hidden) location.reload(); });
 }
@@ -760,11 +903,142 @@ function dromoAd(kind = "card"){
     <div class="dad-pro">Με το «Pro»: ★ προνομιακή προβολή εδώ, στο «Κοντά μου»</div></a>`;
 }
 
+/* Έλεγχος για νέα έκδοση: παίρνει την τελευταία από τον διακομιστή, χωρίς να σβήνει τα δεδομένα σου */
+async function checkUpdate(){
+  toast("Έλεγχος για νέα έκδοση…");
+  try {
+    const r = await fetch("index.html?t=" + Date.now(), {cache:"no-store"});
+    const m = (await r.text()).match(/const VERSION = "([^"]+)"/);
+    const latest = m ? m[1] : null;
+    if (latest && latest === VERSION){ toast("Έχεις ήδη την τελευταία έκδοση (" + VERSION + ")"); return; }
+    if ("serviceWorker" in navigator){ const reg = await navigator.serviceWorker.getRegistration(); if (reg) await reg.update(); }
+    if (window.caches){ const ks = await caches.keys(); await Promise.all(ks.map(k => caches.delete(k))); }
+    toast("Ενημέρωση σε έκδοση " + (latest || "νεότερη") + "…");
+    setTimeout(() => location.replace(baseUrl() + "?v=" + Date.now()), 600);
+  } catch(e){ toast("Δεν υπάρχει σύνδεση — δοκίμασε ξανά"); }
+}
+
+
+/* ---------- Παραλαβή στοιχείων από το Δρομολόγιο ----------
+   α) στη διεύθυνση: #km=<κωδικός>  ("z" = συμπιεσμένο JSON, "j" = σκέτο JSON, σε base64url)
+   β) στην κοινή αποθήκη του κινητού: localStorage "kontamou_from_dromologio" */
+const b64u = s => { s = s.replace(/-/g,"+").replace(/_/g,"/"); while (s.length % 4) s += "="; const b = atob(s), u = new Uint8Array(b.length); for (let i=0;i<b.length;i++) u[i] = b.charCodeAt(i); return u; };
+async function unpackShare(s){
+  const k = s[0], u = b64u(s.slice(1)); let raw = u;
+  if (k === "z"){ const ds = new Blob([u]).stream().pipeThrough(new DecompressionStream("deflate-raw")); raw = new Uint8Array(await new Response(ds).arrayBuffer()); }
+  return JSON.parse(new TextDecoder().decode(raw));
+}
+function dromoStored(){ try { const d = JSON.parse(localStorage.getItem("kontamou_from_dromologio") || "null"); return d && d.app === "dromologio" ? d : null; } catch(e){ return null; } }
+async function dromoFromHash(){
+  const m = location.hash.match(/km=([^&]+)/); if (!m) return null;
+  try { const d = await unpackShare(decodeURIComponent(m[1])); return d && d.app === "dromologio" ? d : null; } catch(e){ toast("Ο σύνδεσμος του Δρομολογίου δεν διαβάστηκε"); return null; }
+}
+function dromoPreset(d){
+  const pr = d.prof && profById(d.prof) ? d.prof : "other";
+  const o = {fromDromologio:true, dromoAt:d.at || Date.now(), trades:[pr], hidden: d.visible === false, lic: d.lic || null};
+  if (pr === "other" && d.profName) o.customName = d.profName;
+  ["name","phone","email","area"].forEach(k => { if (d[k]) o[k] = String(d[k]); });
+  if (typeof d.lat === "number" && typeof d.lng === "number" && !(Cloud.on && Cloud.mine)){ o.lat = d.lat; o.lng = d.lng; o.approx = false; o.posFromDromo = true; }
+  return o;                       // σε υπάρχον προφίλ η ακριβής θέση του δεν αλλάζει
+}
+/* Αν αλλάξει κάτι στο Δρομολόγιο (π.χ. «να μη φαίνομαι» ή νέο κλειδί Pro), ενημερώνεται μόνο του */
+let syncing = false;
+async function syncFromDromologio(){
+  const d = dromoStored(), me = Cloud.on ? Cloud.mine : null;
+  if (!d || !me || syncing || (d.at || 0) <= (me.dromoAt || 0)) return;
+  syncing = true;
+  const q = {...me, hidden: d.visible === false, lic: d.lic || null, dromoAt: d.at || Date.now()};
+  const ok = await Store.upsert(q); syncing = false;
+  if (ok) toast(d.visible === false ? "Από το Δρομολόγιο: η πινέζα σου κρύφτηκε" : "Ενημερώθηκαν τα στοιχεία σου από το Δρομολόγιο");
+}
+
+async function handleDromoHash(){
+  const dh = await dromoFromHash(); if (!dh) return false;
+  history.replaceState(null, "", baseUrl());
+  openStart(); $("start").hidden = true; setType("pro");
+  requireLogin(() => { openForm(Cloud.mine || null, Cloud.mine ? Cloud.mine.type : "pro", dromoPreset(dh));
+    toast("Τα στοιχεία ήρθαν από το Δρομολόγιο — έλεγξέ τα και πάτα «Δημοσίευση»"); });
+  return true;
+}
+addEventListener("hashchange", () => { if (/km=/.test(location.hash)) handleDromoHash(); });
+
+/* ---------- Κλειστή περιοχή: ο πελάτης βλέπει πρόοδο αντί για χάρτη ---------- */
+function updateSoon(){
+  const el = $("soon"); if (!el) return;
+  const c = state.me || map.getCenter(), rid = regionOf(c.lat, c.lng), st = Cloud.stats[rid];
+  const show = Cloud.on && !isAdmin() && st && !st.open;
+  el.hidden = !show; document.body.classList.toggle("soon-on", !!show);
+  if (!show) return;
+  const n = st.count || 0, g = st.goal || 1, pct = Math.min(100, Math.round(n / g * 100));
+  el.innerHTML = `<div class="soon-t">🚧 Ο χάρτης της περιοχής <b>${esc(regName(rid))}</b> ανοίγει σύντομα</div>
+    <div class="soon-n">Έχουν δηλωθεί <b>${n}</b> από <b>${g}</b> μάστορες</div>
+    <div class="soon-bar"><i style="width:${pct}%"></i></div>
+    <div class="soon-s">Όταν συμπληρωθούν, ο χάρτης ανοίγει για όλους μαζί.</div>
+    <div class="soon-b"><button id="soonJoin">🏅 Είσαι μάστορας; Γίνε Ιδρυτικό μέλος</button><button id="soonShare">⤴ Πες το σε μάστορα</button></div>`;
+  $("soonJoin").onclick = () => requireLogin(() => { const me = Cloud.mine; if (me) openProfile(me.id); else openForm(null, "pro"); });
+  $("soonShare").onclick = () => shareText(`Γράψου δωρεάν στο «Κοντά μου» — τον χάρτη με τους μάστορες της γειτονιάς. Οι πρώτοι γίνονται Ιδρυτικά μέλη: ${baseUrl()}`);
+}
+async function shareText(t){
+  try { if (navigator.share) await navigator.share({text:t}); else { await navigator.clipboard.writeText(t); toast("Αντιγράφηκε"); } } catch(e){}
+}
+
+/* ---------- Πίνακας διαχειριστή: στόχοι και άνοιγμα περιοχών ---------- */
+function openAdmin(){
+  const rows = REGIONS.map(r => { const s = Cloud.stats[r.id] || {}; const pct = Math.min(100, Math.round((s.count||0) / (s.goal||r.goal) * 100));
+    return `<div class="adm-r" data-r="${r.id}"><div class="adm-h"><b>${esc(r.name)}</b><span class="badge ${s.open ? "seek" : "demo"}">${s.open ? "Ανοιχτή" : "Κλειστή"}</span></div>
+      <div class="soon-bar"><i style="width:${pct}%"></i></div>
+      <div class="adm-c">Μάστορες: <b>${s.count || 0}</b> · στόχος <input type="number" min="1" max="10000" value="${s.goal || r.goal}" class="adm-g">
+      <button class="adm-save">Αποθήκευση</button><button class="adm-open">${s.open ? "Κλείσιμο" : "Άνοιγμα τώρα"}</button></div></div>`; }).join("");
+  openModal(`<h2>⚙️ Περιοχές</h2><div class="meta">Ο χάρτης κάθε περιοχής ανοίγει αυτόματα μόλις ο αριθμός των μαστόρων φτάσει τον στόχο.</div>
+    ${rows}
+    <div class="btns"><button id="admRecount">⟳ Επανυπολογισμός μετρητών</button></div>
+    <div class="meta" style="font-size:12.5px">Δημόσια διεύθυνση μετρητή (για το Δρομολόγιο):<br><code style="word-break:break-all">${esc(statsRestUrl("attiki"))}</code></div>
+    <div class="btns"><button id="admClose">Κλείσιμο</button></div>`);
+  $("admClose").onclick = closeModal;
+  $("modalCard").querySelectorAll(".adm-r").forEach(el => {
+    const rid = el.dataset.r;
+    el.querySelector(".adm-save").onclick = async () => { const g = +el.querySelector(".adm-g").value || 1;
+      try { await statsDoc(rid).set({name:regName(rid), goal:g}, {merge:true}); toast("Ο στόχος αποθηκεύτηκε"); openAdmin(); } catch(e){ toast("Δεν επιτρέπεται"); } };
+    el.querySelector(".adm-open").onclick = async () => { const s = Cloud.stats[rid] || {};
+      try { await statsDoc(rid).set({open:!s.open}, {merge:true}); setTimeout(openAdmin, 300); } catch(e){ toast("Δεν επιτρέπεται"); } };
+  });
+  $("admRecount").onclick = async () => {
+    toast("Μέτρηση…");
+    for (const r of REGIONS){
+      try { const snap = await Cloud.db.collection(COL.reg).doc(r.id).collection("profiles").get();
+        const n = snap.docs.filter(d => d.data().type === "pro").length;
+        await statsDoc(r.id).set({name:r.name, count:n}, {merge:true}); } catch(e){}
+    }
+    toast("Οι μετρητές ενημερώθηκαν"); setTimeout(openAdmin, 300);
+  };
+}
+const statsRestUrl = rid => `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG ? FIREBASE_CONFIG.projectId : ""}/databases/(default)/documents/${COL.st}/${rid}?key=${FIREBASE_CONFIG ? FIREBASE_CONFIG.apiKey : ""}`;
+
+
+/* ---------- Σύνδεσμος πρόσκλησης συναδέλφων ---------- */
+const inviteUrl = () => baseUrl() + "?ref=" + encodeURIComponent(Cloud.user ? Cloud.user.uid : "");
+function inviteHTML(p){
+  const ri = refInfo(p.id), u = encodeURIComponent(inviteUrl());
+  const t = encodeURIComponent("Γράψου δωρεάν στο «Κοντά μου», τον χάρτη με τους μάστορες της γειτονιάς: " + inviteUrl());
+  return `<div class="inv"><div class="inv-t">🤝 Φέρε έναν συνάδελφο</div>
+    <div class="meta">Για κάθε συνάδελφο που γράφεται από τον δικό σου σύνδεσμο κερδίζεις <b>1 μήνα προνομιακής προβολής</b>.</div>
+    ${ri.n ? `<div class="inv-n">Έφερες <b>${ri.n}</b> ${ri.n === 1 ? "συνάδελφο" : "συναδέλφους"}${ri.until > Date.now() ? ` · προνομιακή προβολή έως <b>${fmtDate(ri.until)}</b>` : ""}</div>` : ""}
+    <div class="inv-b"><a class="viber" href="viber://forward?text=${t}">Viber</a><a class="msg" href="fb-messenger://share/?link=${u}">Messenger</a><a class="wa" href="https://wa.me/?text=${t}" target="_blank" rel="noopener">WhatsApp</a></div>
+    <button id="invCopy" class="inv-c">Αντιγραφή συνδέσμου</button></div>`;
+}
+
 /* ---------- Αρχική σελίδα: ανοίγει σε κάθε είσοδο ---------- */
 function setType(t){
   state.type = t;
   document.querySelectorAll("#nav button[data-t]").forEach(x => x.classList.toggle("on", x.dataset.t===t));
   render();
+}
+function startProgress(){
+  if (!Cloud.on) return "";
+  const c = state.me || {lat:37.98, lng:23.73}, rid = regionOf(c.lat, c.lng), st = Cloud.stats[rid];
+  if (!st || st.open) return "";
+  const n = st.count || 0, g = st.goal || 1;
+  return `<div class="st-prog">🚧 <b>${esc(regName(rid))}:</b> έχουν δηλωθεί ${n} από ${g} μάστορες. Ο χάρτης ανοίγει όταν συμπληρωθούν — οι πρώτοι γίνονται <b>🏅 Ιδρυτικά μέλη</b>.<div class="soon-bar"><i style="width:${Math.min(100, Math.round(n/g*100))}%"></i></div></div>`;
 }
 function openStart(){
   closeModal();
@@ -781,16 +1055,22 @@ function openStart(){
     <div class="st-sec">Θέλω να δηλώσω</div>
     ${my ? row("sMine", ico(mainTrade(my)), "Το προφίλ μου", esc(my.name) + " · " + (my.type==="pro" ? "επαγγελματίας" : "ζητά εργασία"), "gold")
          : row("sPro","🛠️","Είμαι μάστορας","Δωρεάν προφίλ σε 2 λεπτά, χωρίς προμήθεια","gold") + row("sSeek","💼","Ψάχνω εργασία","Δήλωσε την ειδικότητά σου και σε βρίσκουν")}
+    ${!my && dromoStored() ? row("sDromo","📥","Δημοσίευση από το Δρομολόγιο","Τα στοιχεία σου είναι έτοιμα — ένα πάτημα","gold") : ""}
+    ${startProgress()}
+    ${isAdmin() ? `<div class="st-sec">Διαχείριση</div>` + row("sAdmin","⚙️","Περιοχές και μετρητές","Στόχοι, άνοιγμα χάρτη, επανυπολογισμός") : ""}
     <button class="st-link" id="sMap">Απλώς δες τον χάρτη ›</button>
     ${installHTML()}
     ${dromoAd("card")}
-    <div class="st-foot">από το Δρομολόγιο · έκδ. ${VERSION}</div>
+    <div class="st-foot">από το Δρομολόγιο · έκδ. ${VERSION}<br><button class="st-upd" id="sUpd">⟳ Έλεγχος για νέα έκδοση</button></div>
   </div>`;
   $("start").hidden = false;
   const go = t => { $("start").hidden = true; setType(t); setTimeout(() => map.invalidateSize(), 60); };
   $("sFindPro").onclick = () => go("pro");
   $("sFindSeek").onclick = () => go("seek");
   $("sMap").onclick = () => go("all");
+  $("sUpd").onclick = checkUpdate;
+  if ($("sAdmin")) $("sAdmin").onclick = () => { go("all"); openAdmin(); };
+  if ($("sDromo")) $("sDromo").onclick = () => { go("pro"); requireLogin(() => { openForm(Cloud.mine || null, "pro", dromoPreset(dromoStored())); }); };
   if ($("sInstall")) $("sInstall").onclick = doInstall;
   if (my) $("sMine").onclick = () => { go("all"); openProfile(my.id); };
   else { $("sPro").onclick = () => { go("pro"); openForm(null,"pro"); }; $("sSeek").onclick = () => { go("seek"); openForm(null,"seek"); }; }
@@ -835,7 +1115,7 @@ function openProfile(id){
                            : '<div class="meta">Δεν υπάρχουν ακόμα κριτικές.</div>';
     if (!mine) revHtml += `<div class="btns"><button id="btnRev">★ Γράψε κριτική</button></div>`;
   }
-  const upsell = (mine && p.type==="pro" && !f) ? `<div class="lock"><b>★ Προνομιακή προβολή</b><br>Βγες πρώτος στην περιοχή σου, με σήμα «Επαληθευμένος», φωτογραφίες από δουλειές σου και κριτικές πελατών. Περιλαμβάνεται στη συνδρομή Δρομολογίου «Pro».<br><span class="ff">Ιδρυτικά μέλη: οι πρώτοι 100 στη μισή τιμή, για πάντα</span></div>` : "";
+  const upsell = (mine && p.type==="pro" && !f) ? `<div class="lock"><b>★ Προνομιακή προβολή</b><br>Βγες πρώτος στην περιοχή σου, με σήμα «Επαληθευμένος», φωτογραφίες από δουλειές σου και κριτικές πελατών. Περιλαμβάνεται στη συνδρομή Δρομολογίου «Pro».<br><span class="ff">Προσφορά: οι πρώτοι 100 συνδρομητές «Pro» στη μισή τιμή, για πάντα</span></div>` : "";
 
   let info = `<div><span>Απόσταση</span><b>${fmtKm(d)} από ${state.me?"εσένα":"το κέντρο του χάρτη"}</b></div><div><span>Περιοχή</span><b>${esc(p.area)}</b></div>`;
   if (p.type==="pro" && p.radius) info += `<div><span>Εξυπηρετεί</span><b>έως ${p.radius} χλμ</b></div>`;
@@ -844,16 +1124,20 @@ function openProfile(id){
 
   openModal(`
     <div class="hero">${avatar(p)}<div><h2>${esc(p.name)}</h2><div class="sp1">${esc(specIcoTxt(p))}</div>${f && revs.length ? `<div class="meta"><span class="stars">${starStr(av)}</span> ${fmtAvg(av)} · ${revs.length} ${revs.length===1?"κριτική":"κριτικές"}</div>`:""}</div></div>
-    <div class="badges"><span class="badge ${p.type}">${typeName(p.type)}</span>${f?'<span class="badge feat">★ Προνομιακός</span>':""}${f&&p.verified?'<span class="badge ver">✓ Επαληθευμένος</span>':""}${p.sample?'<span class="badge demo">Δείγμα</span>':""}</div>
+    <div class="badges"><span class="badge ${p.type}">${typeName(p.type)}</span>${f?'<span class="badge feat">★ Προνομιακός</span>':""}${f&&p.verified?'<span class="badge ver">✓ Επαληθευμένος</span>':""}${licActive(p)?'<span class="badge ver">Pro · Δρομολόγιο</span>':""}${p.founder?'<span class="badge found">🏅 Ιδρυτικό μέλος</span>':""}${p.sample?'<span class="badge demo">Δείγμα</span>':""}</div>
+    ${mine && p.hidden ? '<div class="lock">🙈 <b>Η πινέζα σου είναι κρυμμένη</b> — δεν σε βλέπουν οι πελάτες. Άλλαξέ το από «Αλλαγή στοιχείων» ή από το Δρομολόγιο.</div>' : ""}
+    ${mine && Cloud.on && p.region && !regionOpen(p.region) ? `<div class="lock">🚧 Ο χάρτης της περιοχής σου (<b>${esc(regName(p.region))}</b>) ανοίγει ${Cloud.stats[p.region] ? `όταν δηλωθούν <b>${Cloud.stats[p.region].goal}</b> μάστορες — τώρα είναι <b>${Cloud.stats[p.region].count || 0}</b>` : "σύντομα"}. Μέχρι τότε το προφίλ σου το βλέπεις μόνο εσύ. Φέρε συναδέλφους για να ανοίξει γρηγορότερα!</div>` : ""}
     <div class="info">${info}</div>
     ${p.desc ? `<div class="desc">${esc(p.desc)}</div>`:""}
     ${gal}
     <div class="actions">${acts}</div>
     ${upsell}
+    ${mine && Cloud.on ? inviteHTML(p) : ""}
     ${mine && p.type==="pro" ? dromoAd("card") : ""}
     ${revHtml}
     <div class="btns"><button id="btnClose">Κλείσιμο</button></div>`);
   $("btnClose").onclick = closeModal;
+  if ($("invCopy")) $("invCopy").onclick = async () => { try { await navigator.clipboard.writeText(inviteUrl()); toast("Ο σύνδεσμος αντιγράφηκε"); } catch(e){ prompt("Αντίγραψε τον σύνδεσμο:", inviteUrl()); } };
   $("modalCard").querySelectorAll(".gal img").forEach(im => im.onclick = () => showImg(im.src));
   $("modalCard").dataset.pid = p.id;
   if ($("btnRev")) $("btnRev").onclick = () => {
@@ -866,7 +1150,7 @@ function openProfile(id){
     catch(e){ toast("Η αναφορά δεν στάλθηκε"); } });
   if ($("btnAdmFeat")) $("btnAdmFeat").onclick = async () => {
     const on = !isFeat(p);
-    try { await Cloud.db.collection(COL.p).doc(p.id).update({featured:on, verified:on}); toast(on ? "Ενεργοποιήθηκε η προνομιακή προβολή" : "Αφαιρέθηκε η προνομιακή προβολή"); closeModal(); }
+    try { await regDoc(p.region, p.id).update({featured:on, verified:on}); toast(on ? "Ενεργοποιήθηκε η προνομιακή προβολή" : "Αφαιρέθηκε η προνομιακή προβολή"); closeModal(); }
     catch(e){ toast("Δεν επιτρέπεται"); } };
   if ($("btnAdmDel")) $("btnAdmDel").onclick = async () => { if (confirm(`Διαγραφή του προφίλ «${p.name}»;`)){ await Store.remove(p.id); closeModal(); } };
   if ($("btnLogout")) $("btnLogout").onclick = async () => { await Cloud.auth.signOut(); closeModal(); render(); toast("Αποσυνδέθηκες"); };
@@ -1069,7 +1353,7 @@ function readForm(){
   return {...draft,
     name:$("fName").value.trim(), customName:($("fCustom")?$("fCustom").value.trim():draft.customName||""), area:$("fArea").value.trim(),
     radius:+$("fRadius").value||0, job:$("fJob").value, years:$("fYears").value.trim(),
-    phone:$("fPhone").value.trim(), email:$("fEmail").value.trim(), hidePhone:$("fHide").checked,
+    phone:$("fPhone").value.trim(), email:$("fEmail").value.trim(), hidePhone:$("fHide").checked, hidden:!$("fVisible").checked,
     approx:$("fApprox").checked, desc:$("fDesc").value.trim(),
     featured: draft.type==="pro" && $("fFeat").checked};
 }
@@ -1077,7 +1361,7 @@ function openForm(p, type = "pro", preset = {}){
   requireLogin(async () => {
     if (Cloud.on){
       const uid = Cloud.user.uid;
-      if (!p) p = state.all.find(x => x.id === uid) || null;          // ένα προφίλ ανά λογαριασμό
+      if (!p) p = Cloud.mine || state.all.find(x => x.id === uid) || null;          // ένα προφίλ ανά λογαριασμό
       if (p) await loadPhotos(p);
       const u = Cloud.user, base = {name:u.displayName || ""};   // το ηλ. ταχυδρομείο δεν μπαίνει μόνο του: θα φαινόταν δημόσια
       draft = p ? {...p, ...preset} : {...base, id:uid, type, approx:type==="seek", radius:10, trades:[], ...preset};
@@ -1102,14 +1386,14 @@ function drawForm(){
     <label>Περιοχή</label><input id="fArea" value="${esc(f.area)}" placeholder="π.χ. Βύρωνας, Αθήνα" maxlength="80">
     <label>Θέση στον χάρτη</label>
     <div class="locbox"><button id="lGps">◎ Η θέση μου</button><button id="lPick">Επιλογή στον χάρτη</button><button id="lFind">Εύρεση από την περιοχή</button></div>
-    <div class="locstat" id="lStat">${f.lat?"✓ Η θέση ορίστηκε":"Δεν έχει οριστεί θέση ακόμα"}</div>
+    <div class="locstat" id="lStat">${f.lat ? (f.posFromDromo ? "📍 Θέση από το Δρομολόγιο (περίπου 1 χλμ.) — διόρθωσέ τη με «Επιλογή στον χάρτη»" : "✓ Η θέση ορίστηκε") : "Δεν έχει οριστεί θέση ακόμα"}</div>
     <label class="chk"><input type="checkbox" id="fApprox" ${f.approx!==false?"checked":""}> Να φαίνομαι κατά προσέγγιση (περίπου 100 μ. γύρω από το σημείο, για ιδιωτικότητα)</label>
     <div ${isPro?"":"hidden"}><label>Εξυπηρετώ έως</label>
       <select id="fRadius">${[2,5,10,15,20,30,50,100].map(v=>`<option value="${v}" ${f.radius==v?"selected":""}>${v} χλμ</option>`).join("")}</select>
       <div class="lock">
         <label class="chk" style="margin:0"><input type="checkbox" id="fFeat" ${f.featured?"checked":""} ${Cloud.on && !isAdmin() ? "disabled" : ""}> <b>★ Προνομιακή προβολή</b></label>
         <div style="margin-top:6px">Για συνδρομητές Δρομολογίου «Pro», για όσο διαρκεί η συνδρομή: πρώτη θέση στην περιοχή, σήμα «Επαληθευμένος», φωτογραφίες και κριτικές. <i>${Cloud.on ? (f.featured ? "Ενεργή στον λογαριασμό σου." : "Ενεργοποιείται μαζί με τη συνδρομή.") : "(Τώρα ενεργοποιείται ελεύθερα, για επίδειξη.)"}</i></div>
-        <span class="ff">Ιδρυτικά μέλη: οι πρώτοι 100 στη μισή τιμή, για πάντα</span>
+        <span class="ff">Προσφορά: οι πρώτοι 100 συνδρομητές «Pro» στη μισή τιμή, για πάντα</span>
         <div id="featBox" ${f.featured?"":"hidden"}>
           <label>Φωτογραφίες από δουλειές μου (έως ${MAX_PHOTOS})</label>
           <div class="thumbs" id="thumbs"></div>
@@ -1120,10 +1404,11 @@ function drawForm(){
       <select id="fJob">${["Πλήρης απασχόληση","Μερική απασχόληση","Εποχική εργασία","Ανά δουλειά / μεροκάματο","Βοηθός τεχνίτη / μαθητεία"].map(v=>`<option ${f.job===v?"selected":""}>${v}</option>`).join("")}</select></div>
     <label>Χρόνια εμπειρίας</label><input id="fYears" type="number" min="0" max="60" inputmode="numeric" value="${esc(f.years)}">
     <label>Τηλέφωνο</label><input id="fPhone" type="tel" inputmode="tel" value="${esc(f.phone)}" placeholder="69…">
+    <label class="chk"><input type="checkbox" id="fVisible" ${f.hidden?"":"checked"}> Να φαίνομαι στον χάρτη</label>
     <label class="chk"><input type="checkbox" id="fHide" ${f.hidePhone?"checked":""}> Να μη φαίνεται το τηλέφωνό μου (μόνο ηλ. ταχυδρομείο)</label>
     <label>Ηλεκτρονικό ταχυδρομείο</label><input id="fEmail" type="email" value="${esc(f.email)}">
     <label>Λίγα λόγια για μένα / τις υπηρεσίες μου</label><textarea id="fDesc" rows="4" maxlength="600" placeholder="π.χ. Ηλεκτρολογικές εγκαταστάσεις, βλάβες, πίνακες. Άμεση εξυπηρέτηση.">${esc(f.desc)}</textarea>
-    <div class="btns"><button id="fCancel">Άκυρο</button><button id="fSave" class="go">Αποθήκευση</button></div>`);
+    <div class="btns"><button id="fCancel">Άκυρο</button><button id="fSave" class="go">${Store.myId() === f.id ? "Αποθήκευση" : "Δημοσίευση"}</button></div>`);
 
   $("modalCard").querySelectorAll(".seg button").forEach(b => b.onclick = () => { draft = readForm(); draft.type = b.dataset.t; drawForm(); });
   $("fCancel").onclick = () => { draft=null; closeModal(); };
@@ -1177,7 +1462,9 @@ function drawForm(){
     if (ok === null) return;
     if (!ok) return toast("Γέμισε ο χώρος αποθήκευσης — αφαίρεσε κάποια φωτογραφία");
     draft = null; await reload();
-    map.setView([p.lat,p.lng], Math.max(map.getZoom(), 16)); openProfile(p.id); toast(p.approx ? "Αποθηκεύτηκε — φαίνεσαι κατά προσέγγιση (έως 100 μ.)" : "Το προφίλ σου εμφανίζεται στον χάρτη");
+    map.setView([p.lat,p.lng], Math.max(map.getZoom(), 16)); openProfile(p.id); const saved = state.all.find(x => x.id === p.id) || p;
+    toast(Cloud.on && saved.region && !regionOpen(saved.region) ? `Δημοσιεύτηκε!${saved.founder ? " Είσαι 🏅 Ιδρυτικό μέλος." : ""} Θα φαίνεσαι μόλις ανοίξει ο χάρτης της περιοχής σου.`
+      : p.approx ? "Αποθηκεύτηκε — φαίνεσαι κατά προσέγγιση (έως 100 μ.)" : "Το προφίλ σου εμφανίζεται στον χάρτη");
   };
 }
 
@@ -1256,10 +1543,12 @@ addEventListener("popstate", () => {
 
 /* ---------- Εκκίνηση (με συνδέσμους ?p=… και ?neo=1) ---------- */
 (async () => {
+  captureRef();
   await cloudInit();
   await reload();
   const q = new URLSearchParams(location.search);
-  if (q.get("p")){
+  if (await handleDromoHash()){
+  } else if (q.get("p")){
     if (!openProfile(q.get("p"))) { openStart(); toast("Το προφίλ δεν βρέθηκε σε αυτή τη συσκευή"); }
   } else if (q.get("apo") === "dromologio" || q.get("prof")){
     /* Κουμπί από το Δρομολόγιο: ?apo=dromologio&prof=electric,solar&pn=…&n=…&ph=…&a=…&e=… */
@@ -1277,6 +1566,7 @@ addEventListener("popstate", () => {
     openForm(null, q.get("neo") === "seek" ? "seek" : "pro");
   } else {
     openStart();
+    if (q.get("ref")) toast("Σε προσκάλεσε συνάδελφος — γράψου δωρεάν με το «Είμαι μάστορας»");
   }
   if (q.toString()) history.replaceState(null, "", baseUrl());
   /* Φορτώνει τη ζωντανή λίστα επαγγελμάτων του Δρομολογίου, για να εμφανίζονται και τα νέα */
