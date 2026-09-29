@@ -2,7 +2,7 @@
    Ρόλος: να εγκαθίσταται η εφαρμογή στο κινητό και να ανοίγει γρήγορα.
    ΣΗΜΑΝΤΙΚΟ: σε κάθε νέα έκδοση αλλάζει ο αριθμός στη γραμμή CACHE,
    ώστε το κινητό να παίρνει αμέσως την καινούργια. */
-const CACHE = "kontamou-1.9";
+const CACHE = "kontamou-1.12";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-512-maskable.png", "./apple-touch-icon.png"];
 // Βιβλιοθήκες με σταθερή έκδοση: φυλάγονται μία φορά
 const LIBS = ["cdnjs.cloudflare.com", "www.gstatic.com"];

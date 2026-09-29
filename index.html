@@ -220,6 +220,18 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 .st-hint{margin-top:14px;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45;opacity:.9}
 .st-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:12px;opacity:.5}
 .logo{cursor:pointer}
+/* Διαφήμιση Δρομολογίου */
+.dad{display:block;text-decoration:none;color:#17324D;background:#fff;border-radius:16px;padding:14px;margin-top:16px;box-shadow:0 6px 18px rgba(0,0,0,.22);border:2px solid #F2B632}
+.dad img,.dad span:first-child{width:46px;height:46px;border-radius:12px;flex:none;font-size:30px;display:flex;align-items:center;justify-content:center}
+.dad-top{display:flex;align-items:center;gap:12px}.dad-top b{display:block;font-size:17px}.dad-top small{color:#5E7185;font-size:13px}
+.dad-tag{margin-left:auto;background:#2E7D5B;color:#fff;font-size:11.5px;font-weight:800;border-radius:20px;padding:4px 9px;width:auto!important;height:auto!important}
+.dad ul{margin:10px 0 0;padding:0;list-style:none;font-size:14px;line-height:1.7}
+.dad-btn{margin-top:10px;background:#17324D;color:#fff;text-align:center;border-radius:12px;padding:11px;font-weight:800}
+.dad-pro{margin-top:8px;text-align:center;font-size:12.5px;color:#A8760B;font-weight:700}
+.dad.mini{display:flex;align-items:center;gap:12px;margin:0;border-radius:0;box-shadow:none;border:0;border-top:1px solid var(--line);background:linear-gradient(90deg,rgba(242,182,50,.14),transparent);padding:12px 16px;color:var(--ink)}
+.dad.mini img,.dad.mini span:first-child{width:38px;height:38px;border-radius:10px;font-size:24px}
+.dad.mini span{flex:1}.dad.mini b{display:block;font-size:14.5px}.dad.mini small{color:var(--mute);font-size:12.5px}.dad.mini em{font-style:normal;font-size:22px;color:var(--mute)}
+.seg.role button{display:flex;flex-direction:column;gap:3px;text-align:center;padding:12px 8px}.seg.role b{font-size:14.5px}.seg.role small{font-size:12px;opacity:.8;font-weight:400}
 /* Ψηφιακή κάρτα */
 .tradebtn{width:100%;text-align:left;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;border-radius:12px;background:var(--bg);font-weight:600}.tradebtn span{color:var(--mute)}
 .cardcv{width:100%;height:auto;border-radius:14px;box-shadow:var(--sh);margin:12px 0 4px;display:block;background:#fff}
@@ -282,7 +294,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 "use strict";
-const VERSION = "1.9";
+const VERSION = "1.12";
 document.getElementById("ver").textContent = "έκδ. " + VERSION;
 
 /* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
@@ -673,7 +685,7 @@ function render(pins = true){
     layer.clearLayers();
     const ms = res.map(p => {
       const f = isFeat(p);
-      const ic = L.divIcon({className:"",iconSize:f?[40,40]:[30,30],iconAnchor:f?[20,40]:[15,30],
+      const ic = L.divIcon({className:"",iconSize:f?[40,40]:[30,30],iconAnchor:f?[20,48]:[15,36],   // η μύτη της σταγόνας είναι στο μισό + μισή διαγώνιο
         html:`<div class="pinwrap"><div class="pin ${p.type}${f?" feat":""}${p.id===mine?" mine":""}"><span class="ic">${ico(mainTrade(p))}</span></div>${f?'<b class="fstar">★</b>':""}</div>`});
       return L.marker([p.lat,p.lng],{icon:ic,zIndexOffset:f?1000:0,kind:p.type,feat:f}).on("click",()=>openProfile(p.id));
     });
@@ -694,6 +706,7 @@ function render(pins = true){
       <div class="t"><b>${esc(p.name)}${p.id===mine?" (εσύ)":""}</b><small>${esc(specTxt(p))} · ${esc(p.area)}</small>${f&&r.length?`<small><span class="stars">★</span> ${fmtAvg(avgOf(r))} · ${r.length} ${r.length===1?"κριτική":"κριτικές"}</small>`:""}</div>
       <span class="km">${fmtKm(p.dist)}</span>
     </div>`; }).join("") : (state.all.length ? '<div class="empty">Δεν βρέθηκε κανείς με αυτά τα φίλτρα.<br>Δοκίμασε μεγαλύτερη απόσταση ή άλλο επάγγελμα.</div>' : '<div class="empty"><b>Ο χάρτης μόλις άνοιξε!</b><br>Γίνε ο πρώτος τεχνίτης της περιοχής σου — πάτα «Προφίλ» κάτω δεξιά.</div>');
+  h += dromoAd("mini");
   h += `<label class="foot"><input type="checkbox" id="chkIcons" ${icons?"checked":""}> Εικονίδια ειδικοτήτων στη λίστα</label>`;
   h += `<label class="foot"><input type="checkbox" id="chkSamples" ${Store.samples()?"checked":""}> Εμφάνιση δειγμάτων επίδειξης</label>`;
   $("list").innerHTML = h;
@@ -734,6 +747,19 @@ if ("serviceWorker" in navigator && window.isSecureContext && location.protocol 
   navigator.serviceWorker.addEventListener("controllerchange", () => { if (reloaded) return; reloaded = true; if ($("start") && !$("start").hidden && $("modal").hidden) location.reload(); });
 }
 
+
+/* ---------- Διαφήμιση Δρομολογίου ---------- */
+const DROMO_URL = "https://aglentzakis-dot.github.io/dromologio/";
+function dromoAd(kind = "card"){
+  const icon = `<img src="${DROMO_URL}icon-192.png" alt="" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🧭'}))">`;
+  if (kind === "mini") return `<a class="dad mini" href="${DROMO_URL}" target="_blank" rel="noopener">${icon}<span><b>Δρομολόγιο</b><small>Οργάνωσε πελάτες, δουλειές και ταμείο · δωρεάν</small></span><em>›</em></a>`;
+  return `<a class="dad" href="${DROMO_URL}" target="_blank" rel="noopener">
+    <div class="dad-top">${icon}<div><b>Δρομολόγιο</b><small>Η εφαρμογή του μάστορα</small></div><span class="dad-tag">Δωρεάν</span></div>
+    <ul><li>📋 Πελάτες, δουλειές και υπενθυμίσεις</li><li>🗺️ Διαδρομές — τι έχεις «στον δρόμο» σου</li><li>🧾 Προσφορές, αποδείξεις και ταμείο</li></ul>
+    <div class="dad-btn">Δες το Δρομολόγιο ›</div>
+    <div class="dad-pro">Με το «Pro»: ★ προνομιακή προβολή εδώ, στο «Κοντά μου»</div></a>`;
+}
+
 /* ---------- Αρχική σελίδα: ανοίγει σε κάθε είσοδο ---------- */
 function setType(t){
   state.type = t;
@@ -757,6 +783,7 @@ function openStart(){
          : row("sPro","🛠️","Είμαι μάστορας","Δωρεάν προφίλ σε 2 λεπτά, χωρίς προμήθεια","gold") + row("sSeek","💼","Ψάχνω εργασία","Δήλωσε την ειδικότητά σου και σε βρίσκουν")}
     <button class="st-link" id="sMap">Απλώς δες τον χάρτη ›</button>
     ${installHTML()}
+    ${dromoAd("card")}
     <div class="st-foot">από το Δρομολόγιο · έκδ. ${VERSION}</div>
   </div>`;
   $("start").hidden = false;
@@ -818,12 +845,12 @@ function openProfile(id){
   openModal(`
     <div class="hero">${avatar(p)}<div><h2>${esc(p.name)}</h2><div class="sp1">${esc(specIcoTxt(p))}</div>${f && revs.length ? `<div class="meta"><span class="stars">${starStr(av)}</span> ${fmtAvg(av)} · ${revs.length} ${revs.length===1?"κριτική":"κριτικές"}</div>`:""}</div></div>
     <div class="badges"><span class="badge ${p.type}">${typeName(p.type)}</span>${f?'<span class="badge feat">★ Προνομιακός</span>':""}${f&&p.verified?'<span class="badge ver">✓ Επαληθευμένος</span>':""}${p.sample?'<span class="badge demo">Δείγμα</span>':""}</div>
-    ${mine ? `<div class="swap"><span>Τώρα εμφανίζεσαι ως <b>${p.type==="pro"?"επαγγελματίας":"αναζητών εργασία"}</b></span><button id="btnSwap">⇄ ${p.type==="pro"?"Ψάχνω εργασία":"Προσφέρω υπηρεσίες"}</button></div>` : ""}
     <div class="info">${info}</div>
     ${p.desc ? `<div class="desc">${esc(p.desc)}</div>`:""}
     ${gal}
     <div class="actions">${acts}</div>
     ${upsell}
+    ${mine && p.type==="pro" ? dromoAd("card") : ""}
     ${revHtml}
     <div class="btns"><button id="btnClose">Κλείσιμο</button></div>`);
   $("btnClose").onclick = closeModal;
@@ -848,20 +875,14 @@ function openProfile(id){
     try { if (navigator.share) await navigator.share({title:"Κοντά μου", text:t, url}); else { await navigator.clipboard.writeText(t+"\n"+url); toast("Ο σύνδεσμος αντιγράφηκε"); } } catch(e){}
   };
   if (mine){
-    $("btnSwap").onclick = async () => {
-      const q = {...p, type: p.type==="pro" ? "seek" : "pro", updated: Date.now()};
-      if (q.type==="seek" && !q.job) q.job = "Ανά δουλειά / μεροκάματο";
-      if (q.type==="pro" && !q.radius) q.radius = 10;
-      await Store.upsert(q); await reload(); openProfile(q.id);
-      toast(q.type==="pro" ? "Εμφανίζεσαι ως επαγγελματίας" : "Εμφανίζεσαι ως αναζητών εργασία");
-    };
     $("btnCard").onclick = () => openCard(p);
     $("btnEdit").onclick = () => openForm(p);
     $("btnMove").onclick = () => pickLocation(p, async ll => {
       const q = {...p, lat:ll.lat, lng:ll.lng};
       if (q.approx){ q.lat = Math.round(q.lat*500)/500; q.lng = Math.round(q.lng*500)/500; }
       const ok = await Store.upsert(q); if (!ok) return;
-      await reload(); openProfile(p.id); toast("Η θέση σου άλλαξε");
+      await reload(); map.setView([q.lat,q.lng], Math.max(map.getZoom(), 16)); openProfile(p.id);
+      toast(q.approx ? "Η θέση άλλαξε — φαίνεσαι κατά προσέγγιση (έως 100 μ.). Για ακριβή θέση, βγάλε το «κατά προσέγγιση» από τα στοιχεία." : "Η θέση σου άλλαξε");
     }, () => openProfile(p.id));
     $("btnDel").onclick = async () => { if (confirm("Να διαγραφεί το προφίλ σου;")){ await Store.remove(p.id); closeModal(); await reload(); toast("Το προφίλ διαγράφηκε"); } };
   }
@@ -1034,8 +1055,11 @@ function openSpecFilter(opt = {}){
   $("spApply").onclick = () => {
     state.specs = new Set(chosen());
     closeModal(); render();
-    const n = $("count").textContent.split(" ")[0];
-    toast(n === "0" ? "Κανείς εδώ — δοκίμασε μεγαλύτερη απόσταση" : `${n} αποτελέσματα`);
+    if (!state.specs.size) return;
+    const go = () => { const n = fitNearest(5);
+      const w = state.me ? "εσένα" : "αυτή την περιοχή";
+      toast(!n ? "Κανείς ακόμα με αυτό το επάγγελμα" : (n === 1 ? `Ο πιο κοντινός σε ${w}` : `Οι ${n} πιο κοντινοί σε ${w}`) + " — απομάκρυνε τον χάρτη για να δεις κι άλλους"); };
+    if (state.me) go(); else locate(p => { setMe(p, false); go(); }, go);
   };
 }
 
@@ -1069,8 +1093,8 @@ function drawForm(){
   openModal(`
     <h2>${Store.myId()===f.id?"Επεξεργασία προφίλ":"Το προφίλ μου"}</h2>
     <div class="meta">Δωρεάν, χωρίς προμήθεια. Χρειάζεται μόνο 2 λεπτά.</div>
-    <label>Είμαι</label>
-    <div class="seg"><button data-t="pro" class="${isPro?"on":""}">Επαγγελματίας / μάστορας</button><button data-t="seek" class="${!isPro?"on":""}">Ψάχνω εργασία</button></div>
+    <label>Πώς θέλεις να εμφανίζεσαι στον χάρτη;</label>
+    <div class="seg role"><button data-t="pro" class="${isPro?"on":""}"><b>🔧 Προσφέρω υπηρεσίες</b><small>Είμαι μάστορας, με βρίσκουν πελάτες</small></button><button data-t="seek" class="${!isPro?"on":""}"><b>💼 Ψάχνω εργασία</b><small>Θέλω να με προσλάβουν</small></button></div>
     <label>Όνομα (ή επωνυμία)</label><input id="fName" value="${esc(f.name)}" maxlength="60" placeholder="π.χ. Γιώργος Παπαδόπουλος">
     <label>Ειδικότητα (έως 3)</label>
     <button id="fTrades" class="tradebtn">${f.trades.length ? esc(f.trades.map(t => ico(t)+" "+tName(t)).join(" · ")) : "— Διάλεξε ειδικότητα —"} <span>▾</span></button>
@@ -1153,7 +1177,7 @@ function drawForm(){
     if (ok === null) return;
     if (!ok) return toast("Γέμισε ο χώρος αποθήκευσης — αφαίρεσε κάποια φωτογραφία");
     draft = null; await reload();
-    map.setView([p.lat,p.lng],14); openProfile(p.id); toast("Το προφίλ σου εμφανίζεται στον χάρτη");
+    map.setView([p.lat,p.lng], Math.max(map.getZoom(), 16)); openProfile(p.id); toast(p.approx ? "Αποθηκεύτηκε — φαίνεσαι κατά προσέγγιση (έως 100 μ.)" : "Το προφίλ σου εμφανίζεται στον χάρτη");
   };
 }
 
@@ -1174,20 +1198,32 @@ $("pickOk").onclick = () => { const c = map.getCenter(), f = pickDone; endPick()
 $("pickCancel").onclick = () => { const f = pickCancelFn; endPick(); f && f(); };
 
 /* ---------- Η θέση μου ---------- */
-function locate(cb){
-  if (!navigator.geolocation) return toast("Η συσκευή δεν δίνει θέση");
+function locate(cb, fail){
+  if (!navigator.geolocation){ toast("Η συσκευή δεν δίνει θέση"); if (fail) fail(); return; }
   toast("Εντοπισμός θέσης…");
   navigator.geolocation.getCurrentPosition(
     pos => cb({lat:pos.coords.latitude, lng:pos.coords.longitude}),
-    () => toast("Δεν επιτράπηκε η πρόσβαση στη θέση"),
+    () => { toast("Δεν επιτράπηκε η πρόσβαση στη θέση"); if (fail) fail(); },
     {enableHighAccuracy:true, timeout:12000});
 }
-$("btnLoc").onclick = () => locate(p => {
+function setMe(p, move = true){
   state.me = p; $("btnLoc").classList.add("on");
   if (meMarker) map.removeLayer(meMarker);
   meMarker = L.marker([p.lat,p.lng],{icon:L.divIcon({className:"",html:'<div class="medot"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false}).addTo(map);
-  map.setView([p.lat,p.lng],13); render();
-});
+  if (move) map.setView([p.lat,p.lng],13);
+  render();
+}
+/* Εστιάζει στους n πιο κοντινούς από τα τρέχοντα αποτελέσματα (και στη θέση σου) */
+function fitNearest(n){
+  const o = origin(), all = filtered().sort((a,b) => a.dist - b.dist);
+  if (!all.length) return 0;
+  const lim = Math.max(3, all[0].dist * 3);                     // όχι όσους είναι πολύ πιο μακριά από τον πρώτο
+  const near = all.filter((p,i) => i === 0 || p.dist <= lim).slice(0, n);
+  const pts = near.map(p => [p.lat, p.lng]); pts.push([o.lat, o.lng]);
+  map.fitBounds(L.latLngBounds(pts), {padding:[60,60], maxZoom:16});
+  return near.length;
+}
+$("btnLoc").onclick = () => locate(p => setMe(p));
 
 /* ---------- Φίλτρα ---------- */
 document.querySelectorAll("#nav button[data-t]").forEach(c => c.onclick = () => {
@@ -1201,6 +1237,22 @@ map.on("moveend", () => { if (!state.me && !picking) render(state.radius > 0); }
 $("sheetHead").onclick = () => { const s=$("sheet"); s.classList.toggle("open"); $("arrow").textContent = s.classList.contains("open")?"Χάρτης ▼":"Λίστα ▲"; setTimeout(()=>map.invalidateSize(),300); };
 $("logoHome").onclick = openStart;
 $("navMe").onclick = () => requireLogin(() => { const id = Store.myId(); if (id && state.all.some(p=>p.id===id)) openProfile(id); else openForm(null); });
+
+
+/* ---------- Κουμπί «πίσω» του κινητού: κλείνει ό,τι είναι ανοιχτό, δεν βγάζει από την εφαρμογή ---------- */
+let lastBack = 0;
+history.replaceState({k:"root"}, "");
+history.pushState({k:"app"}, "");
+addEventListener("popstate", () => {
+  const stay = () => history.pushState({k:"app"}, "");
+  if (picking){ $("pickCancel").click(); return stay(); }
+  if (!$("viewer").hidden){ $("viewer").hidden = true; return stay(); }
+  if (!$("modal").hidden){ closeModal(); draft = null; return stay(); }
+  if ($("sheet").classList.contains("open")){ $("sheetHead").click(); return stay(); }
+  if ($("start").hidden){ openStart(); return stay(); }
+  if (Date.now() - lastBack < 2000) { history.back(); return; }      // δεύτερο «πίσω» μέσα σε 2″: έξοδος
+  lastBack = Date.now(); toast("Πάτα ξανά «πίσω» για έξοδο"); stay();
+});
 
 /* ---------- Εκκίνηση (με συνδέσμους ?p=… και ?neo=1) ---------- */
 (async () => {
