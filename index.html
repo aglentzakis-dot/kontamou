@@ -6,6 +6,10 @@
 <title>Κοντά μου</title>
 <meta name="description" content="Οι μάστορες της γειτονιάς σου και όσοι ζητούν δουλειά, σε έναν χάρτη.">
 <meta name="theme-color" content="#17324D">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Κοντά μου">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317324D'/%3E%3Cpath d='M32 12a14 14 0 0 1 14 14c0 11-14 26-14 26S18 37 18 26a14 14 0 0 1 14-14z' fill='%23F2B632'/%3E%3Ccircle cx='32' cy='26' r='5.5' fill='%2317324D'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
@@ -212,6 +216,8 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 .st-btn em{font-style:normal;font-size:26px;color:#9AAAB8}
 .st-btn.gold{background:#F2B632}.st-btn.gold i{background:rgba(255,255,255,.55)}.st-btn.gold small{color:#5a4410}.st-btn.gold em{color:#17324D}
 .st-link{background:none;border:0;color:#fff;opacity:.85;font-weight:700;margin:10px auto 0;padding:12px;font-size:15px}
+.st-inst{display:block;width:100%;margin-top:14px;background:rgba(255,255,255,.1);color:#fff;border:1px dashed rgba(255,255,255,.45);border-radius:14px;padding:13px;font-weight:700;font-size:15px}
+.st-hint{margin-top:14px;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.45;opacity:.9}
 .st-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:12px;opacity:.5}
 .logo{cursor:pointer}
 /* Ψηφιακή κάρτα */
@@ -276,7 +282,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 "use strict";
-const VERSION = "1.8.1";
+const VERSION = "1.9";
 document.getElementById("ver").textContent = "έκδ. " + VERSION;
 
 /* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
@@ -704,6 +710,30 @@ function openModal(html){ $("modalCard").innerHTML = html; $("modal").hidden = f
 function closeModal(){ $("modal").hidden = true; if (areaCircle){ map.removeLayer(areaCircle); areaCircle=null; } }
 $("modal").addEventListener("click", e => { if (e.target.id==="modal") closeModal(); });
 
+/* ---------- Εγκατάσταση στο κινητό (όπως το Δρομολόγιο) ---------- */
+let installEvt = null;
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+function installHTML(){
+  if (isStandalone()) return "";
+  if (installEvt) return `<button class="st-inst" id="sInstall">📲 Εγκατάσταση στο κινητό</button>`;
+  if (isIOS()) return `<div class="st-hint">📲 <b>Για εγκατάσταση στο iPhone:</b> πάτα το κουμπί κοινοποίησης (τετράγωνο με βελάκι) και μετά «Προσθήκη στην οθόνη Αφετηρίας».</div>`;
+  return `<div class="st-hint">📲 <b>Για εγκατάσταση:</b> μενού του φυλλομετρητή (⋮ πάνω δεξιά) → «Προσθήκη στην αρχική οθόνη» ή «Εγκατάσταση εφαρμογής».</div>`;
+}
+async function doInstall(){
+  if (!installEvt) return;
+  installEvt.prompt();
+  try { const r = await installEvt.userChoice; if (r.outcome === "accepted") toast("Η εφαρμογή εγκαταστάθηκε"); } catch(e){}
+  installEvt = null; if (!$("start").hidden) openStart();
+}
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); installEvt = e; if (!$("start").hidden) openStart(); });
+addEventListener("appinstalled", () => { installEvt = null; });
+if ("serviceWorker" in navigator && window.isSecureContext && location.protocol !== "file:"){
+  navigator.serviceWorker.register("sw.js", {updateViaCache:"none"}).catch(() => {});
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => { if (reloaded) return; reloaded = true; if ($("start") && !$("start").hidden && $("modal").hidden) location.reload(); });
+}
+
 /* ---------- Αρχική σελίδα: ανοίγει σε κάθε είσοδο ---------- */
 function setType(t){
   state.type = t;
@@ -726,6 +756,7 @@ function openStart(){
     ${my ? row("sMine", ico(mainTrade(my)), "Το προφίλ μου", esc(my.name) + " · " + (my.type==="pro" ? "επαγγελματίας" : "ζητά εργασία"), "gold")
          : row("sPro","🛠️","Είμαι μάστορας","Δωρεάν προφίλ σε 2 λεπτά, χωρίς προμήθεια","gold") + row("sSeek","💼","Ψάχνω εργασία","Δήλωσε την ειδικότητά σου και σε βρίσκουν")}
     <button class="st-link" id="sMap">Απλώς δες τον χάρτη ›</button>
+    ${installHTML()}
     <div class="st-foot">από το Δρομολόγιο · έκδ. ${VERSION}</div>
   </div>`;
   $("start").hidden = false;
@@ -733,6 +764,7 @@ function openStart(){
   $("sFindPro").onclick = () => go("pro");
   $("sFindSeek").onclick = () => go("seek");
   $("sMap").onclick = () => go("all");
+  if ($("sInstall")) $("sInstall").onclick = doInstall;
   if (my) $("sMine").onclick = () => { go("all"); openProfile(my.id); };
   else { $("sPro").onclick = () => { go("pro"); openForm(null,"pro"); }; $("sSeek").onclick = () => { go("seek"); openForm(null,"seek"); }; }
 }
