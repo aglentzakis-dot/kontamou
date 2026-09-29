@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Κοντά μου</title>
+<meta name="description" content="Οι μάστορες της γειτονιάς σου και όσοι ζητούν δουλειά, σε έναν χάρτη.">
+<meta name="theme-color" content="#17324D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317324D'/%3E%3Cpath d='M32 12a14 14 0 0 1 14 14c0 11-14 26-14 26S18 37 18 26a14 14 0 0 1 14-14z' fill='%23F2B632'/%3E%3Ccircle cx='32' cy='26' r='5.5' fill='%2317324D'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
+<style>
+/* Χρώματα Δρομολογίου */
+:root{--brand:#17324D;--brand2:#22476B;--onbrand:#fff;--accent:#F2B632;--onaccent:#17324D;--gold-ink:#A8760B;
+  --bg:#EDF1F2;--card:#fff;--ink:#17324D;--mute:#5E7185;--line:#D6DEE3;--red:#C8412B;
+  --pro:#17324D;--seek:#2E7D5B;--me:#2468B5;--sh:0 8px 24px rgba(23,50,77,.16);--sh2:0 2px 8px rgba(23,50,77,.12)}
+@media (prefers-color-scheme:dark){:root{--bg:#0C1823;--card:#132433;--ink:#E4ECF2;--mute:#93A8BA;--line:#253A4D;--gold-ink:#F2B632;--sh:0 8px 24px rgba(0,0,0,.45);--sh2:0 2px 8px rgba(0,0,0,.35)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:system-ui,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 12px}
+button:active{transform:scale(.98)}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:0;border-color:transparent}
+svg.i{width:18px;height:18px;flex:none}
+
+/* Κεφαλίδα */
+header{background:linear-gradient(160deg,var(--brand) 0%,var(--brand2) 100%);color:var(--onbrand);padding:10px 12px 12px;padding-top:max(10px,env(safe-area-inset-top));display:flex;flex-direction:column;gap:9px;z-index:600;box-shadow:0 4px 14px rgba(23,50,77,.25)}
+.top{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex:none}
+.brand{flex:1;min-width:0;line-height:1.1}
+.brand b{font-size:19px;letter-spacing:.2px}
+.brand small{display:block;font-size:11.5px;opacity:.7;margin-top:2px}
+.acc{background:var(--accent);color:var(--onaccent);border:0;font-weight:700;border-radius:10px;padding:9px 13px;white-space:nowrap;box-shadow:0 2px 8px rgba(242,182,50,.35)}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mute)}
+.search input{background:#fff;color:#17324D;border:0;padding-left:40px;height:44px;box-shadow:var(--sh2)}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border-radius:20px;padding:6px 12px;font-size:13.5px;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;gap:6px}
+.chip.on{background:var(--accent);color:var(--onaccent);border-color:var(--accent);font-weight:700}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
+.dot.pro{background:#fff;box-shadow:inset 0 0 0 3px var(--pro)}.chip.on .dot.pro{background:var(--pro);box-shadow:none}
+.dot.seek{background:var(--seek);box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.row2 select,.specbtn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22);font-size:13.5px;padding:8px 10px;border-radius:10px}
+.row2 select option{color:#17324D;background:#fff}
+.specbtn{text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.specbtn.on,.row2 select.on{border-color:var(--accent);color:var(--accent);font-weight:700}
+
+/* Χάρτης */
+.mapwrap{flex:1;min-height:0;position:relative}
+#map{position:absolute;inset:0;z-index:1;background:#dfe6ea}
+.legend{position:absolute;left:10px;top:10px;z-index:500;background:var(--card);border-radius:12px;box-shadow:var(--sh2);padding:7px 10px;font-size:12px;display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.legend span{display:flex;align-items:center;gap:7px}
+.legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.fab{position:absolute;right:12px;bottom:26px;z-index:500;width:48px;height:48px;border-radius:50%;border:0;background:var(--card);color:var(--me);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;padding:0}
+.fab.on{background:var(--me);color:#fff}
+.pinwrap{position:relative}
+.pin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 3px 6px rgba(23,50,77,.4)}
+.pin span{transform:rotate(45deg);color:#fff;font-weight:800;font-size:13px}
+.pin.pro{background:var(--pro)}.pin.seek{background:var(--seek)}
+.pin.feat{width:40px;height:40px;border:3px solid var(--accent);box-shadow:0 0 0 2px #fff,0 4px 10px rgba(23,50,77,.45)}
+.pin.feat span{font-size:16px;color:var(--accent)}
+.pin.mine{outline:3px solid var(--me);outline-offset:1px}
+.fstar{position:absolute;top:-8px;right:-8px;background:var(--accent);color:var(--onaccent);border-radius:50%;width:20px;height:20px;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.medot{width:18px;height:18px;border-radius:50%;background:var(--me);border:3px solid #fff;box-shadow:0 0 0 7px rgba(36,104,181,.25)}
+.clus{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid #fff;box-shadow:0 3px 8px rgba(23,50,77,.4)}
+.clus b{width:28px;height:28px;border-radius:50%;background:#fff;color:#17324D;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.clus.hasfeat{box-shadow:0 0 0 3px var(--accent),0 3px 8px rgba(23,50,77,.4)}
+.leaflet-control-attribution{font-size:10px}
+
+/* Κάτω φύλλο */
+#sheet{background:var(--card);z-index:700;margin-top:-16px;border-radius:18px 18px 0 0;box-shadow:0 -6px 20px rgba(23,50,77,.14);padding-bottom:env(safe-area-inset-bottom);position:relative}
+#sheetHead{width:100%;border:0;border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;background:transparent;text-align:left;position:relative}
+#sheetHead::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:38px;height:4px;border-radius:4px;background:var(--line)}
+#sheetHead .n{font-size:17px;font-weight:800}
+#sheetHead .s{display:block;font-size:12.5px;color:var(--mute);font-weight:400;margin-top:2px}
+#arrow{font-size:13px;font-weight:700;color:var(--brand);background:var(--bg);border-radius:20px;padding:6px 12px;white-space:nowrap}
+@media (prefers-color-scheme:dark){#arrow{color:var(--accent)}}
+#list{max-height:0;overflow-y:auto;transition:max-height .28s ease}
+#sheet.open #list{max-height:50vh}
+.item{display:flex;gap:12px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);cursor:pointer}
+.item:active{background:var(--bg)}
+.item.feat{background:linear-gradient(90deg,rgba(242,182,50,.16),transparent 70%)}
+.av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex:none;position:relative}
+.av.pro{background:var(--pro)}.av.seek{background:var(--seek)}
+@media (prefers-color-scheme:dark){.av.pro{background:#2B5680}}
+.av.feat{box-shadow:0 0 0 3px var(--accent)}
+.av .fstar{width:18px;height:18px;font-size:10px;top:-5px;right:-5px}
+.item .t{flex:1;min-width:0}.item b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px}
+.item small{color:var(--mute);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;margin-top:1px}
+.km{color:var(--brand);font-size:12.5px;font-weight:700;white-space:nowrap;background:var(--bg);border-radius:20px;padding:4px 9px}
+@media (prefers-color-scheme:dark){.km{color:var(--ink)}}
+.stars{color:#E0A21B;letter-spacing:1px}
+.foot{padding:14px 16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.foot input{width:auto}
+.empty{padding:22px 16px;color:var(--mute);border-top:1px solid var(--line);text-align:center}
+
+/* Παράθυρα */
+#modal{position:fixed;inset:0;background:rgba(12,24,35,.55);z-index:2000;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+#modal[hidden]{display:none}
+.card{background:var(--card);width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:var(--sh);animation:up .22s ease}
+@keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+@media(min-width:700px){#modal{align-items:center}.card{border-radius:22px}}
+.card h2{margin:0 0 4px;font-size:21px}
+.hero{display:flex;gap:14px;align-items:center;margin-bottom:10px}
+.hero .av{width:64px;height:64px;font-size:22px}
+.hero h2{margin:0}
+.hero .sp1{color:var(--gold-ink);font-weight:700;margin-top:2px}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 8px}
+.badge{display:inline-block;font-size:11.5px;padding:4px 9px;border-radius:20px;color:#fff;font-weight:700}
+.badge.pro{background:var(--pro)}.badge.seek{background:var(--seek)}.badge.feat{background:var(--accent);color:var(--onaccent)}.badge.ver{background:var(--me)}.badge.demo{background:#8A98A6}
+@media (prefers-color-scheme:dark){.badge.pro{background:#2B5680}}
+.info{background:var(--bg);border-radius:14px;padding:4px 12px;margin:8px 0}
+.info div{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.info div:last-child{border-bottom:0}
+.info span{color:var(--mute)}.info b{text-align:right;font-weight:600}
+.meta{color:var(--mute);font-size:14px;margin:4px 0}
+.desc{white-space:pre-wrap;margin:12px 0;line-height:1.5}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.actions a,.actions button{display:flex;align-items:center;justify-content:center;gap:7px;text-align:center;text-decoration:none;padding:12px;border-radius:12px;font-weight:700;font-size:14.5px;border:1px solid var(--line);color:var(--ink);background:var(--card)}
+.actions .wide{grid-column:1/-1}
+.actions .call{background:var(--brand);color:#fff;border:0}
+@media (prefers-color-scheme:dark){.actions .call{background:#2B5680}}
+.actions .gold{background:var(--accent);color:var(--onaccent);border:0}
+.actions .viber{background:#7360F2;color:#fff;border:0}.actions .wa{background:#1DA955;color:#fff;border:0}
+.actions .danger{color:var(--red)}
+label{display:block;font-size:13px;color:var(--mute);margin:12px 0 5px;font-weight:600}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg button{padding:11px 8px;border-radius:12px}
+.seg button.on{background:var(--brand);color:#fff;border-color:var(--brand);font-weight:700}
+.locbox{display:flex;flex-wrap:wrap;gap:6px}.locbox button{font-size:13.5px;padding:8px 11px;border-radius:20px}
+.locstat{font-size:13px;margin-top:6px;color:var(--mute)}
+.chk{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:14px;color:var(--ink);font-weight:400}.chk input{width:auto;accent-color:var(--brand)}
+.btns{display:flex;gap:8px;margin-top:16px}.btns button{flex:1;padding:13px;border-radius:12px;font-weight:600}
+button.go{background:var(--brand);color:#fff;border:0;font-weight:700}
+@media (prefers-color-scheme:dark){button.go{background:#2B5680}}
+.sec{margin-top:16px;font-weight:800;font-size:15px}
+.gal{display:flex;gap:6px;overflow-x:auto;margin:8px 0}.gal img{height:110px;border-radius:12px;cursor:pointer;flex:none}
+.rev{border-top:1px solid var(--line);padding:10px 0;font-size:14px}.rev p{margin:4px 0 0;white-space:pre-wrap}
+.lock{background:linear-gradient(135deg,rgba(242,182,50,.18),rgba(242,182,50,.06));border:1px solid rgba(242,182,50,.6);border-radius:14px;padding:12px;font-size:13.5px;margin-top:12px;line-height:1.45}
+.lock .ff{display:inline-block;margin-top:8px;background:var(--brand);color:var(--accent);border-radius:8px;padding:4px 9px;font-weight:700;font-size:12.5px}
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.thumbs div{position:relative}.thumbs img{height:64px;width:64px;object-fit:cover;border-radius:10px}
+.thumbs button{position:absolute;top:-6px;right:-6px;padding:0;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;border:0;font-size:13px}
+.starpick{display:flex;gap:2px}.starpick button{font-size:32px;border:0;background:none;color:var(--line);padding:0 4px}.starpick button.on{color:#E0A21B}
+#viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:3000;display:flex;align-items:center;justify-content:center}
+#viewer[hidden]{display:none}#viewer img{max-width:96vw;max-height:92dvh;border-radius:8px}
+#pickBanner{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:1500;background:var(--brand);color:#fff;padding:10px 12px 10px 16px;border-radius:14px;display:flex;gap:10px;align-items:center;box-shadow:var(--sh);width:max-content;max-width:92vw;font-size:14px}
+#pickBanner[hidden]{display:none}
+#pickBanner button{background:var(--accent);color:var(--onaccent);border:0;font-weight:700}
+#toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--brand);color:#fff;padding:11px 18px;border-radius:12px;z-index:4000;opacity:0;transition:.2s;pointer-events:none;max-width:90vw;text-align:center;box-shadow:var(--sh);font-size:14px}
+#toast.show{opacity:1;transform:translateX(-50%)}
+
+/* Φίλτρο επαγγελμάτων */
+.cathead{display:flex;align-items:center;gap:6px;padding:10px 0;border-top:1px solid var(--line)}
+.cathead label{flex:1;margin:0;display:flex;gap:9px;align-items:center;color:var(--ink);font-size:15px;font-weight:700}
+.cathead input,.sp input{width:auto;margin:0;accent-color:var(--brand)}
+.cathead .tog{border:0;background:none;padding:4px 10px;color:var(--mute)}
+.catbody{padding:0 0 6px 28px}.catbody[hidden]{display:none}
+.sp{display:flex;align-items:center;gap:9px;margin:0;padding:8px 0;font-size:15px;color:var(--ink);font-weight:400}
+.sp[hidden]{display:none}
+.cn{margin-left:auto;color:var(--mute);font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1px 8px;font-weight:600}
+.cn.z{opacity:.45}
+.stick{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));background:var(--card);padding:10px 0 4px;margin-bottom:-4px}
+
+/* Καλωσόρισμα */
+.welcome{margin:-20px -18px 0;padding:26px 20px 22px;background:linear-gradient(160deg,var(--brand),var(--brand2));color:#fff;border-radius:22px 22px 0 0;text-align:center}
+.welcome h2{font-size:23px;line-height:1.25;margin:12px 0 6px}
+.welcome p{opacity:.8;margin:0;font-size:14.5px}
+.steps{margin:16px 0 4px;display:flex;flex-direction:column;gap:12px}
+.steps div{display:flex;gap:12px;align-items:flex-start;font-size:14.5px;line-height:1.4}
+.steps i{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--onaccent);font-style:normal;font-weight:800;display:flex;align-items:center;justify-content:center}
+.bigbtn{width:100%;padding:15px;border-radius:14px;font-weight:800;font-size:15.5px;margin-top:10px;border:0}
+.bigbtn small{display:block;font-weight:500;font-size:12.5px;opacity:.8;margin-top:2px}
+
+/* Κάτω μπάρα (όπως στο Δρομολόγιο) */
+nav{background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:800;position:relative}
+nav button{flex:1;min-width:0;background:none;border:0;border-radius:0;padding:8px 1px 8px;color:var(--mute);font-size:clamp(9.5px,2.6vw,12px);display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;isolation:isolate}
+nav button:active{transform:none}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--ink);font-weight:800}
+nav button.on svg{color:var(--accent);filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+nav button.on::after{content:"";position:absolute;top:5px;left:50%;transform:translateX(-50%);width:46px;height:30px;border-radius:10px;background:rgba(242,182,50,.22);z-index:-1}
+nav button.on::before{content:"";position:absolute;top:0;left:30%;right:30%;height:3px;background:var(--accent);border-radius:0 0 3px 3px}
+nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand);color:#fff;font-size:10px;font-weight:800;border-radius:9px;padding:1px 5px;line-height:1.3}
+@media (prefers-color-scheme:dark){nav .cnt{background:#2B5680}}
+.pin span.ic{font-size:13px;line-height:1;width:21px;height:21px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}.pin.feat span.ic{font-size:17px;width:28px;height:28px}
+.av.ic{font-size:22px}
+.swap{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border-radius:14px;padding:10px 12px;margin:10px 0 4px;font-size:14px}
+.swap button{background:var(--brand);color:#fff;border:0;font-weight:700;border-radius:10px;padding:9px 12px;white-space:nowrap}
+@media (prefers-color-scheme:dark){.swap button{background:#2B5680}}
+
+/* Αρχική σελίδα */
+#start{position:fixed;inset:0;z-index:2500;background:linear-gradient(165deg,#17324D 0%,#22476B 60%,#1B3A58 100%);overflow-y:auto;color:#fff}
+#start[hidden]{display:none}
+.st-in{max-width:520px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom));min-height:100%;display:flex;flex-direction:column}
+.st-top{text-align:center;margin:10px 0 18px}
+.st-top h1{margin:10px 0 4px;font-size:32px;letter-spacing:.3px}
+.st-top p{margin:0;opacity:.75;font-size:15px}
+.st-sec{font-size:12.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#F2B632;margin:18px 4px 8px}
+.st-btn{width:100%;display:flex;align-items:center;gap:14px;text-align:left;background:#fff;color:#17324D;border:0;border-radius:16px;padding:14px 14px;margin-bottom:10px;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.st-btn i{font-style:normal;font-size:26px;width:48px;height:48px;border-radius:14px;background:#EDF1F2;display:flex;align-items:center;justify-content:center;flex:none}
+.st-btn span{flex:1;min-width:0}.st-btn b{display:block;font-size:17px}.st-btn small{display:block;color:#5E7185;font-size:13px;margin-top:2px}
+.st-btn em{font-style:normal;font-size:26px;color:#9AAAB8}
+.st-btn.gold{background:#F2B632}.st-btn.gold i{background:rgba(255,255,255,.55)}.st-btn.gold small{color:#5a4410}.st-btn.gold em{color:#17324D}
+.st-link{background:none;border:0;color:#fff;opacity:.85;font-weight:700;margin:10px auto 0;padding:12px;font-size:15px}
+.st-foot{margin-top:auto;padding-top:18px;text-align:center;font-size:12px;opacity:.5}
+.logo{cursor:pointer}
+/* Ψηφιακή κάρτα */
+.tradebtn{width:100%;text-align:left;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:11px 12px;border-radius:12px;background:var(--bg);font-weight:600}.tradebtn span{color:var(--mute)}
+.cardcv{width:100%;height:auto;border-radius:14px;box-shadow:var(--sh);margin:12px 0 4px;display:block;background:#fff}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo" id="logoHome" title="Αρχική"><svg width="22" height="26" viewBox="0 0 28 34"><path d="M14 1a13 13 0 0 1 13 13c0 10-13 19-13 19S1 24 1 14A13 13 0 0 1 14 1z" fill="#F2B632"/><circle cx="14" cy="14" r="5" fill="#17324D"/></svg></div>
+    <div class="brand"><b>Κοντά μου</b><small>από το Δρομολόγιο · <span id="ver"></span></small></div>
+  </div>
+  <div class="search">
+    <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="q" type="search" placeholder="Τι ψάχνεις; π.χ. υδραυλικός, Βύρωνας…">
+  </div>
+  <div class="row2">
+    <button id="btnSpec" class="specbtn">Επαγγέλματα: όλα ▾</button>
+    <select id="radius">
+      <option value="0">Κάθε απόσταση</option>
+      <option value="2">Έως 2 χλμ</option>
+      <option value="5">Έως 5 χλμ</option>
+      <option value="10">Έως 10 χλμ</option>
+      <option value="25">Έως 25 χλμ</option>
+      <option value="50">Έως 50 χλμ</option>
+    </select>
+  </div>
+</header>
+
+<div class="mapwrap">
+  <div id="map"></div>
+  <div class="legend">
+    <span><i style="background:var(--pro)"></i>Επαγγελματίες</span>
+    <span><i style="background:var(--seek)"></i>Ζητούν εργασία</span>
+    <span><i style="background:var(--accent)"></i>Προνομιακοί</span>
+  </div>
+  <button id="btnLoc" class="fab" title="Η θέση μου"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
+</div>
+
+<div id="sheet">
+  <button id="sheetHead"><span><span class="n" id="count">…</span><span class="s" id="count2"></span></span><span id="arrow">Λίστα ▲</span></button>
+  <div id="list"></div>
+</div>
+
+<nav id="nav">
+  <button data-t="all" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M9 4 3 6.5v13.5L9 17.5l6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg><span>Όλοι</span><b class="cnt" id="nAll"></b></button>
+  <button data-t="pro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><span>Μάστορες</span><b class="cnt" id="nPro"></b></button>
+  <button data-t="seek"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 12h18"/></svg><span>Εργασία</span><b class="cnt" id="nSeek"></b></button>
+  <button data-t="feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg><span>Προνομιακοί</span></button>
+  <button id="navMe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="navMeTxt">Προφίλ</span></button>
+</nav>
+
+<div id="pickBanner" hidden>Πάτησε στον χάρτη για να ορίσεις τη θέση <button id="pickCancel">Άκυρο</button></div>
+<div id="start" hidden></div>
+<div id="modal" hidden><div class="card" id="modalCard"></div></div>
+<div id="toast"></div>
+<div id="viewer" hidden><img id="viewerImg" alt=""></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script>
+"use strict";
+const VERSION = "1.7";
+document.getElementById("ver").textContent = "έκδ. " + VERSION;
+
+/* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
+const CATS_D = [{id: "general", g: "Γενικές εργασίες και επισκευές"}, {id: "electric", g: "Ηλεκτρολογικά και ενέργεια"}, {id: "plumb", g: "Υδραυλικά, θέρμανση και αέριο"}, {id: "cool", g: "Κλιματισμός και ψύξη"}, {id: "paint", g: "Βαφές και γυψοσανίδες"}, {id: "metal", g: "Σιδηρικά, κουφώματα και πόρτες"}, {id: "wood", g: "Ξύλο, έπιπλα και δάπεδα"}, {id: "tile", g: "Οικοδομικά, πλακάκια και πέτρα"}, {id: "roof", g: "Στέγες, μονώσεις και στεγανώσεις"}, {id: "clean", g: "Καθαρισμοί, κήποι και απεντομώσεις"}, {id: "tech", g: "Συσκευές, δίκτυα και ασφάλεια"}, {id: "auto", g: "Αυτοκίνητα"}];
+const PROFS = [
+  {id:"electric",e:"⚡",n:"Ηλεκτρολόγος",c:"electric"},
+  {id:"plumb",e:"🚰",n:"Υδραυλικός",c:"plumb"},
+  {id:"cool",e:"❄️",n:"Τεχνικός κλιματισμού / Ψυκτικός",c:"cool"},
+  {id:"heat",e:"🔥",n:"Τεχνικός θέρμανσης / Καυστήρων / Λεβήτων",c:"plumb"},
+  {id:"gas",e:"🔵",n:"Τεχνικός φυσικού αερίου",c:"plumb"},
+  {id:"heatpump",e:"♨️",n:"Τεχνικός αντλιών θερμότητας",c:"cool"},
+  {id:"solar",e:"☀️",n:"Εγκαταστάτης φωτοβολταϊκών",c:"electric"},
+  {id:"paint",e:"🎨",n:"Βαφέας / Ελαιοχρωματιστής",c:"paint"},
+  {id:"drywall",e:"🧱",n:"Γυψοσανίδες / Ψευδοροφές",c:"paint"},
+  {id:"plaster",e:"🪣",n:"Σοβατζής / Τοιχοποιία",c:"tile"},
+  {id:"tile",e:"🔲",n:"Πλακάς",c:"tile"},
+  {id:"marble",e:"🪨",n:"Μαρμαράς",c:"tile"},
+  {id:"builder",e:"🏗️",n:"Οικοδομικές εργασίες / Μάστορας",c:"tile"},
+  {id:"mason",e:"🧱",n:"Χτίστης / Λιθοξόος",c:"tile"},
+  {id:"paving",e:"🛣️",n:"Πλακοστρώσεις / Πεζοδρόμια",c:"tile"},
+  {id:"roof",e:"🏠",n:"Στέγες / Κεραμοσκεπές",c:"roof"},
+  {id:"insul",e:"💧",n:"Μονώσεις / Στεγανοποιήσεις",c:"roof"},
+  {id:"thermal",e:"🧊",n:"Θερμοπρόσοψη / Θερμομόνωση",c:"roof"},
+  {id:"gutter",e:"🌧️",n:"Υδρορροές / Λούκια",c:"roof"},
+  {id:"wood",e:"🪚",n:"Ξυλουργός",c:"wood"},
+  {id:"doors",e:"🚪",n:"Πόρτες / Γκαραζόπορτες",c:"metal"},
+  {id:"alu",e:"🪟",n:"Αλουμινάς / Κουφώματα",c:"metal"},
+  {id:"iron",e:"⚒️",n:"Σιδεράς / Μεταλλικές κατασκευές",c:"metal"},
+  {id:"glass",e:"🔷",n:"Τζαμάς / Υαλοπίνακες",c:"metal"},
+  {id:"lock",e:"🔐",n:"Κλειδαράς",c:"metal"},
+  {id:"awning",e:"⛱️",n:"Εγκαταστάτης τεντών",c:"metal"},
+  {id:"alarm",e:"📹",n:"Συναγερμοί / Κάμερες",c:"tech"},
+  {id:"network",e:"🌐",n:"Δίκτυα / Δομημένη καλωδίωση",c:"tech"},
+  {id:"smart",e:"🏡",n:"Έξυπνο σπίτι / Αυτοματισμοί",c:"electric"},
+  {id:"pc",e:"💻",n:"Τεχνικός υπολογιστών",c:"tech"},
+  {id:"tv",e:"📺",n:"Τεχνικός τηλεοράσεων / Κεραιών",c:"tech"},
+  {id:"appl",e:"🧺",n:"Τεχνικός οικιακών συσκευών",c:"tech"},
+  {id:"electronic",e:"🔌",n:"Τεχνικός ηλεκτρονικών συσκευών",c:"tech"},
+  {id:"pos",e:"🧾",n:"Τεχνικός ταμειακών / Επαγγελματικού εξοπλισμού",c:"tech"},
+  {id:"lift",e:"🛗",n:"Τεχνικός ανελκυστήρων",c:"tech"},
+  {id:"pool",e:"🏊",n:"Τεχνικός πισίνας",c:"plumb"},
+  {id:"drain",e:"🌀",n:"Αποφράξεις / Αποχετεύσεις",c:"plumb"},
+  {id:"pest",e:"🐜",n:"Απεντομώσεις / Μυοκτονίες",c:"clean"},
+  {id:"cleanpro",e:"🧽",n:"Καθαρισμοί χώρων",c:"clean"},
+  {id:"windows",e:"🪟",n:"Καθαρισμός τζαμιών",c:"clean"},
+  {id:"carpet",e:"🛋️",n:"Καθαρισμός χαλιών / στρωμάτων / σαλονιών",c:"clean"},
+  {id:"pressure",e:"💦",n:"Πιεστικά / Καθαρισμός εξωτερικών χώρων",c:"clean"},
+  {id:"garden",e:"🌿",n:"Κηπουρός",c:"clean"},
+  {id:"tree",e:"🌳",n:"Κοπή / Κλάδεμα δέντρων",c:"clean"},
+  {id:"irrig",e:"🚿",n:"Ποτιστικά / Αρδευτικά",c:"plumb"},
+  {id:"spray",e:"🚜",n:"Ψεκασμοί / Γεωργικές εφαρμογές",c:"clean"},
+  {id:"earth",e:"🚧",n:"Χωματουργικές εργασίες",c:"tile"},
+  {id:"handy",e:"🛠️",n:"Πολυτεχνίτης / Γενικές επισκευές",c:"general"},
+  {id:"autoel",e:"🔋",n:"Ηλεκτρολόγος αυτοκινήτων",c:"auto"},
+  {id:"mobilemech",e:"🚗",n:"Κινητό συνεργείο / Φανοποιός",c:"auto"},
+  {id:"furniture",e:"🪑",n:"Συναρμολόγηση επίπλων / Κουζίνες",c:"wood"},
+  {id:"floors",e:"🪵",n:"Ξύλινα και πλαστικά δάπεδα",c:"wood"},
+  {id:"sander",e:"🪵",n:"Πατωματζής (τρίψιμο και βερνίκι)",c:"wood"},
+  {id:"gardencrew",e:"🌿",n:"Συνεργείο κήπων",c:"clean"},
+  {id:"nursery",e:"🪴",n:"Φυτώριο / διανομή φυτών",c:"clean"},
+  {id:"ducts",e:"🌬️",n:"Καθαρισμός αεραγωγών",c:"clean"},
+  {id:"biocl",e:"🚛",n:"Βιολογικοί καθαρισμοί (βόθροι, λύματα)",c:"clean"},
+  {id:"tyre",e:"🛞",n:"Βουλκανιζατέρ / κινητό συνεργείο ελαστικών",c:"auto"},
+  {id:"roadside",e:"🚙",n:"Οδική βοήθεια",c:"auto"},
+  {id:"fire",e:"🚒",n:"Τεχνικός πυρασφάλειας",c:"tech"},
+  {id:"evcharge",e:"🔌",n:"Εγκαταστάτης φορτιστών ηλεκτρικών αυτοκινήτων",c:"electric"},
+  {id:"sat",e:"📡",n:"Εγκαταστάτης δορυφορικών (Starlink κ.ά.)",c:"tech"},
+  {id:"refrig",e:"🧊",n:"Τεχνικός ψυκτικών εγκαταστάσεων (ψυκτικοί θάλαμοι)",c:"cool"},
+  {id:"fridge",e:"🧊",n:"Τεχνικός επαγγελματικών ψυγείων",c:"cool"},
+  {id:"coffee",e:"☕",n:"Τεχνικός εξοπλισμού καφέ / εστίασης",c:"tech"},
+  {id:"proequip",e:"⚙️",n:"Συντηρητής επαγγελματικού εξοπλισμού",c:"tech"},
+  {id:"extinguisher",e:"🧯",n:"Συντηρητής πυροσβεστήρων",c:"tech"},
+  {id:"other",e:"📋",n:"Άλλο επάγγελμα (γενικά)",c:"general"}
+];
+const EXCLUDED_CATS = ["transport","visits"];            // μη τεχνικές κατηγορίες του Δρομολογίου
+const EXCLUDED_IDS = ["moving","haul","smalltrans","courier","driver","inspect","survey","engineer","photo","realtor","propman","facinsp"];
+const profById = id => PROFS.find(p => p.id === id);
+const tName = id => (profById(id) || {}).n || id;
+const ico = id => (profById(id) || {}).e || "🛠️";
+const catName = cid => (CATS_D.find(c => c.id === cid) || {}).g || "";
+const profsOfCat = cid => PROFS.filter(p => p.c === cid).sort((x,y) => (x.id==="other")-(y.id==="other") || x.n.localeCompare(y.n,"el"));
+const tradesOf = p => (p.trades && p.trades.length) ? p.trades : ["other"];
+const mainTrade = p => tradesOf(p)[0];
+const tLabel = (p, id) => id === "other" && p.customName ? p.customName : tName(id);
+const specTxt = p => tradesOf(p).map(id => tLabel(p,id)).join(" · ");
+const specIcoTxt = p => tradesOf(p).map(id => ico(id) + " " + tLabel(p,id)).join(" · ");
+/* Νέα επαγγέλματα που μπαίνουν στο Δρομολόγιο εμφανίζονται και εδώ (στις «Γενικές εργασίες») */
+function mergeLiveTrades(){
+  try {
+    if (typeof CHK_TRADES === "undefined") return;
+    CHK_TRADES.forEach(t => { if (t && t.id && !profById(t.id) && !EXCLUDED_IDS.includes(t.id) && !/μεταφορ|διανομ|μεσίτ|φωτογράφ|οδηγ/i.test(t.n))
+      PROFS.push({id:t.id, e:t.e || "🛠️", n:t.n, c:"general"}); });
+  } catch(e){}
+}
+
+/* ---------- Δείγματα (μόνο για επίδειξη) ---------- */
+const SAMPLES = [
+  {id:"s1",type:"pro",name:"Γιώργος Π.",trades:["electric","solar"],area:"Βύρωνας, Καισαριανή",lat:37.9615,lng:23.7531,radius:8,years:15,desc:"Ηλεκτρολογικές εγκαταστάσεις, πίνακες, βλάβες, φωτοβολταϊκά. Άμεση εξυπηρέτηση."},
+  {id:"s2",type:"pro",name:"Νίκος Κ.",trades:["plumb","drain"],area:"Γλυφάδα, Βούλα",lat:37.8651,lng:23.7545,radius:10,years:20,desc:"Υδραυλικά, θερμοσίφωνες, αποφράξεις."},
+  {id:"s3",type:"pro",name:"Μαρία Λ.",trades:["cleanpro"],area:"Παγκράτι",lat:37.9686,lng:23.7458,radius:5,years:6,desc:"Καθαρισμός σπιτιών και γραφείων, μετά από ανακαίνιση."},
+  {id:"s4",type:"pro",name:"Κώστας Δ.",trades:["paint","drywall"],area:"Περιστέρι",lat:38.0132,lng:23.6915,radius:12,years:25,desc:"Χρωματισμοί εσωτερικοί και εξωτερικοί, γυψοσανίδες."},
+  {id:"s5",type:"pro",name:"Θανάσης Μ.",trades:["cool","heatpump"],area:"Μαρούσι",lat:38.0502,lng:23.8065,radius:15,years:12,desc:"Τοποθέτηση, συντήρηση, επισκευή κλιματιστικών και αντλιών θερμότητας."},
+  {id:"s6",type:"pro",name:"Σπύρος Α.",trades:["iron"],area:"Ρέντης",lat:37.9589,lng:23.6727,radius:20,years:30,desc:"Κάγκελα, πόρτες, σκάλες, μεταλλικές κατασκευές."},
+  {id:"s7",type:"seek",name:"Ελένη Τ.",trades:["electric"],area:"Κουκάκι",lat:37.9642,lng:23.7236,job:"Βοηθός τεχνίτη / μαθητεία",years:1,desc:"Τελειόφοιτη ΙΕΚ ηλεκτρολογίας, ψάχνω θέση βοηθού."},
+  {id:"s8",type:"seek",name:"Αλέξης Β.",trades:["plaster","builder"],area:"Νέα Σμύρνη",lat:37.9451,lng:23.7148,job:"Πλήρης απασχόληση",years:6,desc:"Σοβάδες, χτισίματα, μερεμέτια. Διαθέσιμος άμεσα."},
+  {id:"s9",type:"seek",name:"Δημήτρης Ρ.",trades:["iron","alu"],area:"Αιγάλεω",lat:37.9921,lng:23.6823,job:"Πλήρης απασχόληση",years:8,desc:"Ηλεκτροσυγκολλήσεις, τοποθέτηση κουφωμάτων."},
+  {id:"s10",type:"seek",name:"Άννα Σ.",trades:["cleanpro"],area:"Ζωγράφου",lat:37.9776,lng:23.7697,job:"Μερική απασχόληση",years:5,desc:"Καθαρισμοί σπιτιών και επαγγελματικών χώρων, πρωινές ώρες."},
+  {id:"s11",type:"seek",name:"Παύλος Ι.",trades:["electric","network"],area:"Ηλιούπολη",lat:37.9316,lng:23.7572,job:"Εποχική εργασία",years:2,desc:"Βοηθός ηλεκτρολόγου, καλωδιώσεις δικτύων."},
+  {id:"s12",type:"pro",name:"Στέλιος Χ.",trades:["mobilemech","autoel"],area:"Καλλιθέα",lat:37.9557,lng:23.7019,radius:6,years:18,desc:"Σέρβις στον χώρο σου, ηλεκτρολογικά αυτοκινήτου, διαγνωστικός έλεγχος."},
+  {id:"s13",type:"pro",name:"Λευτέρης Ζ.",trades:["plumb","heat"],area:"Βύρωνας",lat:37.9620,lng:23.7545,radius:6,years:9,desc:"Υδραυλικά σπιτιού, λέβητες, καυστήρες."},
+  {id:"s14",type:"pro",name:"Χρήστος Ν.",trades:["tile","marble"],area:"Βύρωνας",lat:37.9608,lng:23.7522,radius:15,years:22,desc:"Πλακάκια, μάρμαρα, ανακαινίσεις μπάνιου."},
+  {id:"s15",type:"seek",name:"Μάριος Κ.",trades:["paint"],area:"Βύρωνας",lat:37.9612,lng:23.7550,job:"Ανά δουλειά / μεροκάματο",years:4,desc:"Βοηθός μπογιατζή, διαθέσιμος και Σάββατα."},
+  {id:"s16",type:"pro",name:"Σοφία Γ.",trades:["lock","doors"],area:"Βύρωνας",lat:37.9625,lng:23.7528,radius:10,years:11,desc:"Κλειδαριές ασφαλείας, θωρακισμένες πόρτες, ανοίγματα 24 ώρες."}
+].map(p => ({...p, sample:true}));
+const SAMPLE_FEAT = {
+  s1:[{name:"Κατερίνα",stars:5,text:"Ήρθε την ίδια μέρα, καθαρή δουλειά.",date:"2026-08-12"},{name:"Βασίλης",stars:5,text:"Πολύ συνεπής στην τιμή.",date:"2026-07-02"}],
+  s2:[{name:"Γιάννης",stars:4,text:"Γρήγορος, λίγο αργοπόρησε στο ραντεβού.",date:"2026-09-01"}],
+  s5:[{name:"Ελένη",stars:5,text:"Καθάρισμα και γκάζια σε δύο κλιματιστικά, άψογος.",date:"2026-06-20"},{name:"Μάνος",stars:5,text:"Τον συστήνω.",date:"2026-05-11"},{name:"Ρένα",stars:4,text:"Καλή δουλειά.",date:"2026-04-03"}],
+  s12:[{name:"Τάσος",stars:5,text:"Βρήκε τη βλάβη που άλλοι δεν έβρισκαν.",date:"2026-09-10"}]
+};
+SAMPLES.forEach(p => { if (SAMPLE_FEAT[p.id]){ p.featured = true; p.verified = true; p.reviews = SAMPLE_FEAT[p.id]; } });
+
+/* ---------- Αποθήκευση (τοπικά τώρα — αργότερα κοινή βάση) ---------- */
+function fixOld(p){
+  if (p.trades || !p.spec) return p;
+  const n = norm(p.spec), hit = PROFS.find(x => norm(x.n) === n || norm(x.n).split(" / ").includes(n) || norm(x.n).startsWith(n));
+  const q = {...p, trades:[hit ? hit.id : "other"]}; if (!hit) q.customName = p.spec; delete q.spec; return q;
+}
+const KEY = "kontamou.v1";
+/* ---------- Κοινή βάση (δωρεάν πρόγραμμα της Google) ----------
+   Όσο το FIREBASE_CONFIG είναι null, η εφαρμογή δουλεύει μόνο στη συσκευή.
+   Για κοινή βάση: βάλε εδώ τα στοιχεία του έργου «kontamou» και στο ADMIN_EMAIL τον λογαριασμό σου. */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyB8MfXTZ1d9Jdw1Xi6fvdwg8ZaJslN5D4s",
+  authDomain: "kontamou-aa327.firebaseapp.com",
+  projectId: "kontamou-aa327",
+  storageBucket: "kontamou-aa327.firebasestorage.app",
+  messagingSenderId: "443144986743",
+  appId: "1:443144986743:web:10afb2a6536bbc1551a672"
+};
+const ADMIN_EMAIL = "aglentzakis@gmail.com";
+const COL = {p:"kontamou_profiles", ph:"kontamou_photos", r:"kontamou_reviews", rep:"kontamou_reports"};
+const Cloud = {on:false, db:null, auth:null, user:null, profiles:[], reviews:[]};
+const MAX_PHOTOS = 4;
+const isAdmin = () => !!(Cloud.on && Cloud.user && ADMIN_EMAIL && Cloud.user.email === ADMIN_EMAIL);
+const PROFILE_KEYS = ["type","name","trades","customName","area","lat","lng","approx","radius","job","years","phone","hidePhone","email","desc","featured","verified","fromDromologio","updated"];
+function cleanProfile(p){ const o = {}; PROFILE_KEYS.forEach(k => { if (p[k] !== undefined && p[k] !== null && p[k] !== "") o[k] = p[k]; }); return JSON.parse(JSON.stringify(o)); }
+function loadScript(src){ return new Promise((ok, bad) => { const sc = document.createElement("script"); sc.src = src; sc.onload = ok; sc.onerror = bad; document.head.appendChild(sc); }); }
+async function cloudInit(){
+  if (!FIREBASE_CONFIG) return false;
+  const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+  try {
+    await loadScript(FB + "firebase-app-compat.js");
+    await Promise.all([loadScript(FB + "firebase-auth-compat.js"), loadScript(FB + "firebase-firestore-compat.js")]);
+    firebase.initializeApp(FIREBASE_CONFIG);
+    Cloud.auth = firebase.auth(); Cloud.db = firebase.firestore(); Cloud.on = true;
+    try { await Cloud.auth.getRedirectResult(); } catch(e){}
+    Cloud.auth.onAuthStateChanged(u => { Cloud.user = u; render(false); });
+    let first; const ready = new Promise(r => first = r);
+    Cloud.db.collection(COL.p).onSnapshot(snap => {
+      Cloud.profiles = snap.docs.map(d => ({...d.data(), id:d.id})); first(); reload();
+    }, () => { first(); toast("Δεν υπάρχει σύνδεση με την κοινή βάση"); });
+    Cloud.db.collection(COL.r).onSnapshot(snap => { Cloud.reviews = snap.docs.map(d => d.data()); render(false); }, () => {});
+    await Promise.race([ready, new Promise(r => setTimeout(r, 7000))]);
+    return true;
+  } catch(e){ Cloud.on = false; toast("Δεν φορτώθηκε η κοινή βάση — λειτουργία στη συσκευή"); return false; }
+}
+/* Σύνδεση με λογαριασμό Google — χρειάζεται μόνο για να γράψεις (προφίλ, κριτική, αναφορά) */
+function requireLogin(then){
+  if (!Cloud.on || Cloud.user) return then();
+  openModal(`
+    <div class="hero"><div class="av pro">🔐</div><div><h2>Σύνδεση</h2><div class="meta">Με τον λογαριασμό σου στη Google</div></div></div>
+    <div class="desc">Για να φτιάξεις προφίλ ή να γράψεις κριτική χρειάζεται σύνδεση, ώστε κανείς άλλος να μην μπορεί να αλλάξει τα στοιχεία σου. Για να δεις τον χάρτη δεν χρειάζεται.</div>
+    <div class="actions"><button id="gLogin" class="call wide">Σύνδεση με Google</button></div>
+    <div class="btns"><button id="gCancel">Άκυρο</button></div>`);
+  $("gCancel").onclick = closeModal;
+  $("gLogin").onclick = async () => {
+    const prov = new firebase.auth.GoogleAuthProvider();
+    try { await Cloud.auth.signInWithPopup(prov); Cloud.user = Cloud.auth.currentUser; closeModal(); then(); }
+    catch(e){
+      if (/popup-blocked|operation-not-supported|web-storage/.test(e.code||"")) { try { await Cloud.auth.signInWithRedirect(prov); } catch(e2){ toast("Η σύνδεση απέτυχε"); } }
+      else if (!/popup-closed|cancelled-popup/.test(e.code||"")) toast("Η σύνδεση απέτυχε");
+    }
+  };
+}
+async function loadPhotos(p){
+  if (!Cloud.on || p.sample || p._ph) return;
+  try { const d = await Cloud.db.collection(COL.ph).doc(p.id).get(); p.photos = d.exists ? (d.data().photos || []) : []; } catch(e){ p.photos = p.photos || []; }
+  p._ph = true;
+}
+
+const Store = {
+  load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } },
+  save(d){ try { localStorage.setItem(KEY, JSON.stringify(d)); return true; } catch(e){ return false; } },
+  async list(){
+    const d = this.load();
+    let a = Cloud.on ? Cloud.profiles.map(x => {
+          const old = state.all.find(y => y.id === x.id); return old && old._ph && old.updated === x.updated ? {...x, photos:old.photos, _ph:true} : x; })
+      : (d.profiles || []).map(fixOld);
+    if (this.samples()) a = a.concat(SAMPLES);
+    return a;
+  },
+  async upsert(p){
+    if (Cloud.on){
+      if (!Cloud.user) return false;
+      const uid = Cloud.user.uid, cur = Cloud.profiles.find(x => x.id === uid), o = cleanProfile({...p, updated:Date.now()});
+      o.uid = uid;
+      if (!isAdmin()){ o.featured = !!(cur && cur.featured); o.verified = !!(cur && cur.verified); }
+      try {
+        await Cloud.db.collection(COL.p).doc(uid).set(o);
+        if (p.photos !== undefined) await Cloud.db.collection(COL.ph).doc(uid).set({uid, photos: o.featured ? (p.photos || []).slice(0, MAX_PHOTOS) : []});
+        return true;
+      } catch(e){ toast("Η αποθήκευση απέτυχε: " + (e.code || "σφάλμα")); return null; }
+    }
+    const d = this.load(); d.profiles = (d.profiles||[]).filter(x => x.id !== p.id); d.profiles.push(p); d.myId = p.id; return this.save(d);
+  },
+  async remove(id){
+    if (Cloud.on){
+      try { await Cloud.db.collection(COL.p).doc(id).delete(); await Cloud.db.collection(COL.ph).doc(id).delete(); } catch(e){ toast("Η διαγραφή απέτυχε"); }
+      return;
+    }
+    const d = this.load(); d.profiles = (d.profiles||[]).filter(x => x.id !== id); if (d.myId === id) delete d.myId; this.save(d);
+  },
+  reviews(p){
+    if (Cloud.on) return (p.reviews||[]).concat(Cloud.reviews.filter(r => r.to === p.id).sort((a,b) => String(b.date).localeCompare(String(a.date))));
+    const d = this.load(); return (p.reviews||[]).concat(((d.reviews||{})[p.id])||[]);
+  },
+  async addReview(id, r){
+    if (Cloud.on){
+      const uid = Cloud.user.uid;
+      try { await Cloud.db.collection(COL.r).doc(id + "_" + uid).set({...r, to:id, from:uid}); return true; }
+      catch(e){ toast("Η κριτική δεν αποθηκεύτηκε"); return false; }
+    }
+    const d = this.load(); d.reviews = d.reviews || {}; (d.reviews[id] = d.reviews[id] || []).unshift(r); return this.save(d);
+  },
+  myId(){
+    if (Cloud.on) return Cloud.user && Cloud.profiles.some(x => x.id === Cloud.user.uid) ? Cloud.user.uid : null;
+    return this.load().myId;
+  },
+  samples(){ const v = this.load().samples; return v === undefined ? !Cloud.on : v !== false; },
+  setSamples(v){ const d = this.load(); d.samples = v; this.save(d); },
+  flag(k, v){ const d = this.load(); if (v === undefined) return !!d[k]; d[k] = v; this.save(d); }
+};
+
+/* ---------- Κωδικός σάρωσης (QR) — ενσωματωμένος, χωρίς εξωτερική βιβλιοθήκη ---------- */
+const QR = (() => {
+  const ECC = [0,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24];
+  const BLK = [0,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10];
+  const mul = (x,y) => { let z=0; for (let i=7;i>=0;i--){ z=(z<<1)^((z>>>7)*0x11D); z^=((y>>>i)&1)*x; } return z & 255; };
+  const rawMods = v => { let r=(16*v+128)*v+64; if (v>=2){ const n=Math.floor(v/7)+2; r-=(25*n-10)*n-55; if (v>=7) r-=36; } return r; };
+  const dataCw = v => Math.floor(rawMods(v)/8) - ECC[v]*BLK[v];
+  function rsDiv(d){ const r=new Array(d).fill(0); r[d-1]=1; let root=1;
+    for (let i=0;i<d;i++){ for (let j=0;j<d;j++){ r[j]=mul(r[j],root); if (j+1<d) r[j]^=r[j+1]; } root=mul(root,2); } return r; }
+  function rsRem(data, div){ const r=div.map(()=>0); for (const b of data){ const f=b^r.shift(); r.push(0); div.forEach((c,i)=>r[i]^=mul(c,f)); } return r; }
+  const bit = (x,i) => ((x>>>i)&1) !== 0;
+  function encode(text){
+    const bytes = Array.from(new TextEncoder().encode(text));
+    let v = 1;
+    for (; v <= 15; v++){ const cc = v<10?8:16; if (4+cc+bytes.length*8 <= dataCw(v)*8) break; }
+    if (v > 15) throw new Error("πολύ μεγάλο");
+    const bits = []; const push = (val,len) => { for (let i=len-1;i>=0;i--) bits.push((val>>>i)&1); };
+    push(4,4); push(bytes.length, v<10?8:16); bytes.forEach(b=>push(b,8));
+    const cap = dataCw(v)*8;
+    push(0, Math.min(4, cap-bits.length)); push(0, (8-bits.length%8)%8);
+    for (let p=0xEC; bits.length<cap; p^=0xEC^0x11) push(p,8);
+    const data = []; for (let i=0;i<bits.length;i+=8){ let b=0; for (let j=0;j<8;j++) b=(b<<1)|bits[i+j]; data.push(b); }
+    const nb=BLK[v], el=ECC[v], raw=Math.floor(rawMods(v)/8), nShort=nb-raw%nb, shortLen=Math.floor(raw/nb), div=rsDiv(el);
+    const blocks=[]; for (let i=0,k=0;i<nb;i++){ const dat=data.slice(k,k+shortLen-el+(i<nShort?0:1)); k+=dat.length;
+      const ecc=rsRem(dat,div); if (i<nShort) dat.push(0); blocks.push(dat.concat(ecc)); }
+    const cw=[]; for (let i=0;i<blocks[0].length;i++) blocks.forEach((b,j)=>{ if (i!==shortLen-el || j>=nShort) cw.push(b[i]); });
+    const size=v*4+17, M=[...Array(size)].map(()=>Array(size).fill(false)), F=[...Array(size)].map(()=>Array(size).fill(false));
+    const setF=(x,y,d)=>{ M[y][x]=d; F[y][x]=true; };
+    for (let i=0;i<size;i++){ setF(6,i,i%2===0); setF(i,6,i%2===0); }
+    const finder=(x,y)=>{ for (let dy=-4;dy<=4;dy++) for (let dx=-4;dx<=4;dx++){ const d=Math.max(Math.abs(dx),Math.abs(dy)), xx=x+dx, yy=y+dy;
+      if (xx>=0&&xx<size&&yy>=0&&yy<size) setF(xx,yy,d!==2&&d!==4); } };
+    finder(3,3); finder(size-4,3); finder(3,size-4);
+    if (v>1){ const n=Math.floor(v/7)+2, step=Math.ceil((v*4+4)/(n*2-2))*2, pos=[6];
+      for (let p=size-7; pos.length<n; p-=step) pos.splice(1,0,p);
+      pos.forEach((a,i)=>pos.forEach((b,j)=>{ if ((i===0&&j===0)||(i===0&&j===n-1)||(i===n-1&&j===0)) return;
+        for (let dy=-2;dy<=2;dy++) for (let dx=-2;dx<=2;dx++) setF(a+dx,b+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1); })); }
+    const format=mask=>{ const d=mask; let r=d; for (let i=0;i<10;i++) r=(r<<1)^((r>>>9)*0x537); const b=((d<<10)|r)^0x5412;
+      for (let i=0;i<=5;i++) setF(8,i,bit(b,i)); setF(8,7,bit(b,6)); setF(8,8,bit(b,7)); setF(7,8,bit(b,8));
+      for (let i=9;i<15;i++) setF(14-i,8,bit(b,i));
+      for (let i=0;i<8;i++) setF(size-1-i,8,bit(b,i)); for (let i=8;i<15;i++) setF(8,size-15+i,bit(b,i)); setF(8,size-8,true); };
+    format(0);
+    if (v>=7){ let r=v; for (let i=0;i<12;i++) r=(r<<1)^((r>>>11)*0x1F25); const b=(v<<12)|r;
+      for (let i=0;i<18;i++){ const d=bit(b,i), a=size-11+i%3, c=Math.floor(i/3); setF(a,c,d); setF(c,a,d); } }
+    let k=0; for (let right=size-1; right>=1; right-=2){ if (right===6) right=5;
+      for (let vert=0; vert<size; vert++) for (let j=0;j<2;j++){ const x=right-j, up=((right+1)&2)===0, y=up?size-1-vert:vert;
+        if (!F[y][x] && k<cw.length*8){ M[y][x]=bit(cw[k>>>3],7-(k&7)); k++; } } }
+    const mf=[(x,y)=>(x+y)%2===0,(x,y)=>y%2===0,(x,y)=>x%3===0,(x,y)=>(x+y)%3===0,(x,y)=>(Math.floor(x/3)+Math.floor(y/2))%2===0,
+      (x,y)=>x*y%2+x*y%3===0,(x,y)=>(x*y%2+x*y%3)%2===0,(x,y)=>((x+y)%2+x*y%3)%2===0];
+    const apply=m=>{ for (let y=0;y<size;y++) for (let x=0;x<size;x++) if (!F[y][x] && mf[m](x,y)) M[y][x]=!M[y][x]; };
+    const penalty=()=>{ let p=0, dark=0;
+      for (let a=0;a<size;a++){ let rc=null,rl=0,cc=null,cl=0;
+        for (let b=0;b<size;b++){
+          if (M[a][b]===rc){ rl++; if (rl===5) p+=3; else if (rl>5) p++; } else { rc=M[a][b]; rl=1; }
+          if (M[b][a]===cc){ cl++; if (cl===5) p+=3; else if (cl>5) p++; } else { cc=M[b][a]; cl=1; }
+          if (M[a][b]) dark++;
+          if (a<size-1 && b<size-1){ const c=M[a][b]; if (c===M[a][b+1]&&c===M[a+1][b]&&c===M[a+1][b+1]) p+=3; } } }
+      const t=size*size; p+=(Math.ceil(Math.abs(dark*20-t*10)/t)-1)*10; return p; };
+    let best=0, bp=Infinity;
+    for (let m=0;m<8;m++){ apply(m); format(m); const p=penalty(); if (p<bp){ bp=p; best=m; } apply(m); }
+    apply(best); format(best);
+    return M;
+  }
+  function draw(ctx, text, x, y, s, dark="#17324D"){
+    const M = encode(text), n = M.length + 8, u = s / n;
+    ctx.fillStyle = "#fff"; ctx.fillRect(x, y, s, s); ctx.fillStyle = dark;
+    for (let r=0;r<M.length;r++) for (let c=0;c<M.length;c++) if (M[r][c]) ctx.fillRect(x+(c+4)*u, y+(r+4)*u, u+0.6, u+0.6);
+  }
+  return { encode, draw };
+})();
+
+/* ---------- Βοηθητικά ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function km(a,b){ const R=6371,r=x=>x*Math.PI/180; const dLa=r(b.lat-a.lat), dLo=r(b.lng-a.lng);
+  const h=Math.sin(dLa/2)**2+Math.cos(r(a.lat))*Math.cos(r(b.lat))*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+const fmtKm = d => d < 1 ? Math.round(d*1000) + " μ." : d.toFixed(d<10?1:0).replace(".",",") + " χλμ";
+function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove("show"),2600); }
+function phoneIntl(p){ let d=String(p||"").replace(/\D/g,""); if(!d) return ""; if(d.startsWith("00")) d=d.slice(2); if(d.length===10) d="30"+d; return d; }
+function phoneNice(p){ const d=String(p||"").replace(/\D/g,"").replace(/^0030|^30(?=\d{10}$)/,""); return d.length===10 ? `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6)}` : String(p||""); }
+const typeName = t => t==="pro" ? "Επαγγελματίας" : "Ζητά εργασία";
+const isFeat = p => p.type==="pro" && !!p.featured;
+const initials = n => String(n||"").trim().split(/\s+/).slice(0,2).map(w=>w.charAt(0)).join("").toUpperCase() || "?";
+const avgOf = r => r.length ? r.reduce((s,x)=>s+(+x.stars||0),0)/r.length : 0;
+const starStr = n => { const k = Math.round(n); return "★".repeat(k) + "☆".repeat(5-k); };
+const fmtAvg = n => n.toFixed(1).replace(".",",");
+function fmtDate(s){ const d = new Date(s); return isNaN(d) ? "" : d.toLocaleDateString("el-GR",{day:"numeric",month:"short",year:"numeric"}); }
+function showImg(src){ $("viewerImg").src = src; $("viewer").hidden = false; }
+$("viewer").onclick = () => { $("viewer").hidden = true; };
+const baseUrl = () => location.href.split(/[?#]/)[0];
+const profileUrl = p => baseUrl() + "?p=" + encodeURIComponent(p.id);
+function avatar(p, extra="", icon=false){ const f=isFeat(p); return `<div class="av ${p.type}${f?" feat":""}${icon?" ic":""} ${extra}">${icon?ico(mainTrade(p)):esc(initials(p.name))}${f?'<b class="fstar">★</b>':""}</div>`; }
+function shrink(file, max=900){
+  return new Promise((ok, bad) => {
+    const fr = new FileReader();
+    fr.onload = () => { const im = new Image(); im.onload = () => {
+      const k = Math.min(1, max/Math.max(im.width, im.height));
+      const c = document.createElement("canvas"); c.width = Math.round(im.width*k); c.height = Math.round(im.height*k);
+      c.getContext("2d").drawImage(im,0,0,c.width,c.height); ok(c.toDataURL("image/jpeg",0.72));
+    }; im.onerror = bad; im.src = fr.result; };
+    fr.onerror = bad; fr.readAsDataURL(file);
+  });
+}
+
+/* ---------- Χάρτης ---------- */
+const map = L.map("map",{zoomControl:false}).setView([37.975,23.735],12);
+L.control.zoom({position:"topright"}).addTo(map);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© συντελεστές OpenStreetMap"}).addTo(map);
+map.attributionControl.setPrefix(false);
+function clusterIcon(c){
+  const ms = c.getAllChildMarkers(), n = ms.length;
+  const pct = Math.round(ms.filter(m => m.options.kind==="pro").length/n*100);
+  const feat = ms.some(m => m.options.feat);
+  return L.divIcon({className:"", iconSize:[44,44], iconAnchor:[22,22],
+    html:`<div class="clus${feat?" hasfeat":""}" style="background:conic-gradient(#17324D 0 ${pct}%, #2E7D5B 0)"><b>${n}</b></div>`});
+}
+const layer = (L.markerClusterGroup
+  ? L.markerClusterGroup({showCoverageOnHover:false, maxClusterRadius:45, spiderfyOnMaxZoom:true, spiderfyDistanceMultiplier:1.6, iconCreateFunction:clusterIcon})
+  : L.layerGroup()).addTo(map);
+let areaCircle = null, originCircle = null, meMarker = null;
+
+const state = { type:"all", specs:new Set(), radius:0, q:"", me:null, all:[] };
+
+function specLabel(){
+  const s = state.specs, b = $("btnSpec");
+  b.textContent = !s.size ? "Επαγγέλματα: όλα ▾" : s.size===1 ? [...s][0] + " ▾" : `Επαγγέλματα: ${s.size} ▾`;
+  b.classList.toggle("on", s.size>0);
+  $("radius").classList.toggle("on", state.radius>0);
+}
+function origin(){ return state.me || map.getCenter(); }
+function filtered(type = state.type){
+  const o = origin(), q = norm(state.q);
+  return state.all.map(p => ({...p, dist: km(o,p)}))
+    .filter(p => type==="all" || (type==="feat" ? isFeat(p) : p.type===type))
+    .filter(p => !state.specs.size || tradesOf(p).some(t => state.specs.has(t)))
+    .filter(p => !q || norm([p.name,specTxt(p),p.area,p.desc,...tradesOf(p).map(t=>catName((profById(t)||{}).c))].join(" ")).includes(q))
+    .filter(p => !state.radius || p.dist <= state.radius)
+    .sort((a,b) => (isFeat(b)-isFeat(a)) || (a.dist-b.dist));
+}
+
+function render(pins = true){
+  const res = filtered(), mine = Store.myId();
+  if (pins){
+    layer.clearLayers();
+    const ms = res.map(p => {
+      const f = isFeat(p);
+      const ic = L.divIcon({className:"",iconSize:f?[40,40]:[30,30],iconAnchor:f?[20,40]:[15,30],
+        html:`<div class="pinwrap"><div class="pin ${p.type}${f?" feat":""}${p.id===mine?" mine":""}"><span class="ic">${ico(mainTrade(p))}</span></div>${f?'<b class="fstar">★</b>':""}</div>`});
+      return L.marker([p.lat,p.lng],{icon:ic,zIndexOffset:f?1000:0,kind:p.type,feat:f}).on("click",()=>openProfile(p.id));
+    });
+    if (layer.addLayers) layer.addLayers(ms); else ms.forEach(m => layer.addLayer(m));
+  }
+  if (originCircle){ map.removeLayer(originCircle); originCircle=null; }
+  if (state.radius){ originCircle = L.circle(origin(),{radius:state.radius*1000,color:"#2468B5",weight:1.5,dashArray:"6 6",fillOpacity:.05,interactive:false}).addTo(map); }
+
+  const nPro = res.filter(p=>p.type==="pro").length, nSeek = res.length-nPro;
+  $("count").textContent = res.length === 1 ? "1 αποτέλεσμα" : `${res.length} αποτελέσματα`;
+  $("count2").textContent = `${nPro} επαγγελματίες · ${nSeek} ζητούν εργασία`;
+  const allN = filtered("all"); $("nAll").textContent = allN.length;
+  $("nPro").textContent = allN.filter(p=>p.type==="pro").length; $("nSeek").textContent = allN.filter(p=>p.type==="seek").length;
+  const icons = Store.flag("listIcons");
+  let h = res.length ? res.map(p => { const f = isFeat(p), r = Store.reviews(p); return `
+    <div class="item${f?" feat":""}" data-id="${esc(p.id)}">
+      ${avatar(p,"",icons)}
+      <div class="t"><b>${esc(p.name)}${p.id===mine?" (εσύ)":""}</b><small>${esc(specTxt(p))} · ${esc(p.area)}</small>${f&&r.length?`<small><span class="stars">★</span> ${fmtAvg(avgOf(r))} · ${r.length} ${r.length===1?"κριτική":"κριτικές"}</small>`:""}</div>
+      <span class="km">${fmtKm(p.dist)}</span>
+    </div>`; }).join("") : (state.all.length ? '<div class="empty">Δεν βρέθηκε κανείς με αυτά τα φίλτρα.<br>Δοκίμασε μεγαλύτερη απόσταση ή άλλο επάγγελμα.</div>' : '<div class="empty"><b>Ο χάρτης μόλις άνοιξε!</b><br>Γίνε ο πρώτος τεχνίτης της περιοχής σου — πάτα «Προφίλ» κάτω δεξιά.</div>');
+  h += `<label class="foot"><input type="checkbox" id="chkIcons" ${icons?"checked":""}> Εικονίδια ειδικοτήτων στη λίστα</label>`;
+  h += `<label class="foot"><input type="checkbox" id="chkSamples" ${Store.samples()?"checked":""}> Εμφάνιση δειγμάτων επίδειξης</label>`;
+  $("list").innerHTML = h;
+  $("list").querySelectorAll(".item").forEach(el => el.onclick = () => openProfile(el.dataset.id));
+  $("chkIcons").onchange = e => { Store.flag("listIcons", e.target.checked); render(false); };
+  $("chkSamples").onchange = async e => { Store.setSamples(e.target.checked); await reload(); };
+  $("navMeTxt").textContent = mine ? "Το προφίλ μου" : "Προφίλ";
+  specLabel();
+}
+async function reload(){ state.all = await Store.list(); render(); }
+
+/* ---------- Παράθυρα ---------- */
+function openModal(html){ $("modalCard").innerHTML = html; $("modal").hidden = false; $("modalCard").scrollTop = 0; }
+function closeModal(){ $("modal").hidden = true; if (areaCircle){ map.removeLayer(areaCircle); areaCircle=null; } }
+$("modal").addEventListener("click", e => { if (e.target.id==="modal") closeModal(); });
+
+/* ---------- Αρχική σελίδα: ανοίγει σε κάθε είσοδο ---------- */
+function setType(t){
+  state.type = t;
+  document.querySelectorAll("#nav button[data-t]").forEach(x => x.classList.toggle("on", x.dataset.t===t));
+  render();
+}
+function openStart(){
+  closeModal();
+  const my = state.all.find(p => p.id === Store.myId());
+  const row = (id, icon, title, sub, cls="") => `<button class="st-btn ${cls}" id="${id}"><i>${icon}</i><span><b>${title}</b><small>${sub}</small></span><em>›</em></button>`;
+  $("start").innerHTML = `<div class="st-in">
+    <div class="st-top">
+      <svg width="54" height="64" viewBox="0 0 28 34"><path d="M14 1a13 13 0 0 1 13 13c0 10-13 19-13 19S1 24 1 14A13 13 0 0 1 14 1z" fill="#F2B632"/><circle cx="14" cy="14" r="5" fill="#17324D"/></svg>
+      <h1>Κοντά μου</h1><p>Οι τεχνίτες της γειτονιάς σου, σε έναν χάρτη</p>
+    </div>
+    <div class="st-sec">Θέλω να βρω</div>
+    ${row("sFindPro","🔧","Μάστορα για δουλειά","Ηλεκτρολόγους, υδραυλικούς, μπογιατζήδες και άλλους")}
+    ${row("sFindSeek","👷","Τεχνίτη να προσλάβω","Τεχνίτες και βοηθούς που ζητούν εργασία")}
+    <div class="st-sec">Θέλω να δηλώσω</div>
+    ${my ? row("sMine", ico(mainTrade(my)), "Το προφίλ μου", esc(my.name) + " · " + (my.type==="pro" ? "επαγγελματίας" : "ζητά εργασία"), "gold")
+         : row("sPro","🛠️","Είμαι μάστορας","Δωρεάν προφίλ σε 2 λεπτά, χωρίς προμήθεια","gold") + row("sSeek","💼","Ψάχνω εργασία","Δήλωσε την ειδικότητά σου και σε βρίσκουν")}
+    <button class="st-link" id="sMap">Απλώς δες τον χάρτη ›</button>
+    <div class="st-foot">από το Δρομολόγιο · έκδ. ${VERSION}</div>
+  </div>`;
+  $("start").hidden = false;
+  const go = t => { $("start").hidden = true; setType(t); setTimeout(() => map.invalidateSize(), 60); };
+  $("sFindPro").onclick = () => go("pro");
+  $("sFindSeek").onclick = () => go("seek");
+  $("sMap").onclick = () => go("all");
+  if (my) $("sMine").onclick = () => { go("all"); openProfile(my.id); };
+  else { $("sPro").onclick = () => { go("pro"); openForm(null,"pro"); }; $("sSeek").onclick = () => { go("seek"); openForm(null,"seek"); }; }
+}
+
+/* ---------- Προβολή προφίλ ---------- */
+function openProfile(id){
+  const p = state.all.find(x => x.id===id); if (!p) return false;
+  if (Cloud.on && isFeat(p) && !p._ph && !p.sample){ loadPhotos(p).then(() => { if (!$("modal").hidden && $("modalCard").dataset.pid === p.id) openProfile(p.id); }); }
+  const mine = p.id === Store.myId();
+  const d = km(origin(), p);
+  if (areaCircle) map.removeLayer(areaCircle);
+  if (p.type==="pro" && p.radius) areaCircle = L.circle([p.lat,p.lng],{radius:p.radius*1000,color:"#F2B632",weight:2,fillColor:"#F2B632",fillOpacity:.1,interactive:false}).addTo(map);
+  map.panTo([p.lat,p.lng]);
+
+  const ph = phoneIntl(p.phone);
+  let acts = "";
+  if (mine) acts += `<button id="btnCard" class="gold wide">▣ Η ψηφιακή μου κάρτα</button>`;
+  if (p.sample){
+    acts += '<div class="meta wide" style="grid-column:1/-1">Δείγμα επίδειξης — χωρίς πραγματικά στοιχεία επικοινωνίας.</div>';
+  } else {
+    if (ph && !p.hidePhone){
+      acts += `<a class="call wide" href="tel:+${ph}">☎ Κλήση · ${esc(phoneNice(p.phone))}</a>`;
+      acts += `<a class="viber" href="viber://chat?number=%2B${ph}">Βάιμπερ</a>`;
+      acts += `<a class="wa" href="https://wa.me/${ph}" target="_blank" rel="noopener">Γουότσαπ</a>`;
+    }
+    if (p.email) acts += `<a class="${ph && !p.hidePhone ? "" : "call "}wide" href="mailto:${esc(p.email)}?subject=${encodeURIComponent("Επικοινωνία από «Κοντά μου»")}">✉ Ηλεκτρονικό ταχυδρομείο</a>`;
+  }
+  acts += `<a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener">➤ Διαδρομή</a>`;
+  acts += `<button id="btnShare">⤴ Κοινοποίηση</button>`;
+  if (mine) acts += `<button id="btnEdit">✎ Επεξεργασία</button><button id="btnDel" class="danger">Διαγραφή</button>`;
+  if (Cloud.on && !mine && !p.sample) acts += `<button id="btnReport" class="wide" style="font-weight:600;color:var(--mute)">⚑ Αναφορά προβλήματος</button>`;
+  if (isAdmin() && !p.sample) acts += `<button id="btnAdmFeat" class="gold">${isFeat(p) ? "Αφαίρεση ★" : "Ενεργοποίηση ★"}</button><button id="btnAdmDel" class="danger">Διαγραφή (διαχ.)</button>`;
+  if (Cloud.on && mine) acts += `<button id="btnLogout" class="wide" style="font-weight:600;color:var(--mute)">Αποσύνδεση από τον λογαριασμό</button>`;
+
+  const f = isFeat(p), revs = Store.reviews(p), av = avgOf(revs);
+  const gal = f && p.photos && p.photos.length ? `<div class="sec">Φωτογραφίες από δουλειές</div><div class="gal">${p.photos.map(s=>`<img src="${s}" alt="">`).join("")}</div>` : "";
+  let revHtml = "";
+  if (f){
+    revHtml = `<div class="sec">Κριτικές πελατών ${revs.length?`· <span class="stars">★</span> ${fmtAvg(av)}`:""}</div>`;
+    revHtml += revs.length ? revs.map(r=>`<div class="rev"><b>${esc(r.name)}</b> <span class="stars">${starStr(r.stars)}</span> <small class="meta">${fmtDate(r.date)}</small>${r.text?`<p>${esc(r.text)}</p>`:""}</div>`).join("")
+                           : '<div class="meta">Δεν υπάρχουν ακόμα κριτικές.</div>';
+    if (!mine) revHtml += `<div class="btns"><button id="btnRev">★ Γράψε κριτική</button></div>`;
+  }
+  const upsell = (mine && p.type==="pro" && !f) ? `<div class="lock"><b>★ Προνομιακή προβολή</b><br>Βγες πρώτος στην περιοχή σου, με σήμα «Επαληθευμένος», φωτογραφίες από δουλειές σου και κριτικές πελατών. Περιλαμβάνεται στη συνδρομή Δρομολογίου «Pro».<br><span class="ff">Ιδρυτικά μέλη: οι πρώτοι 100 στη μισή τιμή, για πάντα</span></div>` : "";
+
+  let info = `<div><span>Απόσταση</span><b>${fmtKm(d)} από ${state.me?"εσένα":"το κέντρο του χάρτη"}</b></div><div><span>Περιοχή</span><b>${esc(p.area)}</b></div>`;
+  if (p.type==="pro" && p.radius) info += `<div><span>Εξυπηρετεί</span><b>έως ${p.radius} χλμ</b></div>`;
+  if (p.type==="seek" && p.job) info += `<div><span>Ζητά</span><b>${esc(p.job)}</b></div>`;
+  if (p.years) info += `<div><span>Εμπειρία</span><b>${esc(p.years)} ${p.years==1?"χρόνος":"χρόνια"}</b></div>`;
+
+  openModal(`
+    <div class="hero">${avatar(p)}<div><h2>${esc(p.name)}</h2><div class="sp1">${esc(specIcoTxt(p))}</div>${f && revs.length ? `<div class="meta"><span class="stars">${starStr(av)}</span> ${fmtAvg(av)} · ${revs.length} ${revs.length===1?"κριτική":"κριτικές"}</div>`:""}</div></div>
+    <div class="badges"><span class="badge ${p.type}">${typeName(p.type)}</span>${f?'<span class="badge feat">★ Προνομιακός</span>':""}${f&&p.verified?'<span class="badge ver">✓ Επαληθευμένος</span>':""}${p.sample?'<span class="badge demo">Δείγμα</span>':""}</div>
+    ${mine ? `<div class="swap"><span>Τώρα εμφανίζεσαι ως <b>${p.type==="pro"?"επαγγελματίας":"αναζητών εργασία"}</b></span><button id="btnSwap">⇄ ${p.type==="pro"?"Ψάχνω εργασία":"Προσφέρω υπηρεσίες"}</button></div>` : ""}
+    <div class="info">${info}</div>
+    ${p.desc ? `<div class="desc">${esc(p.desc)}</div>`:""}
+    ${gal}
+    <div class="actions">${acts}</div>
+    ${upsell}
+    ${revHtml}
+    <div class="btns"><button id="btnClose">Κλείσιμο</button></div>`);
+  $("btnClose").onclick = closeModal;
+  $("modalCard").querySelectorAll(".gal img").forEach(im => im.onclick = () => showImg(im.src));
+  $("modalCard").dataset.pid = p.id;
+  if ($("btnRev")) $("btnRev").onclick = () => {
+    if (Cloud.on && p.sample) return toast("Στα δείγματα επίδειξης δεν γράφονται κριτικές");
+    requireLogin(() => openReview(p)); };
+  if ($("btnReport")) $("btnReport").onclick = () => requireLogin(async () => {
+    const why = prompt("Τι πρόβλημα υπάρχει με αυτό το προφίλ; (π.χ. ψεύτικο, λάθος τηλέφωνο, προσβλητικό)");
+    if (!why) return;
+    try { await Cloud.db.collection(COL.rep).add({to:p.id, from:Cloud.user.uid, reason:why.slice(0,300), date:new Date().toISOString()}); toast("Ευχαριστούμε, θα το ελέγξουμε"); }
+    catch(e){ toast("Η αναφορά δεν στάλθηκε"); } });
+  if ($("btnAdmFeat")) $("btnAdmFeat").onclick = async () => {
+    const on = !isFeat(p);
+    try { await Cloud.db.collection(COL.p).doc(p.id).update({featured:on, verified:on}); toast(on ? "Ενεργοποιήθηκε η προνομιακή προβολή" : "Αφαιρέθηκε η προνομιακή προβολή"); closeModal(); }
+    catch(e){ toast("Δεν επιτρέπεται"); } };
+  if ($("btnAdmDel")) $("btnAdmDel").onclick = async () => { if (confirm(`Διαγραφή του προφίλ «${p.name}»;`)){ await Store.remove(p.id); closeModal(); } };
+  if ($("btnLogout")) $("btnLogout").onclick = async () => { await Cloud.auth.signOut(); closeModal(); render(); toast("Αποσυνδέθηκες"); };
+  $("btnShare").onclick = async () => {
+    const url = profileUrl(p), t = `${p.name} — ${specTxt(p)}, ${p.area}`;
+    try { if (navigator.share) await navigator.share({title:"Κοντά μου", text:t, url}); else { await navigator.clipboard.writeText(t+"\n"+url); toast("Ο σύνδεσμος αντιγράφηκε"); } } catch(e){}
+  };
+  if (mine){
+    $("btnSwap").onclick = async () => {
+      const q = {...p, type: p.type==="pro" ? "seek" : "pro", updated: Date.now()};
+      if (q.type==="seek" && !q.job) q.job = "Ανά δουλειά / μεροκάματο";
+      if (q.type==="pro" && !q.radius) q.radius = 10;
+      await Store.upsert(q); await reload(); openProfile(q.id);
+      toast(q.type==="pro" ? "Εμφανίζεσαι ως επαγγελματίας" : "Εμφανίζεσαι ως αναζητών εργασία");
+    };
+    $("btnCard").onclick = () => openCard(p);
+    $("btnEdit").onclick = () => openForm(p);
+    $("btnDel").onclick = async () => { if (confirm("Να διαγραφεί το προφίλ σου;")){ await Store.remove(p.id); closeModal(); await reload(); toast("Το προφίλ διαγράφηκε"); } };
+  }
+  return true;
+}
+
+/* ---------- Ψηφιακή κάρτα ---------- */
+const FONT = 'system-ui,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif';
+function rrect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function fit(ctx,text,weight,size,maxW){ let s=size; do { ctx.font=`${weight} ${s}px ${FONT}`; s-=2; } while (ctx.measureText(text).width>maxW && s>14); }
+function pinGlyph(ctx,x,y,r,fill,hole){
+  ctx.beginPath(); ctx.arc(x,y,r,Math.PI*0.78,Math.PI*0.22,false); ctx.lineTo(x,y+r*1.75); ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+  ctx.beginPath(); ctx.arc(x,y,r*0.4,0,Math.PI*2); ctx.fillStyle=hole; ctx.fill();
+}
+function drawCard(cv, p, kind){
+  const url = profileUrl(p), f = isFeat(p), revs = Store.reviews(p);
+  const contact = !p.hidePhone && p.phone ? "Τηλ. " + phoneNice(p.phone) : (p.email || "");
+  const ctx = cv.getContext("2d");
+  if (kind === "card"){
+    cv.width = 1050; cv.height = 600;
+    const g = ctx.createLinearGradient(0,0,1050,600); g.addColorStop(0,"#17324D"); g.addColorStop(1,"#22476B");
+    ctx.fillStyle = g; ctx.fillRect(0,0,1050,600);
+    ctx.fillStyle = "rgba(255,255,255,.04)"; ctx.beginPath(); ctx.arc(980,640,330,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#F2B632"; ctx.fillRect(0,0,16,600);
+    pinGlyph(ctx,74,66,19,"#F2B632","#17324D");
+    ctx.fillStyle = "#fff"; ctx.font = `800 30px ${FONT}`; ctx.fillText("Κοντά μου",104,77);
+    ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.font = `500 19px ${FONT}`; ctx.fillText("από το Δρομολόγιο",104,103);
+    ctx.fillStyle = "#fff"; fit(ctx,p.name,"800",66,540); ctx.fillText(p.name,56,245);
+    ctx.fillStyle = "#F2B632"; fit(ctx,specTxt(p),"700",38,540); ctx.fillText(specTxt(p),56,298);
+    ctx.fillStyle = "rgba(255,255,255,.8)"; fit(ctx,p.area,"500",26,540); ctx.fillText(p.area,56,340);
+    let y = 388;
+    if (f){ ctx.fillStyle = "#F2B632"; ctx.font = `700 22px ${FONT}`;
+      const t = "★ Προνομιακός" + (p.verified ? "   ✓ Επαληθευμένος" : "") + (revs.length ? `   ★ ${fmtAvg(avgOf(revs))} (${revs.length})` : "");
+      fit(ctx,t,"700",22,540); ctx.fillText(t,56,y); }
+    if (contact){ ctx.fillStyle = "#fff"; fit(ctx,contact,"800",38,540); ctx.fillText(contact,56,535); }
+    ctx.fillStyle = "#fff"; rrect(ctx,650,100,350,400,24); ctx.fill();
+    QR.draw(ctx,url,672,112,306);
+    ctx.fillStyle = "#17324D"; ctx.font = `700 21px ${FONT}`; ctx.textAlign = "center";
+    ctx.fillText("Σκάναρε με την κάμερα",825,448); ctx.fillStyle = "#5E7185"; ctx.font = `500 17px ${FONT}`;
+    ctx.fillText("και δες το προφίλ μου",825,474); ctx.textAlign = "left";
+  } else {
+    cv.width = 1000; cv.height = 1150;
+    ctx.fillStyle = "#fff"; ctx.fillRect(0,0,1000,1150);
+    const g = ctx.createLinearGradient(0,0,1000,230); g.addColorStop(0,"#17324D"); g.addColorStop(1,"#22476B");
+    ctx.fillStyle = g; ctx.fillRect(0,0,1000,230);
+    ctx.fillStyle = "#F2B632"; ctx.fillRect(0,224,1000,12);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#F2B632"; ctx.font = `800 34px ${FONT}`; ctx.fillText("ΒΡΕΣ ΜΕ ΣΤΟ",500,82);
+    pinGlyph(ctx,352,140,26,"#F2B632","#17324D");
+    ctx.fillStyle = "#fff"; ctx.font = `800 78px ${FONT}`; ctx.textAlign = "left"; ctx.fillText("Κοντά μου",398,168);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#17324D"; fit(ctx,p.name,"800",62,880); ctx.fillText(p.name,500,315);
+    ctx.fillStyle = "#A8760B"; fit(ctx,specTxt(p),"700",42,880); ctx.fillText(specTxt(p),500,372);
+    QR.draw(ctx,url,230,400,540);
+    ctx.fillStyle = "#17324D"; ctx.fillRect(0,960,1000,190);
+    ctx.fillStyle = "#fff"; if (contact){ fit(ctx,contact,"800",54,900); ctx.fillText(contact,500,1040); }
+    ctx.fillStyle = "#F2B632"; ctx.font = `700 30px ${FONT}`; ctx.fillText("Σκάναρε με την κάμερα του κινητού",500,contact?1100:1070);
+    ctx.textAlign = "left";
+  }
+}
+function openCard(p){
+  let kind = "card";
+  openModal(`
+    <h2>Η ψηφιακή μου κάρτα</h2>
+    <div class="meta">Στείλ' την σε πελάτες, τύπωσέ την ή κόλλησέ την στο αυτοκίνητο. Όποιος σκανάρει τον κωδικό βλέπει το προφίλ σου.</div>
+    <div class="seg" style="margin-top:12px"><button data-k="card" class="on">Επαγγελματική κάρτα</button><button data-k="sticker">Αυτοκόλλητο</button></div>
+    <canvas id="cardCv" class="cardcv"></canvas>
+    <div class="actions">
+      <button id="cDown" class="call wide">⬇ Λήψη εικόνας</button>
+      <button id="cShare">⤴ Αποστολή</button>
+      <button id="cCopy">Αντιγραφή συνδέσμου</button>
+    </div>
+    <div class="meta" style="margin-top:10px;font-size:12.5px">Συμβουλή: για αυτοκόλλητο αυτοκινήτου, τύπωσέ το τουλάχιστον 10×11 εκ. για να σκανάρεται από απόσταση.</div>
+    <div class="btns"><button id="cBack">Πίσω</button></div>`);
+  const cv = $("cardCv");
+  const redraw = () => drawCard(cv, p, kind);
+  redraw();
+  $("modalCard").querySelectorAll(".seg button").forEach(b => b.onclick = () => {
+    kind = b.dataset.k; $("modalCard").querySelectorAll(".seg button").forEach(x => x.classList.toggle("on", x===b)); redraw(); });
+  const fname = () => kind==="card" ? "kontamou-karta.png" : "kontamou-autokollito.png";
+  $("cDown").onclick = () => cv.toBlob(b => { const a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = fname(); a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); toast("Η εικόνα αποθηκεύτηκε"); }, "image/png");
+  $("cShare").onclick = () => cv.toBlob(async b => {
+    const file = new File([b], fname(), {type:"image/png"}), text = `${p.name} — ${specTxt(p)}\n${profileUrl(p)}`;
+    try {
+      if (navigator.canShare && navigator.canShare({files:[file]})) await navigator.share({files:[file], text});
+      else if (navigator.share) await navigator.share({text, url:profileUrl(p)});
+      else { await navigator.clipboard.writeText(text); toast("Ο σύνδεσμος αντιγράφηκε"); }
+    } catch(e){}
+  }, "image/png");
+  $("cCopy").onclick = async () => { try { await navigator.clipboard.writeText(profileUrl(p)); toast("Ο σύνδεσμος αντιγράφηκε"); } catch(e){ prompt("Αντίγραψε τον σύνδεσμο:", profileUrl(p)); } };
+  $("cBack").onclick = () => openProfile(p.id);
+}
+
+/* ---------- Κριτική ---------- */
+function openReview(p){
+  let stars = 0;
+  openModal(`
+    <h2>Κριτική για ${esc(p.name)}</h2>
+    <div class="meta">${esc(specTxt(p))} · ${esc(p.area)}</div>
+    <label>Βαθμολογία</label>
+    <div class="starpick">${[1,2,3,4,5].map(n=>`<button data-n="${n}">★</button>`).join("")}</div>
+    <label>Το όνομά σου</label><input id="rName" maxlength="40">
+    <label>Σχόλιο (προαιρετικό)</label><textarea id="rText" rows="3" maxlength="400"></textarea>
+    <div class="btns"><button id="rCancel">Άκυρο</button><button id="rSave" class="go">Καταχώριση</button></div>`);
+  if (Cloud.on && Cloud.user) $("rName").value = Cloud.user.displayName || "";
+  const btns = $("modalCard").querySelectorAll(".starpick button");
+  btns.forEach(b => b.onclick = () => { stars = +b.dataset.n; btns.forEach(x => x.classList.toggle("on", +x.dataset.n <= stars)); });
+  $("rCancel").onclick = () => openProfile(p.id);
+  $("rSave").onclick = async () => {
+    if (!stars) return toast("Διάλεξε αστέρια");
+    const name = $("rName").value.trim(); if (!name) return toast("Γράψε το όνομά σου");
+    await Store.addReview(p.id, {name, stars, text:$("rText").value.trim(), date:new Date().toISOString().slice(0,10)});
+    render(); openProfile(p.id); toast("Ευχαριστούμε για την κριτική");
+  };
+}
+
+/* ---------- Πίνακας επαγγελμάτων ανά κατηγορία (φίλτρο ή επιλογή στη φόρμα) ---------- */
+/* opt.pick: επιλογή για το προφίλ (έως opt.max), αλλιώς φίλτρο αναζήτησης */
+function openSpecFilter(opt = {}){
+  const pick = !!opt.pick, max = opt.max || 3, sel = new Set(pick ? opt.sel : state.specs), order = pick ? [...opt.sel] : [];
+  const base = state.all.filter(p => state.type==="all" || (state.type==="feat" ? isFeat(p) : p.type===state.type));
+  const cnt = {}; base.forEach(p => tradesOf(p).forEach(t => cnt[t] = (cnt[t]||0) + 1));
+  const cn = n => pick ? "" : `<span class="cn${n?"":" z"}">${n}</span>`;
+  let h = `<h2>${pick ? "Η ειδικότητά μου" : "Επαγγέλματα"}</h2>
+    <div class="meta">${pick ? `Διάλεξε έως ${max}, όπως στο Δρομολόγιο. Η πρώτη που διαλέγεις φαίνεται στην πινέζα σου.` : "Διάλεξε ένα ή περισσότερα. Το κουτάκι της κατηγορίας τα επιλέγει όλα μαζί. Ο αριθμός δείχνει πόσοι υπάρχουν."}</div>
+    <input id="specQ" type="search" placeholder="Γρήγορη εύρεση επαγγέλματος…" style="margin:10px 0 4px">`;
+  CATS_D.forEach((c, i) => {
+    const list = profsOfCat(c.id); if (!list.length) return;
+    const n = list.reduce((s,x) => s + (cnt[x.id]||0), 0), some = list.some(x => sel.has(x.id));
+    h += `<div class="cat" data-i="${i}">
+      <div class="cathead"><label>${pick ? "" : '<input type="checkbox" class="cc">'} ${esc(c.g)}</label>${cn(n)}<button class="tog">${some?"▲":"▼"}</button></div>
+      <div class="catbody" ${some?"":"hidden"}>${list.map(x => `<label class="sp" data-n="${esc(norm(x.n+" "+c.g))}"><input type="checkbox" value="${esc(x.id)}" ${sel.has(x.id)?"checked":""}> ${esc(x.n)} ${cn(cnt[x.id]||0)}</label>`).join("")}</div>
+    </div>`;
+  });
+  h += pick ? `<div class="btns stick"><button id="spClear">Άκυρο</button><button id="spApply" class="go">Επιλογή</button></div>`
+            : `<div class="btns stick"><button id="spClear">Όλα τα επαγγέλματα</button><button id="spApply" class="go">Εμφάνιση</button></div>`;
+  openModal(h);
+  const card = $("modalCard");
+  const syncCat = cat => { const cc = cat.querySelector(".cc"); if (!cc) return;
+    const boxes = [...cat.querySelectorAll(".sp input")], k = boxes.filter(b => b.checked).length;
+    cc.checked = k === boxes.length; cc.indeterminate = k > 0 && k < boxes.length; };
+  const setOpen = (cat, open) => { cat.querySelector(".catbody").hidden = !open; cat.querySelector(".tog").textContent = open ? "▲" : "▼"; };
+  card.querySelectorAll(".cat").forEach(cat => {
+    syncCat(cat);
+    cat.querySelector(".tog").onclick = () => setOpen(cat, cat.querySelector(".catbody").hidden);
+    const cc = cat.querySelector(".cc");
+    if (cc) cc.onchange = e => { cat.querySelectorAll(".sp input").forEach(b => b.checked = e.target.checked); setOpen(cat, true); };
+    cat.querySelectorAll(".sp input").forEach(b => b.onchange = () => {
+      if (pick && b.checked && card.querySelectorAll(".sp input:checked").length > max){ b.checked = false; toast(`Έως ${max} ειδικότητες`); }
+      if (pick){ const i = order.indexOf(b.value); if (b.checked && i < 0) order.push(b.value); if (!b.checked && i >= 0) order.splice(i,1); }
+      syncCat(cat);
+    });
+  });
+  $("specQ").oninput = e => {
+    const q = norm(e.target.value.trim());
+    card.querySelectorAll(".cat").forEach(cat => {
+      let any = false;
+      cat.querySelectorAll(".sp").forEach(l => { const ok = !q || l.dataset.n.includes(q); l.hidden = !ok; any = any || ok; });
+      cat.hidden = !any; if (q) setOpen(cat, any);
+    });
+  };
+  const chosen = () => [...card.querySelectorAll(".sp input:checked")].map(b => b.value);
+  if (pick){
+    $("spClear").onclick = () => opt.onDone(null);
+    $("spApply").onclick = () => { const c = chosen(); if (!c.length) return toast("Διάλεξε τουλάχιστον μία");
+      opt.onDone(order.filter(x => c.includes(x)).concat(c.filter(x => !order.includes(x)))); };
+    return;
+  }
+  $("spClear").onclick = () => { state.specs = new Set(); closeModal(); render(); };
+  $("spApply").onclick = () => {
+    state.specs = new Set(chosen());
+    closeModal(); render();
+    const n = $("count").textContent.split(" ")[0];
+    toast(n === "0" ? "Κανείς εδώ — δοκίμασε μεγαλύτερη απόσταση" : `${n} αποτελέσματα`);
+  };
+}
+
+/* ---------- Φόρμα προφίλ ---------- */
+let draft = null;
+function readForm(){
+  return {...draft,
+    name:$("fName").value.trim(), customName:($("fCustom")?$("fCustom").value.trim():draft.customName||""), area:$("fArea").value.trim(),
+    radius:+$("fRadius").value||0, job:$("fJob").value, years:$("fYears").value.trim(),
+    phone:$("fPhone").value.trim(), email:$("fEmail").value.trim(), hidePhone:$("fHide").checked,
+    approx:$("fApprox").checked, desc:$("fDesc").value.trim(),
+    featured: draft.type==="pro" && $("fFeat").checked};
+}
+function openForm(p, type = "pro", preset = {}){
+  requireLogin(async () => {
+    if (Cloud.on){
+      const uid = Cloud.user.uid;
+      if (!p) p = state.all.find(x => x.id === uid) || null;          // ένα προφίλ ανά λογαριασμό
+      if (p) await loadPhotos(p);
+      const u = Cloud.user, base = {name:u.displayName || ""};   // το ηλ. ταχυδρομείο δεν μπαίνει μόνο του: θα φαινόταν δημόσια
+      draft = p ? {...p, ...preset} : {...base, id:uid, type, approx:true, radius:10, trades:[], ...preset};
+    } else {
+      draft = p ? {...p, ...preset} : {id:"u"+Date.now().toString(36), type, approx:true, radius:10, trades:[], ...preset};
+    }
+    if (!draft.trades) draft.trades = [];
+    drawForm();
+  });
+}
+function drawForm(){
+  const f = draft, isPro = f.type==="pro";
+  openModal(`
+    <h2>${Store.myId()===f.id?"Επεξεργασία προφίλ":"Το προφίλ μου"}</h2>
+    <div class="meta">Δωρεάν, χωρίς προμήθεια. Χρειάζεται μόνο 2 λεπτά.</div>
+    <label>Είμαι</label>
+    <div class="seg"><button data-t="pro" class="${isPro?"on":""}">Επαγγελματίας / μάστορας</button><button data-t="seek" class="${!isPro?"on":""}">Ψάχνω εργασία</button></div>
+    <label>Όνομα (ή επωνυμία)</label><input id="fName" value="${esc(f.name)}" maxlength="60" placeholder="π.χ. Γιώργος Παπαδόπουλος">
+    <label>Ειδικότητα (έως 3)</label>
+    <button id="fTrades" class="tradebtn">${f.trades.length ? esc(f.trades.map(t => ico(t)+" "+tName(t)).join(" · ")) : "— Διάλεξε ειδικότητα —"} <span>▾</span></button>
+    ${f.trades.includes("other") ? `<input id="fCustom" value="${esc(f.customName)}" maxlength="50" placeholder="Γράψε το επάγγελμά σου" style="margin-top:6px">` : ""}
+    <label>Περιοχή</label><input id="fArea" value="${esc(f.area)}" placeholder="π.χ. Βύρωνας, Αθήνα" maxlength="80">
+    <label>Θέση στον χάρτη</label>
+    <div class="locbox"><button id="lGps">◎ Η θέση μου</button><button id="lPick">Επιλογή στον χάρτη</button><button id="lFind">Εύρεση από την περιοχή</button></div>
+    <div class="locstat" id="lStat">${f.lat?"✓ Η θέση ορίστηκε":"Δεν έχει οριστεί θέση ακόμα"}</div>
+    <label class="chk"><input type="checkbox" id="fApprox" ${f.approx!==false?"checked":""}> Να φαίνομαι κατά προσέγγιση (όχι ακριβής διεύθυνση)</label>
+    <div ${isPro?"":"hidden"}><label>Εξυπηρετώ έως</label>
+      <select id="fRadius">${[2,5,10,15,20,30,50,100].map(v=>`<option value="${v}" ${f.radius==v?"selected":""}>${v} χλμ</option>`).join("")}</select>
+      <div class="lock">
+        <label class="chk" style="margin:0"><input type="checkbox" id="fFeat" ${f.featured?"checked":""} ${Cloud.on && !isAdmin() ? "disabled" : ""}> <b>★ Προνομιακή προβολή</b></label>
+        <div style="margin-top:6px">Για συνδρομητές Δρομολογίου «Pro», για όσο διαρκεί η συνδρομή: πρώτη θέση στην περιοχή, σήμα «Επαληθευμένος», φωτογραφίες και κριτικές. <i>${Cloud.on ? (f.featured ? "Ενεργή στον λογαριασμό σου." : "Ενεργοποιείται μαζί με τη συνδρομή.") : "(Τώρα ενεργοποιείται ελεύθερα, για επίδειξη.)"}</i></div>
+        <span class="ff">Ιδρυτικά μέλη: οι πρώτοι 100 στη μισή τιμή, για πάντα</span>
+        <div id="featBox" ${f.featured?"":"hidden"}>
+          <label>Φωτογραφίες από δουλειές μου (έως ${MAX_PHOTOS})</label>
+          <div class="thumbs" id="thumbs"></div>
+          <input type="file" id="fPhotos" accept="image/*" multiple>
+        </div>
+      </div></div>
+    <div ${isPro?"hidden":""}><label>Τι εργασία ζητάω</label>
+      <select id="fJob">${["Πλήρης απασχόληση","Μερική απασχόληση","Εποχική εργασία","Ανά δουλειά / μεροκάματο","Βοηθός τεχνίτη / μαθητεία"].map(v=>`<option ${f.job===v?"selected":""}>${v}</option>`).join("")}</select></div>
+    <label>Χρόνια εμπειρίας</label><input id="fYears" type="number" min="0" max="60" inputmode="numeric" value="${esc(f.years)}">
+    <label>Τηλέφωνο</label><input id="fPhone" type="tel" inputmode="tel" value="${esc(f.phone)}" placeholder="69…">
+    <label class="chk"><input type="checkbox" id="fHide" ${f.hidePhone?"checked":""}> Να μη φαίνεται το τηλέφωνό μου (μόνο ηλ. ταχυδρομείο)</label>
+    <label>Ηλεκτρονικό ταχυδρομείο</label><input id="fEmail" type="email" value="${esc(f.email)}">
+    <label>Λίγα λόγια για μένα / τις υπηρεσίες μου</label><textarea id="fDesc" rows="4" maxlength="600" placeholder="π.χ. Ηλεκτρολογικές εγκαταστάσεις, βλάβες, πίνακες. Άμεση εξυπηρέτηση.">${esc(f.desc)}</textarea>
+    <div class="btns"><button id="fCancel">Άκυρο</button><button id="fSave" class="go">Αποθήκευση</button></div>`);
+
+  $("modalCard").querySelectorAll(".seg button").forEach(b => b.onclick = () => { draft = readForm(); draft.type = b.dataset.t; drawForm(); });
+  $("fCancel").onclick = () => { draft=null; closeModal(); };
+  $("fTrades").onclick = () => { draft = readForm();
+    openSpecFilter({pick:true, max:3, sel:draft.trades, onDone: c => { if (c) draft.trades = c; drawForm(); }}); };
+  const drawThumbs = () => {
+    const ph = draft.photos || [];
+    $("thumbs").innerHTML = ph.map((s,i)=>`<div><img src="${s}" alt=""><button data-i="${i}">×</button></div>`).join("");
+    $("thumbs").querySelectorAll("button").forEach(b => b.onclick = () => { draft.photos.splice(+b.dataset.i,1); drawThumbs(); });
+    $("thumbs").querySelectorAll("img").forEach(im => im.onclick = () => showImg(im.src));
+  };
+  drawThumbs();
+  $("fFeat").onchange = e => { $("featBox").hidden = !e.target.checked; };
+  $("fPhotos").onchange = async e => {
+    draft.photos = draft.photos || [];
+    for (const file of [...e.target.files]){
+      if (draft.photos.length >= MAX_PHOTOS){ toast(`Έως ${MAX_PHOTOS} φωτογραφίες`); break; }
+      try { draft.photos.push(await shrink(file, 800)); } catch(err){ toast("Δεν διαβάστηκε μια φωτογραφία"); }
+    }
+    e.target.value = ""; drawThumbs();
+  };
+  $("lGps").onclick = () => locate(pos => { draft = readForm(); draft.lat=pos.lat; draft.lng=pos.lng; $("lStat").textContent="✓ Ορίστηκε από τη θέση σου"; });
+  $("lPick").onclick = () => { draft = readForm(); $("modal").hidden = true; $("pickBanner").hidden = false; picking = true; };
+  $("lFind").onclick = async () => {
+    const a = $("fArea").value.trim(); if (!a) return toast("Γράψε πρώτα την περιοχή");
+    $("lStat").textContent = "Αναζήτηση…";
+    try {
+      const r = await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=gr&accept-language=el&q="+encodeURIComponent(a));
+      const j = await r.json();
+      if (!j.length){ $("lStat").textContent = "Δεν βρέθηκε — δοκίμασε «Επιλογή στον χάρτη»"; return; }
+      draft = readForm(); draft.lat=+j[0].lat; draft.lng=+j[0].lon;
+      map.setView([draft.lat,draft.lng],14);
+      $("lStat").textContent = "✓ Βρέθηκε: " + j[0].display_name.split(",").slice(0,3).join(",");
+    } catch(e){ $("lStat").textContent = "Χωρίς σύνδεση — δοκίμασε «Επιλογή στον χάρτη»"; }
+  };
+  $("fSave").onclick = async () => {
+    const p = readForm();
+    if (!p.name) return toast("Συμπλήρωσε όνομα");
+    if (!p.trades || !p.trades.length) return toast("Διάλεξε ειδικότητα");
+    if (!p.area) return toast("Συμπλήρωσε περιοχή");
+    if (!p.lat) return toast("Όρισε τη θέση σου στον χάρτη");
+    if (!p.phone && !p.email) return toast("Βάλε τηλέφωνο ή ηλ. ταχυδρομείο");
+    if (p.hidePhone && !p.email) return toast("Αφού κρύβεις το τηλέφωνο, βάλε ηλ. ταχυδρομείο");
+    if (p.type==="pro") delete p.job; else { delete p.radius; p.featured = false; }
+    if (!p.trades.includes("other")) delete p.customName; else if (!p.customName) return toast("Γράψε το επάγγελμά σου");
+    if (!p.featured){ delete p.photos; p.verified = false; } else p.verified = true;
+    if (p.approx){ p.lat = Math.round(p.lat*200)/200; p.lng = Math.round(p.lng*200)/200; }
+    p.updated = Date.now(); delete p.sample;
+    const ok = await Store.upsert(p);
+    if (ok === null) return;
+    if (!ok) return toast("Γέμισε ο χώρος αποθήκευσης — αφαίρεσε κάποια φωτογραφία");
+    draft = null; await reload();
+    map.setView([p.lat,p.lng],14); openProfile(p.id); toast("Το προφίλ σου εμφανίζεται στον χάρτη");
+  };
+}
+
+/* Επιλογή θέσης στον χάρτη */
+let picking = false;
+map.on("click", e => {
+  if (!picking) return;
+  picking = false; $("pickBanner").hidden = true;
+  draft.lat = e.latlng.lat; draft.lng = e.latlng.lng;
+  drawForm(); $("lStat").textContent = "✓ Ορίστηκε από τον χάρτη";
+});
+$("pickCancel").onclick = () => { picking=false; $("pickBanner").hidden=true; drawForm(); };
+
+/* ---------- Η θέση μου ---------- */
+function locate(cb){
+  if (!navigator.geolocation) return toast("Η συσκευή δεν δίνει θέση");
+  toast("Εντοπισμός θέσης…");
+  navigator.geolocation.getCurrentPosition(
+    pos => cb({lat:pos.coords.latitude, lng:pos.coords.longitude}),
+    () => toast("Δεν επιτράπηκε η πρόσβαση στη θέση"),
+    {enableHighAccuracy:true, timeout:12000});
+}
+$("btnLoc").onclick = () => locate(p => {
+  state.me = p; $("btnLoc").classList.add("on");
+  if (meMarker) map.removeLayer(meMarker);
+  meMarker = L.marker([p.lat,p.lng],{icon:L.divIcon({className:"",html:'<div class="medot"></div>',iconSize:[18,18],iconAnchor:[9,9]}),interactive:false}).addTo(map);
+  map.setView([p.lat,p.lng],13); render();
+});
+
+/* ---------- Φίλτρα ---------- */
+document.querySelectorAll("#nav button[data-t]").forEach(c => c.onclick = () => {
+  document.querySelectorAll("#nav button[data-t]").forEach(x=>x.classList.remove("on")); c.classList.add("on");
+  state.type = c.dataset.t; render();
+});
+$("btnSpec").onclick = openSpecFilter;
+$("radius").onchange = e => { state.radius = +e.target.value; render(); };
+let qt; $("q").oninput = e => { clearTimeout(qt); qt = setTimeout(()=>{ state.q = e.target.value; render(); },200); };
+map.on("moveend", () => { if (!state.me && !picking) render(state.radius > 0); });
+$("sheetHead").onclick = () => { const s=$("sheet"); s.classList.toggle("open"); $("arrow").textContent = s.classList.contains("open")?"Χάρτης ▼":"Λίστα ▲"; setTimeout(()=>map.invalidateSize(),300); };
+$("logoHome").onclick = openStart;
+$("navMe").onclick = () => requireLogin(() => { const id = Store.myId(); if (id && state.all.some(p=>p.id===id)) openProfile(id); else openForm(null); });
+
+/* ---------- Εκκίνηση (με συνδέσμους ?p=… και ?neo=1) ---------- */
+(async () => {
+  await cloudInit();
+  await reload();
+  const q = new URLSearchParams(location.search);
+  if (q.get("p")){
+    if (!openProfile(q.get("p"))) { openStart(); toast("Το προφίλ δεν βρέθηκε σε αυτή τη συσκευή"); }
+  } else if (q.get("apo") === "dromologio" || q.get("prof")){
+    /* Κουμπί από το Δρομολόγιο: ?apo=dromologio&prof=electric,solar&pn=…&n=…&ph=…&a=…&e=… */
+    const ids = (q.get("prof") || "").split(",").map(x => x.trim()).filter(Boolean).slice(0,3);
+    const trades = ids.map(id => profById(id) ? id : "other").filter((v,i,a) => a.indexOf(v) === i);
+    const preset = {fromDromologio:true};
+    if (trades.length) preset.trades = trades;
+    if (q.get("pn")) preset.customName = q.get("pn");
+    const mine = state.all.find(p => p.id === Store.myId());
+    const put = (k, v) => { if (v && !(mine && mine[k])) preset[k] = v; };
+    put("name", q.get("n")); put("phone", q.get("ph")); put("area", q.get("a")); put("email", q.get("e"));
+    openForm(mine || null, mine ? mine.type : "pro", preset);
+    toast("Τα στοιχεία ήρθαν από το Δρομολόγιο — όρισε τη θέση σου και πάτα Αποθήκευση");
+  } else if (q.get("neo")){
+    openForm(null, q.get("neo") === "seek" ? "seek" : "pro");
+  } else {
+    openStart();
+  }
+  if (q.toString()) history.replaceState(null, "", baseUrl());
+  /* Φορτώνει τη ζωντανή λίστα επαγγελμάτων του Δρομολογίου, για να εμφανίζονται και τα νέα */
+  const sc = document.createElement("script");
+  sc.src = "https://aglentzakis-dot.github.io/dromologio/listes-epaggelmaton.js";
+  sc.onload = mergeLiveTrades; document.body.appendChild(sc);
+})();
+</script>
+</body>
+</html>
