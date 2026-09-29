@@ -148,6 +148,13 @@ button.go{background:var(--brand);color:#fff;border:0;font-weight:700}
 #viewer[hidden]{display:none}#viewer img{max-width:96vw;max-height:92dvh;border-radius:8px}
 #pickBanner{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:1500;background:var(--brand);color:#fff;padding:10px 12px 10px 16px;border-radius:14px;display:flex;gap:10px;align-items:center;box-shadow:var(--sh);width:max-content;max-width:92vw;font-size:14px}
 #pickBanner[hidden]{display:none}
+#pickPin{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);z-index:650;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+#pickPin[hidden]{display:none}
+#pickPin::after{content:"";position:absolute;left:50%;bottom:-5px;width:10px;height:4px;margin-left:-5px;border-radius:50%;background:rgba(0,0,0,.35)}
+.picking #sheet,.picking nav,.picking .legend,.picking #btnLoc{display:none}
+#pickBanner{flex-direction:column;align-items:stretch;text-align:center;gap:8px;width:min(92vw,420px);top:auto;bottom:calc(18px + env(safe-area-inset-bottom))}
+#pickBanner .pb{display:flex;gap:8px}#pickBanner .pb button{flex:1;padding:12px;border-radius:12px}
+#pickBanner #pickCancel{background:rgba(255,255,255,.15);color:#fff}
 #pickBanner button{background:var(--accent);color:var(--onaccent);border:0;font-weight:700}
 #toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--brand);color:#fff;padding:11px 18px;border-radius:12px;z-index:4000;opacity:0;transition:.2s;pointer-events:none;max-width:90vw;text-align:center;box-shadow:var(--sh);font-size:14px}
 #toast.show{opacity:1;transform:translateX(-50%)}
@@ -242,6 +249,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
     <span><i style="background:var(--seek)"></i>Ζητούν εργασία</span>
     <span><i style="background:var(--accent)"></i>Προνομιακοί</span>
   </div>
+  <div id="pickPin" hidden><svg width="44" height="54" viewBox="0 0 28 34" style="display:block"><path d="M14 1a13 13 0 0 1 13 13c0 10-13 19-13 19S1 24 1 14A13 13 0 0 1 14 1z" fill="#F2B632" stroke="#17324D" stroke-width="1.5"/><circle cx="14" cy="14" r="5" fill="#17324D"/></svg></div>
   <button id="btnLoc" class="fab" title="Η θέση μου"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>
 </div>
 
@@ -258,7 +266,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
   <button id="navMe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span id="navMeTxt">Προφίλ</span></button>
 </nav>
 
-<div id="pickBanner" hidden>Πάτησε στον χάρτη για να ορίσεις τη θέση <button id="pickCancel">Άκυρο</button></div>
+<div id="pickBanner" hidden><b>Μετακίνησε τον χάρτη ώστε η πινέζα να δείχνει το σημείο σου</b><small style="opacity:.8">Μπορείς και να πατήσεις κάπου για να πάει εκεί</small><div class="pb"><button id="pickCancel">Άκυρο</button><button id="pickOk">✓ Εδώ είναι</button></div></div>
 <div id="start" hidden></div>
 <div id="modal" hidden><div class="card" id="modalCard"></div></div>
 <div id="toast"></div>
@@ -268,7 +276,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 "use strict";
-const VERSION = "1.7";
+const VERSION = "1.8.1";
 document.getElementById("ver").textContent = "έκδ. " + VERSION;
 
 /* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
@@ -409,7 +417,7 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "443144986743",
   appId: "1:443144986743:web:10afb2a6536bbc1551a672"
 };
-const ADMIN_EMAIL = "aglentzakis@gmail.com";
+const ADMIN_EMAIL = "aglentzakis.apps@gmail.com";
 const COL = {p:"kontamou_profiles", ph:"kontamou_photos", r:"kontamou_reviews", rep:"kontamou_reports"};
 const Cloud = {on:false, db:null, auth:null, user:null, profiles:[], reviews:[]};
 const MAX_PHOTOS = 4;
@@ -747,14 +755,14 @@ function openProfile(id){
   } else {
     if (ph && !p.hidePhone){
       acts += `<a class="call wide" href="tel:+${ph}">☎ Κλήση · ${esc(phoneNice(p.phone))}</a>`;
-      acts += `<a class="viber" href="viber://chat?number=%2B${ph}">Βάιμπερ</a>`;
-      acts += `<a class="wa" href="https://wa.me/${ph}" target="_blank" rel="noopener">Γουότσαπ</a>`;
+      acts += `<a class="viber" href="viber://chat?number=%2B${ph}">Viber</a>`;
+      acts += `<a class="wa" href="https://wa.me/${ph}" target="_blank" rel="noopener">WhatsApp</a>`;
     }
     if (p.email) acts += `<a class="${ph && !p.hidePhone ? "" : "call "}wide" href="mailto:${esc(p.email)}?subject=${encodeURIComponent("Επικοινωνία από «Κοντά μου»")}">✉ Ηλεκτρονικό ταχυδρομείο</a>`;
   }
   acts += `<a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener">➤ Διαδρομή</a>`;
   acts += `<button id="btnShare">⤴ Κοινοποίηση</button>`;
-  if (mine) acts += `<button id="btnEdit">✎ Επεξεργασία</button><button id="btnDel" class="danger">Διαγραφή</button>`;
+  if (mine) acts += `<button id="btnEdit" class="call">✎ Αλλαγή στοιχείων</button><button id="btnMove" class="call">📍 Αλλαγή θέσης</button><button id="btnDel" class="danger wide">Διαγραφή προφίλ</button>`;
   if (Cloud.on && !mine && !p.sample) acts += `<button id="btnReport" class="wide" style="font-weight:600;color:var(--mute)">⚑ Αναφορά προβλήματος</button>`;
   if (isAdmin() && !p.sample) acts += `<button id="btnAdmFeat" class="gold">${isFeat(p) ? "Αφαίρεση ★" : "Ενεργοποίηση ★"}</button><button id="btnAdmDel" class="danger">Διαγραφή (διαχ.)</button>`;
   if (Cloud.on && mine) acts += `<button id="btnLogout" class="wide" style="font-weight:600;color:var(--mute)">Αποσύνδεση από τον λογαριασμό</button>`;
@@ -817,6 +825,12 @@ function openProfile(id){
     };
     $("btnCard").onclick = () => openCard(p);
     $("btnEdit").onclick = () => openForm(p);
+    $("btnMove").onclick = () => pickLocation(p, async ll => {
+      const q = {...p, lat:ll.lat, lng:ll.lng};
+      if (q.approx){ q.lat = Math.round(q.lat*500)/500; q.lng = Math.round(q.lng*500)/500; }
+      const ok = await Store.upsert(q); if (!ok) return;
+      await reload(); openProfile(p.id); toast("Η θέση σου άλλαξε");
+    }, () => openProfile(p.id));
     $("btnDel").onclick = async () => { if (confirm("Να διαγραφεί το προφίλ σου;")){ await Store.remove(p.id); closeModal(); await reload(); toast("Το προφίλ διαγράφηκε"); } };
   }
   return true;
@@ -1010,9 +1024,9 @@ function openForm(p, type = "pro", preset = {}){
       if (!p) p = state.all.find(x => x.id === uid) || null;          // ένα προφίλ ανά λογαριασμό
       if (p) await loadPhotos(p);
       const u = Cloud.user, base = {name:u.displayName || ""};   // το ηλ. ταχυδρομείο δεν μπαίνει μόνο του: θα φαινόταν δημόσια
-      draft = p ? {...p, ...preset} : {...base, id:uid, type, approx:true, radius:10, trades:[], ...preset};
+      draft = p ? {...p, ...preset} : {...base, id:uid, type, approx:type==="seek", radius:10, trades:[], ...preset};
     } else {
-      draft = p ? {...p, ...preset} : {id:"u"+Date.now().toString(36), type, approx:true, radius:10, trades:[], ...preset};
+      draft = p ? {...p, ...preset} : {id:"u"+Date.now().toString(36), type, approx:type==="seek", radius:10, trades:[], ...preset};
     }
     if (!draft.trades) draft.trades = [];
     drawForm();
@@ -1033,7 +1047,7 @@ function drawForm(){
     <label>Θέση στον χάρτη</label>
     <div class="locbox"><button id="lGps">◎ Η θέση μου</button><button id="lPick">Επιλογή στον χάρτη</button><button id="lFind">Εύρεση από την περιοχή</button></div>
     <div class="locstat" id="lStat">${f.lat?"✓ Η θέση ορίστηκε":"Δεν έχει οριστεί θέση ακόμα"}</div>
-    <label class="chk"><input type="checkbox" id="fApprox" ${f.approx!==false?"checked":""}> Να φαίνομαι κατά προσέγγιση (όχι ακριβής διεύθυνση)</label>
+    <label class="chk"><input type="checkbox" id="fApprox" ${f.approx!==false?"checked":""}> Να φαίνομαι κατά προσέγγιση (περίπου 100 μ. γύρω από το σημείο, για ιδιωτικότητα)</label>
     <div ${isPro?"":"hidden"}><label>Εξυπηρετώ έως</label>
       <select id="fRadius">${[2,5,10,15,20,30,50,100].map(v=>`<option value="${v}" ${f.radius==v?"selected":""}>${v} χλμ</option>`).join("")}</select>
       <div class="lock">
@@ -1076,7 +1090,8 @@ function drawForm(){
     e.target.value = ""; drawThumbs();
   };
   $("lGps").onclick = () => locate(pos => { draft = readForm(); draft.lat=pos.lat; draft.lng=pos.lng; $("lStat").textContent="✓ Ορίστηκε από τη θέση σου"; });
-  $("lPick").onclick = () => { draft = readForm(); $("modal").hidden = true; $("pickBanner").hidden = false; picking = true; };
+  $("lPick").onclick = () => { draft = readForm();
+    pickLocation(draft, ll => { draft.lat = ll.lat; draft.lng = ll.lng; drawForm(); $("lStat").textContent = "✓ Ορίστηκε από τον χάρτη"; }, () => drawForm()); };
   $("lFind").onclick = async () => {
     const a = $("fArea").value.trim(); if (!a) return toast("Γράψε πρώτα την περιοχή");
     $("lStat").textContent = "Αναζήτηση…";
@@ -1100,7 +1115,7 @@ function drawForm(){
     if (p.type==="pro") delete p.job; else { delete p.radius; p.featured = false; }
     if (!p.trades.includes("other")) delete p.customName; else if (!p.customName) return toast("Γράψε το επάγγελμά σου");
     if (!p.featured){ delete p.photos; p.verified = false; } else p.verified = true;
-    if (p.approx){ p.lat = Math.round(p.lat*200)/200; p.lng = Math.round(p.lng*200)/200; }
+    if (p.approx){ p.lat = Math.round(p.lat*500)/500; p.lng = Math.round(p.lng*500)/500; }   // περίπου ±100 μ.
     p.updated = Date.now(); delete p.sample;
     const ok = await Store.upsert(p);
     if (ok === null) return;
@@ -1111,14 +1126,20 @@ function drawForm(){
 }
 
 /* Επιλογή θέσης στον χάρτη */
-let picking = false;
-map.on("click", e => {
-  if (!picking) return;
-  picking = false; $("pickBanner").hidden = true;
-  draft.lat = e.latlng.lat; draft.lng = e.latlng.lng;
-  drawForm(); $("lStat").textContent = "✓ Ορίστηκε από τον χάρτη";
-});
-$("pickCancel").onclick = () => { picking=false; $("pickBanner").hidden=true; drawForm(); };
+/* Σταθερή πινέζα στο κέντρο: μετακινείς τον χάρτη από κάτω και πατάς «Εδώ είναι» */
+let picking = false, pickDone = null, pickCancelFn = null;
+function pickLocation(from, done, cancel){
+  closeModal(); picking = true; pickDone = done; pickCancelFn = cancel;
+  document.body.classList.add("picking"); $("pickPin").hidden = false; $("pickBanner").hidden = false;
+  setTimeout(() => { map.invalidateSize();
+    if (from && from.lat) map.setView([from.lat, from.lng], 17);
+    else if (state.me) map.setView([state.me.lat, state.me.lng], 17);
+    else map.setZoom(Math.max(map.getZoom(), 15)); }, 60);
+}
+function endPick(){ picking = false; document.body.classList.remove("picking"); $("pickPin").hidden = true; $("pickBanner").hidden = true; setTimeout(() => map.invalidateSize(), 60); }
+map.on("click", e => { if (picking) map.panTo(e.latlng); });
+$("pickOk").onclick = () => { const c = map.getCenter(), f = pickDone; endPick(); f && f({lat:c.lat, lng:c.lng}); };
+$("pickCancel").onclick = () => { const f = pickCancelFn; endPick(); f && f(); };
 
 /* ---------- Η θέση μου ---------- */
 function locate(cb){
