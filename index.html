@@ -45,7 +45,12 @@ header{background:linear-gradient(160deg,var(--brand) 0%,var(--brand2) 100%);col
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 .dot.pro{background:#fff;box-shadow:inset 0 0 0 3px var(--pro)}.chip.on .dot.pro{background:var(--pro);box-shadow:none}
 .dot.seek{background:var(--seek);box-shadow:0 0 0 2px rgba(255,255,255,.7)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr auto;gap:6px}
+.row2:has(#btnClear[hidden]){grid-template-columns:1fr 1fr}
+.clearbtn{background:var(--accent);color:var(--onaccent);border:0;font-weight:800;font-size:13px;border-radius:10px;padding:8px 10px;white-space:nowrap}
+.clearbtn[hidden]{display:none}
+.legend label{display:flex;align-items:center;gap:6px;margin:3px 0 0;padding-top:5px;border-top:1px solid var(--line);font-size:12px;color:var(--ink);font-weight:600;cursor:pointer}
+.legend label input{width:auto;margin:0;accent-color:var(--brand)}
 .row2 select,.specbtn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.22);font-size:13.5px;padding:8px 10px;border-radius:10px}
 .row2 select option{color:#17324D;background:#fff}
 .specbtn{text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -280,6 +285,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
       <option value="25">Έως 25 χλμ</option>
       <option value="50">Έως 50 χλμ</option>
     </select>
+    <button id="btnClear" class="clearbtn" hidden title="Εκκαθάριση φίλτρων">✕ Όλα</button>
   </div>
 </header>
 
@@ -289,6 +295,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
     <span><i style="background:var(--pro)"></i>Επαγγελματίες</span>
     <span><i style="background:var(--seek)"></i>Ζητούν εργασία</span>
     <span><i style="background:var(--accent)"></i>Προνομιακοί</span>
+    <label><input type="checkbox" id="chkAll" checked> Όλοι στον χάρτη</label>
   </div>
   <div id="pickPin" hidden><svg width="44" height="54" viewBox="0 0 28 34" style="display:block"><path d="M14 1a13 13 0 0 1 13 13c0 10-13 19-13 19S1 24 1 14A13 13 0 0 1 14 1z" fill="#F2B632" stroke="#17324D" stroke-width="1.5"/><circle cx="14" cy="14" r="5" fill="#17324D"/></svg></div>
   <div id="soon" hidden></div>
@@ -318,7 +325,7 @@ nav .cnt{position:absolute;top:3px;left:calc(50% + 10px);background:var(--brand)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
 <script>
 "use strict";
-const VERSION = "1.14";
+const VERSION = "1.15";
 document.getElementById("ver").textContent = "έκδ. " + VERSION;
 
 /* ---------- Επαγγέλματα: ίδια λίστα και κωδικοί με το Δρομολόγιο (μόνο τεχνικά) ---------- */
@@ -806,9 +813,11 @@ const state = { type:"all", specs:new Set(), radius:0, q:"", me:null, all:[] };
 
 function specLabel(){
   const s = state.specs, b = $("btnSpec");
-  b.textContent = !s.size ? "Επαγγέλματα: όλα ▾" : s.size===1 ? [...s][0] + " ▾" : `Επαγγέλματα: ${s.size} ▾`;
+  b.textContent = !s.size ? "Επαγγέλματα: όλα ▾" : s.size===1 ? tName([...s][0]) + " ▾" : `Επαγγέλματα: ${s.size} ▾`;
   b.classList.toggle("on", s.size>0);
   $("radius").classList.toggle("on", state.radius>0);
+  $("btnClear").hidden = !(s.size || state.radius || state.q || state.type !== "all");
+  $("chkAll").checked = !onlyFeatFar();
 }
 function origin(){ return state.me || map.getCenter(); }
 function filtered(type = state.type){
@@ -819,14 +828,33 @@ function filtered(type = state.type){
     .filter(p => !q || norm([p.name,specTxt(p),p.area,p.desc,...tradesOf(p).map(t=>catName((profById(t)||{}).c))].join(" ")).includes(q))
     .filter(p => !state.radius || p.dist <= state.radius)
     .filter(p => !p.hidden || p.id === Store.myId())
-    .sort((a,b) => (isFeat(b)-isFeat(a)) || (founderBoost(b)-founderBoost(a)) || (a.dist-b.dist));
+    .sort(rankCmp);
 }
+/* Κατάταξη:
+   1) προνομιακοί πρώτα — αλλά μεταξύ τους μετράει η απόσταση ανά χιλιόμετρο, ώστε ο καθένας να «κερδίζει» τη γειτονιά του,
+      και όσοι είναι στο ίδιο χιλιόμετρο αλλάζουν σειρά κάθε μέρα (δίκαιη εναλλαγή)
+   2) ιδρυτικά μέλη τον πρώτο χρόνο   3) απόσταση */
+const dayKey = () => new Date().toISOString().slice(0,10);
+const rot = p => licHash(p.id + "|" + dayKey());
+function rankCmp(a, b){
+  const fa = isFeat(a), fb = isFeat(b);
+  if (fa !== fb) return fb - fa;
+  if (fa && fb){
+    const ka = Math.floor(a.dist), kb = Math.floor(b.dist);
+    return (ka - kb) || (rot(a) - rot(b)) || (a.dist - b.dist);
+  }
+  return (founderBoost(b) - founderBoost(a)) || (a.dist - b.dist);
+}
+/* «Όλοι στον χάρτη» (προεπιλογή: ναι). Αν το βγάλεις, όταν ο χάρτης είναι μακριά φαίνονται μόνο οι προνομιακοί */
+const FAR_ZOOM = 14;
+const onlyFeatFar = () => Store.flag("onlyFeatFar");
+const pinVisible = p => !onlyFeatFar() || map.getZoom() >= FAR_ZOOM || isFeat(p) || p.id === Store.myId();
 
 function render(pins = true){
   const res = filtered(), mine = Store.myId();
   if (pins){
     layer.clearLayers();
-    const ms = res.map(p => {
+    const ms = res.filter(pinVisible).map(p => {
       const f = isFeat(p);
       const ic = L.divIcon({className:"",iconSize:f?[40,40]:[30,30],iconAnchor:f?[20,48]:[15,36],   // η μύτη της σταγόνας είναι στο μισό + μισή διαγώνιο
         html:`<div class="pinwrap"><div class="pin ${p.type}${f?" feat":""}${p.id===mine?" mine":""}"><span class="ic">${ico(mainTrade(p))}</span></div>${f?'<b class="fstar">★</b>':""}${p.founder?'<b class="fbadge">🏅</b>':""}</div>`});
@@ -1519,6 +1547,13 @@ document.querySelectorAll("#nav button[data-t]").forEach(c => c.onclick = () => 
 });
 $("btnSpec").onclick = openSpecFilter;
 $("radius").onchange = e => { state.radius = +e.target.value; render(); };
+$("chkAll").onchange = e => { Store.flag("onlyFeatFar", !e.target.checked); render();
+  toast(e.target.checked ? "Φαίνονται όλοι οι μάστορες" : "Από μακριά φαίνονται μόνο οι προνομιακοί — πλησίασε για να δεις όλους"); };
+map.on("zoomend", () => { if (onlyFeatFar() && !picking) render(); });
+$("btnClear").onclick = () => {
+  state.specs = new Set(); state.radius = 0; state.q = ""; $("q").value = ""; $("radius").value = "0";
+  setType("all"); toast("Τα φίλτρα καθαρίστηκαν");
+};
 let qt; $("q").oninput = e => { clearTimeout(qt); qt = setTimeout(()=>{ state.q = e.target.value; render(); },200); };
 map.on("moveend", () => { if (!state.me && !picking) render(state.radius > 0); });
 $("sheetHead").onclick = () => { const s=$("sheet"); s.classList.toggle("open"); $("arrow").textContent = s.classList.contains("open")?"Χάρτης ▼":"Λίστα ▲"; setTimeout(()=>map.invalidateSize(),300); };
