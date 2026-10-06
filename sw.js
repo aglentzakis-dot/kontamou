@@ -4,7 +4,7 @@
    ΣΗΜΑΝΤΙΚΟ: σε κάθε νέα έκδοση αλλάζει ο αριθμός στη γραμμή CACHE,
    ώστε το κινητό να παίρνει αμέσως την καινούργια. */
 const CACHE = "kontamou-1.36";
-const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-512-maskable.png", "./apple-touch-icon.png"];
+const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-512-maskable.png", "./apple-touch-icon.png", "./othoni-enarxis.js", "./othoni-enarxis.webp"];
 // Βιβλιοθήκες με σταθερή έκδοση: φυλάγονται μία φορά
 const LIBS = ["cdnjs.cloudflare.com", "www.gstatic.com"];
 
