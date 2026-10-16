@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Κοντά μου — οι τεχνίτες της γειτονιάς σου</title>
+<meta name="theme-color" content="#17324D">
+<meta name="description" content="Κοντά μου: χάρτης με μάστορες, βοηθούς σπιτιού, φροντιστές κατοικιδίων, δασκάλους και επαγγελματίες υγείας που έρχονται σε σένα.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Προεπισκόπηση όταν στέλνεις τον σύνδεσμο σε μήνυμα -->
+<meta property="og:title" content="Κοντά μου — βρες τον άνθρωπο που χρειάζεσαι, εκεί που τον χρειάζεσαι">
+<meta property="og:description" content="Μάστορες, βοήθεια για το σπίτι, κατοικίδια, μαθήματα και υγεία στο σπίτι — σε έναν χάρτη, κοντά σου.">
+<meta property="og:image" content="icon-512.png">
+<meta property="og:type" content="website">
+<style>
+:root{--brand:#17324D;--accent:#F2B632;--paper:#EDF1F2;--card:#fff;--ink:#17324D;--muted:#5E7185;--line:#D6DEE3;--green:#2E7D5B;--red:#C62828}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:system-ui,"Segoe UI",Roboto,"Noto Sans",Arial,sans-serif;background:var(--paper);color:var(--ink);font-size:16px;line-height:1.5}
+.wrap{max-width:540px;margin:0 auto;padding:0 16px 40px}
+header{background:var(--brand);color:#fff;text-align:center;padding:30px 16px 34px;border-radius:0 0 22px 22px}
+header img{width:76px;height:auto;display:block;margin:0 auto}
+header h1{margin:12px 0 4px;font-size:30px;font-weight:800}
+header p{margin:0;opacity:.9;font-size:15.5px}
+.badge{display:inline-block;margin-top:14px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-radius:20px;padding:5px 13px;font-size:13.5px;font-weight:600}
+.btns{margin:-22px auto 0;max-width:508px;padding:0 16px;position:relative;z-index:2}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:16px 18px;border-radius:14px;border:0;font:inherit;font-size:17px;font-weight:800;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 12px rgba(23,50,77,.16);cursor:pointer}
+.btn.main{background:var(--accent);color:var(--brand)}
+.btn.ghost{background:var(--card);color:var(--brand);border:1.5px solid var(--line);box-shadow:none;font-size:16px}
+.btn.red{background:var(--red);color:#fff}
+.btn:active{transform:translateY(1px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 4px;margin-top:14px}
+.card h2{margin:0 0 10px;font-size:18px;font-weight:800}
+.card p{margin:0 0 12px}
+.note{background:#FFF6E0;border:1px solid #F0DCA6;border-radius:16px;padding:14px 16px;margin-top:14px}
+.note b{display:block;margin-bottom:4px}.note p{margin:0;font-size:15px}
+.inapp{background:#FDECEA;border:2px solid var(--red);border-radius:16px;padding:16px;margin-top:14px}
+.inapp h2{margin:0 0 6px;font-size:19px;color:var(--red)}
+.inapp p{margin:0 0 12px;font-size:15.5px}
+.inapp .btn{margin-bottom:8px}
+.tabs{display:flex;gap:8px;margin:0 0 14px}
+.tabs button{flex:1;padding:10px 6px;border-radius:11px;border:1.5px solid var(--line);background:var(--card);color:var(--muted);font:inherit;font-weight:700;font-size:14.5px;cursor:pointer}
+.tabs button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.steps{counter-reset:s;list-style:none;margin:0;padding:0}
+.steps li{counter-increment:s;position:relative;padding:0 0 14px 38px;margin:0;font-size:15.5px}
+.steps li::before{content:counter(s);position:absolute;left:0;top:-1px;width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.feat{list-style:none;margin:0;padding:0}
+.feat li{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:15.5px}
+.feat li:last-child{border-bottom:0}
+.feat .e{flex:none;font-size:20px;line-height:1.3}
+details{border-bottom:1px solid var(--line);padding:11px 0}
+details:last-of-type{border-bottom:0}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-size:15.5px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+details[open] summary::after{transform:rotate(180deg)}
+details p{margin:8px 0 2px;font-size:15px;color:#3d5265}
+footer{text-align:center;color:var(--muted);font-size:13.5px;margin-top:24px;line-height:1.7}
+footer a{color:var(--brand)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <img src="pineza-g.png" alt="">
+  <h1>Κοντά μου</h1>
+  <p id="sub">Βρες τον άνθρωπο που χρειάζεσαι,<br>εκεί που τον χρειάζεσαι.</p>
+  <span class="badge" id="why">Μάστορες · Σπίτι · Κατοικίδια · Μαθήματα · Υγεία στο σπίτι</span>
+</header>
+
+<div class="btns">
+  <button class="btn main" id="install" hidden>⬇ Εγκατάσταση στο κινητό</button>
+  <a class="btn main" id="open" href="index.html">Άνοιγμα της εφαρμογής</a>
+  <a class="btn ghost" href="#odigies">Πώς μπαίνει στην αρχική οθόνη</a>
+</div>
+
+<div class="wrap">
+
+  <!-- Μόνο όταν ο σύνδεσμος άνοιξε μέσα σε Messenger, Facebook, Instagram, Viber κ.λπ. -->
+  <div class="inapp" id="inapp" hidden>
+    <h2>⚠️ Άνοιξέ το στον Chrome</h2>
+    <p>Είσαι μέσα σε άλλη εφαρμογή (π.χ. Messenger). Εδώ <b>δεν γίνεται σύνδεση με τη Google ούτε εγκατάσταση</b>. Άνοιξε τη σελίδα στον κανονικό περιηγητή του κινητού σου.</p>
+    <button class="btn red" id="toChrome" hidden>🌐 Άνοιγμα στον Chrome</button>
+    <button class="btn ghost" id="copy">📋 Αντιγραφή συνδέσμου</button>
+    <p id="iaHow" style="font-size:14px;margin:6px 0 0"></p>
+  </div>
+
+  <div class="note" id="ctx" hidden></div>
+
+  <div class="card" id="odigies">
+    <h2>Βάλ' την στην αρχική οθόνη</h2>
+    <div class="tabs">
+      <button data-t="and" class="on">Android</button>
+      <button data-t="ios">iPhone</button>
+      <button data-t="pc">Υπολογιστής</button>
+    </div>
+    <ol class="steps" data-p="and">
+      <li>Άνοιξε τον σύνδεσμο με το <b>Chrome</b> (όχι μέσα από το Messenger, το Facebook ή το Viber).</li>
+      <li>Πάτα το κίτρινο κουμπί <b>«Εγκατάσταση στο κινητό»</b> πιο πάνω. Αν δεν το βλέπεις, πάτα τις <b>τρεις τελείες</b> πάνω δεξιά.</li>
+      <li>Διάλεξε <b>«Εγκατάσταση εφαρμογής»</b> ή «Προσθήκη στην αρχική οθόνη» και πάτα <b>Εγκατάσταση</b>.</li>
+      <li>Το εικονίδιο μπαίνει στην αρχική οθόνη, σαν κανονική εφαρμογή.</li>
+    </ol>
+    <ol class="steps" data-p="ios" hidden>
+      <li>Άνοιξε τον σύνδεσμο με το <b>Safari</b> (μόνο αυτό μπορεί να εγκαταστήσει).</li>
+      <li>Πάτα το εικονίδιο <b>Κοινή χρήση</b> κάτω στη μέση — το τετράγωνο με το βελάκι προς τα πάνω.</li>
+      <li>Κατέβα λίγο και διάλεξε <b>«Προσθήκη στην οθόνη Home»</b>.</li>
+      <li>Πάτα <b>Προσθήκη</b> πάνω δεξιά. Το εικονίδιο μπαίνει στην αρχική οθόνη.</li>
+    </ol>
+    <ol class="steps" data-p="pc" hidden>
+      <li>Άνοιξε τον σύνδεσμο με <b>Chrome</b> ή <b>Edge</b>.</li>
+      <li>Πάτα το εικονίδιο <b>εγκατάστασης</b> στη δεξιά άκρη της γραμμής διευθύνσεων.</li>
+      <li>Πάτα <b>Εγκατάσταση</b>. Δουλεύει και σκέτη μέσα στο πρόγραμμα περιήγησης.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Τι βρίσκεις</h2>
+    <ul class="feat">
+      <li><span class="e">🔧</span><span><b>Μάστορες</b> — ηλεκτρολόγους, υδραυλικούς, ελαιοχρωματιστές, κλειδαράδες και πολλούς άλλους, κοντά σου.</span></li>
+      <li><span class="e">🏠</span><span><b>Σπίτι και κήπος</b> — καθαρισμό, σιδέρωμα, κηπουρική, μετακομίσεις.</span></li>
+      <li><span class="e">🐾</span><span><b>Κατοικίδια</b> — βόλτα, φύλαξη, εκπαίδευση, περιποίηση.</span></li>
+      <li><span class="e">📚</span><span><b>Μαθήματα</b> — σχολικά, γλώσσες, μουσική, υπολογιστές.</span></li>
+      <li><span class="e">🩺</span><span><b>Υγεία στο σπίτι</b> — νοσηλευτές, φυσικοθεραπευτές, εξετάσεις, φροντίδα ηλικιωμένων.</span></li>
+      <li><span class="e">📣</span><span><b>Ζήτα και σου απαντούν</b> — γράφεις τι χρειάζεσαι και σου στέλνουν όσοι είναι κοντά.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Είσαι επαγγελματίας;</h2>
+    <p>Γράψου δωρεάν σε 2 λεπτά, χωρίς προμήθεια. Δηλώνεις ειδικότητα και περιοχή, και σε βρίσκουν οι πελάτες της γειτονιάς σου. Οι πρώτοι σε κάθε περιοχή γίνονται <b>🏅 Ιδρυτικά μέλη</b>.</p>
+  </div>
+
+  <div class="card">
+    <h2>Συχνές απορίες</h2>
+    <details><summary>Κοστίζει κάτι;</summary>
+      <p>Όχι. Η αναζήτηση και η εγγραφή είναι δωρεάν. Πληρωμένη είναι μόνο η προαιρετική ★ προνομιακή προβολή για επαγγελματίες, που σημειώνεται πάντα ως διαφήμιση.</p></details>
+    <details><summary>Γιατί θέλει σύνδεση με τη Google;</summary>
+      <p>Για να βλέπουν τα στοιχεία των επαγγελματιών μόνο πραγματικοί λογαριασμοί, και να μην μπορεί κανείς να αλλάξει τα στοιχεία κάποιου άλλου. Δεν παίρνουμε κωδικούς.</p></details>
+    <details><summary>Ελέγχετε τους επαγγελματίες;</summary>
+      <p>Όχι. Το «Κοντά μου» είναι κατάλογος· τα στοιχεία τα δηλώνει ο καθένας και η συμφωνία γίνεται απευθείας μεταξύ σας. Ζήτα γραπτή προσφορά και απόδειξη, και ανέφερε κάθε πρόβλημα με το «⚑ Αναφορά».</p></details>
+    <details><summary>Πώς παίρνω τη νέα έκδοση;</summary>
+      <p>Μόνη της. Κλείσε και ξανάνοιξε την εφαρμογή.</p></details>
+  </div>
+
+  <footer>
+    από το Δρομολόγιο · © 2026 Ανδρέας Μ. Γλεντζάκης<br>
+    Πρόβλημα ή ιδέα; <a href="mailto:aglentzakis.apps@gmail.com">Στείλε μου μήνυμα</a>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var ua = navigator.userAgent || "", q = location.search || "", app = "index.html" + q + (location.hash || "");
+  var android = /Android/i.test(ua), ios = /iPhone|iPad|iPod/i.test(ua);
+  var inApp = /FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|Viber|Line\/|MicroMessenger|Snapchat|TikTok|; wv\)/i.test(ua);
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* Αν είναι ήδη εγκατεστημένη, πάμε κατευθείαν μέσα (με ό,τι έφερε ο σύνδεσμος) */
+  if (matchMedia("(display-mode: standalone)").matches) { location.replace(app); return; }
+
+  $("open").href = app;
+
+  /* Τι σου έστειλαν: προφίλ επαγγελματία ή πρόσκληση από συνάδελφο */
+  var P = new URLSearchParams(q), ctx = $("ctx");
+  if (P.get("p")) { ctx.innerHTML = "<b>👤 Σου έστειλαν το προφίλ ενός επαγγελματία</b><p>Πάτα «Άνοιγμα της εφαρμογής» για να το δεις.</p>"; ctx.hidden = false; $("open").textContent = "👤 Δες το προφίλ"; }
+  else if (P.get("ref")) { ctx.innerHTML = "<b>🤝 Σε προσκάλεσε συνάδελφος</b><p>Άνοιξε την εφαρμογή και πάτα «Είμαι μάστορας» (ή την ειδικότητά σου) για να γραφτείς δωρεάν.</p>"; ctx.hidden = false; }
+
+  /* Μέσα σε Messenger/Facebook κ.λπ.: εξήγηση και άνοιγμα στον Chrome */
+  if (inApp) {
+    $("inapp").hidden = false; $("open").className = "btn ghost";
+    var full = location.href;
+    if (android) {
+      $("toChrome").hidden = false;
+      $("toChrome").onclick = function(){ location.href = "intent://" + full.replace(/^https?:\/\//, "") + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodeURIComponent(full) + ";end"; };
+      $("iaHow").innerHTML = "Αν δεν ανοίξει: πάτα τις <b>⋮ τρεις τελείες</b> πάνω δεξιά και διάλεξε «<b>Άνοιγμα σε πρόγραμμα περιήγησης</b>».";
+    } else {
+      $("iaHow").innerHTML = "Πάτα τις <b>··· τρεις τελείες</b> ή το εικονίδιο της πυξίδας και διάλεξε «<b>Άνοιγμα στο Safari</b>».";
+    }
+    $("copy").onclick = function(){
+      var done = function(){ $("copy").textContent = "✓ Αντιγράφηκε — επικόλλησέ τον στον Chrome"; };
+      if (navigator.clipboard) navigator.clipboard.writeText(full).then(done, function(){ prompt("Αντίγραψε τον σύνδεσμο:", full); });
+      else prompt("Αντίγραψε τον σύνδεσμο:", full);
+    };
+  }
+
+  /* Καρτέλες οδηγιών, ανάλογα με τη συσκευή */
+  var btns = document.querySelectorAll(".tabs button");
+  function show(t){
+    btns.forEach(function(b){ b.classList.toggle("on", b.dataset.t === t); });
+    document.querySelectorAll(".steps").forEach(function(o){ o.hidden = (o.dataset.p !== t); });
+  }
+  btns.forEach(function(b){ b.onclick = function(){ show(b.dataset.t); }; });
+  show(ios ? "ios" : (android ? "and" : "pc"));
+
+  /* Κουμπί εγκατάστασης — μόνο όταν το κινητό το επιτρέπει */
+  var ev = null, ib = $("install"), op = $("open");
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); ev = e; ib.hidden = false; op.className = "btn ghost"; });
+  ib.onclick = function(){ if (!ev) return; ev.prompt(); ev.userChoice.then(function(){ ev = null; ib.hidden = true; }); };
+  window.addEventListener("appinstalled", function(){ ib.hidden = true; op.className = "btn main"; op.textContent = "Άνοιξε την εφαρμογή"; });
+})();
+</script>
+</body>
+</html>
