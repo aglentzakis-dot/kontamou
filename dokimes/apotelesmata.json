@@ -1,6 +1,6 @@
 {
- "pass": 78,
- "fail": 12,
+ "pass": 91,
+ "fail": 0,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -69,8 +69,8 @@
    "group": "Απομόνωση χρηστών",
    "name": "Τρίτος δεν στέλνει αίτημα στο όνομα άλλου",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Απομόνωση χρηστών",
@@ -223,22 +223,22 @@
    "group": "Αποκλεισμός υγείας και ανηλίκων",
    "name": "Έλεγχος ελέγχου: κανονική ζήτηση",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Αποκλεισμός υγείας και ανηλίκων",
    "name": "Ζήτηση στον κόσμο «Υγεία» απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Αποκλεισμός υγείας και ανηλίκων",
    "name": "Ζήτηση για ειδική αγωγή απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Αποδεικτικά αποδοχής",
@@ -398,22 +398,22 @@
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Ο χρήστης κάνει καταγγελία (έλεγχος ελέγχου)",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Καταγγελία στο όνομα άλλου απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Καταγγελία που γεννιέται «κλειστή» απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
@@ -440,13 +440,20 @@
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Διαχειριστής βάζει «σε εξέταση» με νέα εγγραφή ιστορικού",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Εγγραφή ιστορικού με ξένο email απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "Καταγγελίες και επανεξέταση",
+   "name": "Δεύτερη εγγραφή σε υπάρχον ιστορικό επιτρέπεται",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
    "result": "ΣΩΣΤΟ",
    "err": ""
   },
@@ -475,8 +482,8 @@
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Κλείσιμο με αποτέλεσμα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
@@ -503,22 +510,22 @@
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Κρυμμένος χρήστης ζητά επανεξέταση",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Επανεξέταση με άλλο λόγο απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
    "name": "Τρίτος δεν ζητά επανεξέταση για άλλον",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Provided document reference is from a different Firestore instance."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Καταγγελίες και επανεξέταση",
