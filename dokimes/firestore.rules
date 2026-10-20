@@ -270,7 +270,8 @@ service cloud.firestore {
         && request.resource.data.status in ['review', 'closed'] && request.resource.data.upd == request.time
         && request.resource.data.hist is list && request.resource.data.hist.size() <= 60
         && request.resource.data.hist.size() == resource.data.get('hist', []).size() + 1
-        && request.resource.data.hist[0:resource.data.get('hist', []).size()] == resource.data.get('hist', [])
+        && (resource.data.get('hist', []).size() == 0
+            || request.resource.data.hist[0:resource.data.get('hist', []).size()] == resource.data.get('hist', []))
         && request.resource.data.hist[request.resource.data.hist.size() - 1].by == request.auth.token.email
         && (request.resource.data.status == 'closed'
             ? (request.resource.data.closedAt == request.time && str(request.resource.data.get('outcome', ''), 300))

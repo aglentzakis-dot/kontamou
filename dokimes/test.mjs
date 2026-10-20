@@ -55,7 +55,7 @@ async function t(group, name, expect, fn){
   out.push({ group, name, expect: expect ? "ΕΠΙΤΡΕΠΕΤΑΙ" : "ΑΠΟΡΡΙΠΤΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
   console.log((ok ? "✓" : "✗") + " [" + group + "] " + name + (ok ? "" : "  → " + err));
 }
-const withRate = (db, uid, ops) => { const b = writeBatch(db); b.set(doc(db, "kontamou_rate/" + uid), { t: serverTimestamp() }); ops(b); return b.commit(); };
+const withRate = (db, uid, ops) => { db = db;  const b = writeBatch(db); b.set(doc(db, "kontamou_rate/" + uid), { t: serverTimestamp() }); ops(b, db); return b.commit(); };
 
 const G1 = "Απομόνωση χρηστών";
 await t(G1, "Ανώνυμος δεν διαβάζει προφίλ", false, () => getDoc(doc(ctx.anon(), "kontamou_regions/attiki/profiles/alice")));
@@ -67,7 +67,7 @@ await t(G1, "Τηλέφωνο με «αίτημα επικοινωνίας» δ�
 await t(G1, "Τρίτος δεν διαβάζει ξένο αίτημα", false, () => getDoc(doc(ctx.eve(), "kontamou_requests/alice_bob")));
 await t(G1, "Ο πελάτης δεν αποδέχεται μόνος του το αίτημά του", false, () => updateDoc(doc(ctx.bob(), "kontamou_requests/alice_bob"), { status: "accepted", ts: serverTimestamp() }));
 await t(G1, "Ο επαγγελματίας αποδέχεται αίτημα (έλεγχος ελέγχου)", true, () => updateDoc(doc(ctx.alice(), "kontamou_requests/alice_bob"), { status: "accepted", ts: serverTimestamp() }));
-await t(G1, "Τρίτος δεν στέλνει αίτημα στο όνομα άλλου", false, () => withRate(ctx.eve(), "eve", b => b.set(doc(ctx.eve(), "kontamou_requests/alice_bob"), { pro: "alice", client: "bob", clientName: "Bob", msg: "x", status: "pending", ts: serverTimestamp() })));
+await t(G1, "Τρίτος δεν στέλνει αίτημα στο όνομα άλλου", false, () => withRate(ctx.eve(), "eve", (b, db) => b.set(doc(db, "kontamou_requests/alice_bob"), { pro: "alice", client: "bob", clientName: "Bob", msg: "x", status: "pending", ts: serverTimestamp() })));
 await t(G1, "Τρίτος δεν διαβάζει ξένα αγαπημένα", false, () => getDoc(doc(ctx.eve(), "kontamou_favs/bob")));
 await t(G1, "Τρίτος δεν διαβάζει ξένη αποδοχή όρων", false, () => getDoc(doc(ctx.eve(), "kontamou_consent/bob")));
 await t(G1, "Τρίτος χωρίς προφίλ δεν διαβάζει ζητήσεις", false, () => getDoc(doc(ctx.eve(), "kontamou_needs/n1")));
@@ -95,9 +95,9 @@ await t(G2, "Βοήθεια ηλικιωμένων (ψώνια) απορρίπτ
 await t(G2, "Ειδικότητα υγείας μέσα σε άλλο κόσμο απορρίπτεται", false, () => newProf(ctx.eve(), "eve", { world: "tech", trades: ["md_nurse"] }));
 await t(G2, "Υπάρχον προφίλ δεν μεταφέρεται στην «Υγεία»", false, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "health", trades: ["md_doc"], ts: serverTimestamp() }));
 const need = extra => ({ uid: "bob", name: "Bob", world: "tech", trade: "plumb", region: "attiki", lat: 37.962, lng: 23.754, area: "Βύρωνας", text: "Χρειάζομαι βοήθεια άμεσα", when: "now", status: "open", ts: serverTimestamp(), ...extra });
-await t(G2, "Έλεγχος ελέγχου: κανονική ζήτηση", true, () => withRate(ctx.bob(), "bob", b => b.set(doc(ctx.bob(), "kontamou_needs/n2"), need({}))));
-await t(G2, "Ζήτηση στον κόσμο «Υγεία» απορρίπτεται", false, () => withRate(ctx.bob(), "bob", b => b.set(doc(ctx.bob(), "kontamou_needs/n2"), need({ world: "health", trade: "md_nurse" }))));
-await t(G2, "Ζήτηση για ειδική αγωγή απορρίπτεται", false, () => withRate(ctx.bob(), "bob", b => b.set(doc(ctx.bob(), "kontamou_needs/n2"), need({ world: "learn", trade: "l_sped" }))));
+await t(G2, "Έλεγχος ελέγχου: κανονική ζήτηση", true, () => withRate(ctx.bob(), "bob", (b, db) => b.set(doc(db, "kontamou_needs/n2"), need({}))));
+await t(G2, "Ζήτηση στον κόσμο «Υγεία» απορρίπτεται", false, () => withRate(ctx.bob(), "bob", (b, db) => b.set(doc(db, "kontamou_needs/n2"), need({ world: "health", trade: "md_nurse" }))));
+await t(G2, "Ζήτηση για ειδική αγωγή απορρίπτεται", false, () => withRate(ctx.bob(), "bob", (b, db) => b.set(doc(db, "kontamou_needs/n2"), need({ world: "learn", trade: "l_sped" }))));
 
 const G3 = "Αποδεικτικά αποδοχής";
 const ack = extra => ({ uid: "bob", role: "client", kind: "request", ref: "alice_bob", other: "alice", stmt: "ΠΕΛ-2026-10-20", terms: "2026-10-20", at: serverTimestamp(), ...extra });
@@ -130,14 +130,17 @@ await t(G4, "Διαχειριστής δεν σβήνει πρόσφατη συ�
 
 const G5 = "Καταγγελίες και επανεξέταση";
 const rep = extra => ({ to: "alice", from: "bob", reason: "Απάτη ή εξαπάτηση", text: "Ζήτησε χρήματα", region: "attiki", case: "ΑΝ-261020-CCCC", status: "open", ts: serverTimestamp(), ...extra });
-await t(G5, "Ο χρήστης κάνει καταγγελία (έλεγχος ελέγχου)", true, () => withRate(ctx.bob(), "bob", b => b.set(doc(ctx.bob(), "kontamou_reports/alice_bob_1700000000000"), rep({}))));
-await t(G5, "Καταγγελία στο όνομα άλλου απορρίπτεται", false, () => withRate(ctx.eve(), "eve", b => b.set(doc(ctx.eve(), "kontamou_reports/alice_bob_1700000000001"), rep({}))));
-await t(G5, "Καταγγελία που γεννιέται «κλειστή» απορρίπτεται", false, () => withRate(ctx.bob(), "bob", b => b.set(doc(ctx.bob(), "kontamou_reports/alice_bob_1700000000002"), rep({ status: "closed" }))));
+await t(G5, "Ο χρήστης κάνει καταγγελία (έλεγχος ελέγχου)", true, () => withRate(ctx.bob(), "bob", (b, db) => b.set(doc(db, "kontamou_reports/alice_bob_1700000000000"), rep({}))));
+await t(G5, "Καταγγελία στο όνομα άλλου απορρίπτεται", false, () => withRate(ctx.eve(), "eve", (b, db) => b.set(doc(db, "kontamou_reports/alice_bob_1700000000001"), rep({}))));
+await t(G5, "Καταγγελία που γεννιέται «κλειστή» απορρίπτεται", false, () => withRate(ctx.bob(), "bob", (b, db) => b.set(doc(db, "kontamou_reports/alice_bob_1700000000002"), rep({ status: "closed" }))));
 await t(G5, "Ο καταγγέλλων βλέπει την καταγγελία του", true, () => getDoc(doc(ctx.bob(), "kontamou_reports/alice_bob")));
 await t(G5, "Ο καταγγελλόμενος δεν βλέπει την καταγγελία", false, () => getDoc(doc(ctx.alice(), "kontamou_reports/alice_bob")));
 await t(G5, "Ο καταγγέλλων δεν αλλάζει την κατάσταση", false, () => updateDoc(doc(ctx.bob(), "kontamou_reports/alice_bob"), { status: "closed" }));
 await t(G5, "Διαχειριστής βάζει «σε εξέταση» με νέα εγγραφή ιστορικού", true, () => updateDoc(doc(ctx.co(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "", by: CO }], upd: serverTimestamp() }));
 await t(G5, "Εγγραφή ιστορικού με ξένο email απορρίπτεται", false, () => updateDoc(doc(ctx.co(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "", by: OWNER }], upd: serverTimestamp() }));
+await t(G5, "Δεύτερη εγγραφή σε υπάρχον ιστορικό επιτρέπεται", true, async () => {
+  await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "αρχικό", by: CO }] }));
+  return updateDoc(doc(ctx.co(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "αρχικό", by: CO }, { at: 2, st: "review", note: "", by: CO }], upd: serverTimestamp() }); });
 await t(G5, "Διαχειριστής δεν ξαναγράφει παλιό ιστορικό", false, async () => {
   await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "αρχικό", by: CO }] }));
   return updateDoc(doc(ctx.co(), "kontamou_reports/alice_bob"), { status: "review", hist: [{ at: 1, st: "review", note: "αλλαγμένο", by: CO }, { at: 2, st: "review", note: "", by: CO }], upd: serverTimestamp() }); });
@@ -150,9 +153,9 @@ await t(G5, "Κλειστή υπόθεση δεν αλλάζει αποτέλε�
 await t(G5, "Διαχειριστής δεν σβήνει ανοιχτή καταγγελία", false, () => deleteDoc(doc(ctx.co(), "kontamou_reports/alice_bob")));
 await t(G5, "Κλειστή καταγγελία σβήνεται μετά από 180 ημέρες", true, () => deleteDoc(doc(ctx.co(), "kontamou_reports/closedold")));
 const app = extra => ({ to: "alice", from: "alice", reason: "Αίτημα επανεξέτασης (ένσταση)", text: "Τα διόρθωσα", region: "attiki", case: "ΑΝ-261020-DDDD", status: "open", ts: serverTimestamp(), ...extra });
-await t(G5, "Κρυμμένος χρήστης ζητά επανεξέταση", true, () => withRate(ctx.alice(), "alice", b => b.set(doc(ctx.alice(), "kontamou_reports/alice_appeal_1700000000000"), app({}))));
-await t(G5, "Επανεξέταση με άλλο λόγο απορρίπτεται", false, () => withRate(ctx.alice(), "alice", b => b.set(doc(ctx.alice(), "kontamou_reports/alice_appeal_1700000000000"), app({ reason: "Άλλο" }))));
-await t(G5, "Τρίτος δεν ζητά επανεξέταση για άλλον", false, () => withRate(ctx.eve(), "eve", b => b.set(doc(ctx.eve(), "kontamou_reports/alice_appeal_1700000000000"), app({ from: "eve" }))));
+await t(G5, "Κρυμμένος χρήστης ζητά επανεξέταση", true, () => withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({}))));
+await t(G5, "Επανεξέταση με άλλο λόγο απορρίπτεται", false, () => withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({ reason: "Άλλο" }))));
+await t(G5, "Τρίτος δεν ζητά επανεξέταση για άλλον", false, () => withRate(ctx.eve(), "eve", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({ from: "eve" }))));
 await t(G5, "Συνδιαχειριστής δεν φτιάχνει καταγγελία για λογαριασμό άλλου", false, () => setDoc(doc(ctx.co(), "kontamou_reports/alice_bob_1700000000009"), rep({ from: "bob" })));
 
 const G6 = "Αρχείο ενεργειών";
