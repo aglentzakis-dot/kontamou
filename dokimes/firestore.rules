@@ -1,0 +1,374 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    // Κύριος διαχειριστής: μόνο αυτός αλλάζει τη λίστα διαχειριστών
+    function isOwner() { return signedIn() && request.auth.token.email == "aglentzakis.apps@gmail.com" && request.auth.token.email_verified == true; }
+    // Διαχειριστής: ο κύριος ή όσοι έχει προσθέσει εκείνος στο kontamou_admins/{email}
+    function isAdmin() { return isOwner() || (signedIn() && request.auth.token.email_verified == true
+      && request.auth.token.email is string
+      && exists(/databases/$(database)/documents/kontamou_admins/$(request.auth.token.email))); }
+    function str(v, n) { return v is string && v.size() <= n; }
+    function statsP(rid) { return /databases/$(database)/documents/kontamou_stats/$(rid); }
+    function profP(rid, uid) { return /databases/$(database)/documents/kontamou_regions/$(rid)/profiles/$(uid); }
+    function ownerP(uid) { return /databases/$(database)/documents/kontamou_owner/$(uid); }
+    function rateP(uid) { return /databases/$(database)/documents/kontamou_rate/$(uid); }
+    function reqP(pro, client) { return /databases/$(database)/documents/kontamou_requests/$(pro + '_' + client); }
+    function regionOpen(rid) { return exists(statsP(rid)) && get(statsP(rid)).data.get('open', false) == true; }
+    function throttled() { return getAfter(rateP(me())).data.t == request.time; }
+    function proBefore(rid) { return exists(profP(rid, me())) && get(profP(rid, me())).data.type == 'pro'; }
+    function proAfter(rid) { return existsAfter(profP(rid, me())) && getAfter(profP(rid, me())).data.type == 'pro'; }
+    function onGrid(x) { return math.abs(x * 500 - math.round(x * 500)) < 0.001; }
+    function cfgP() { return /databases/$(database)/documents/kontamou_config/worlds; }
+    function worldOk(w) { return w == 'tech' || isAdmin() || (exists(cfgP()) && w in get(cfgP()).data.get('open', [])); }
+    function cfgTP() { return /databases/$(database)/documents/kontamou_config/trades; }
+    function xids(w) { return exists(cfgTP()) ? get(cfgTP()).data.get('ids', {}).get(w, []) : []; }
+    function hr(v) { return v is string && (v.size() == 0 || v.matches('^([01][0-9]|2[0-3]):[0-5][0-9]-([01][0-9]|2[0-3]):[0-5][0-9]$')); }
+    function same(k) { return request.resource.data.get(k, null) == resource.data.get(k, null); }
+    // Αποκλεισμένος λογαριασμός: δεν στέλνει αιτήματα, κριτικές, ζητήσεις ή απαντήσεις
+    function img(v) { return v is string && v.size() < 400000 && v.matches('^data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$'); }
+    function notBanned() { return !exists(/databases/$(database)/documents/kontamou_bans/$(me())); }
+    // Ορατό προφίλ: υπάρχει, δεν είναι κρυμμένο (από τον ίδιο ή τον διαχειριστή) και η περιοχή του έχει ανοίξει
+    function visibleUid(uid) {
+      let o = ownerP(uid);
+      return exists(o) && exists(profP(get(o).data.region, uid))
+        && get(profP(get(o).data.region, uid)).data.hidden == false
+        && get(profP(get(o).data.region, uid)).data.adminHidden == false
+        && regionOpen(get(o).data.region);
+    }
+
+    function validProfile(rid, uid) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['uid','region','type','name','trades','customName','area','lat','lng','exact','shop',
+                               'radius','job','years','desc','contact','hasPhone','hasEmail','hidden','adminHidden',
+                               'featured','verified','proUntil','founder','refBy','created','ts','fromDromologio','dromoAt',
+                               'world','levels','modes','availDay','price','freq','supplies','animals','hours','offHol','offHide','regNo','hideWhy','verAt','verWhat'])
+        && d.uid == uid && d.region == rid
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 60
+        && d.trades is list && d.trades.size() >= 1 && d.trades.size() <= 3
+        && ((d.get('world', 'tech') == 'tech' && d.trades.hasOnly(['electric', 'plumb', 'cool', 'heat', 'gas', 'heatpump', 'solar', 'paint', 'drywall', 'plaster', 'tile', 'marble', 'builder', 'mason', 'paving', 'roof', 'insul', 'thermal', 'gutter', 'wood', 'doors', 'alu', 'iron', 'glass', 'lock', 'awning', 'alarm', 'network', 'smart', 'pc', 'tv', 'appl', 'electronic', 'pos', 'lift', 'pool', 'drain', 'pest', 'cleanpro', 'windows', 'carpet', 'pressure', 'garden', 'tree', 'irrig', 'spray', 'earth', 'handy', 'autoel', 'mobilemech', 'furniture', 'floors', 'sander', 'gardencrew', 'nursery', 'ducts', 'biocl', 'tyre', 'roadside', 'fire', 'evcharge', 'sat', 'refrig', 'fridge', 'coffee', 'proequip', 'extinguisher', 'other', 'd_phone', 'd_help'].concat(xids('tech'))))
+         || (d.get('world', 'tech') == 'home' && d.trades.hasOnly(['cleanpro', 'h_rental', 'h_stairs', 'windows', 'carpet', 'pressure', 'h_iron', 'h_sew', 'handy', 'furniture', 'h_org', 'h_check', 'h_cook', 'garden', 'tree', 'irrig', 'g_lawn', 'pest', 'biocl', 'h_other', 'smalltrans', 'mv_bulky', 'courier', 'e_other'].concat(xids('home'))))
+         || (d.get('world', 'tech') == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other'].concat(xids('pets'))))
+         || (d.get('world', 'tech') == 'car' && d.trades.hasOnly(['roadside', 'mobilemech', 'autoel', 'tyre', 'c_key', 'c_wash', 'c_glass', 'c_other'].concat(xids('car'))))
+         || (d.get('world', 'tech') == 'learn' && d.trades.hasOnly(['l_uni', 'l_en', 'l_lang', 'l_gr4f', 'l_music', 'l_art', 'l_pc', 'l_other'].concat(xids('learn'))))
+         || (d.get('world', 'tech') == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands')))))
+        && (!('levels' in d) || (d.levels is list && d.levels.size() <= 5 && d.levels.hasOnly(['uni', 'adult'])))
+        && (!('modes' in d) || (d.modes is list && d.modes.size() <= 3 && d.modes.hasOnly(['go', 'place', 'online'])))
+        && (!('availDay' in d) || (d.availDay is string && d.availDay.size() == 10))
+        && str(d.get('price', ''), 40) && str(d.get('regNo', ''), 80) && str(d.get('hideWhy', ''), 200) && str(d.get('verWhat', ''), 120)
+        && (!('freq' in d) || (d.freq is list && d.freq.size() <= 4 && d.freq.hasOnly(['once', 'week', '2week', 'month'])))
+        && (!('supplies' in d) || d.supplies is bool)
+        && (!('animals' in d) || (d.animals is list && d.animals.size() <= 5 && d.animals.hasOnly(['dog', 'cat', 'small', 'bird', 'fish'])))
+        && (!('hours' in d) || (d.hours is list && d.hours.size() == 7 && hr(d.hours[0]) && hr(d.hours[1]) && hr(d.hours[2])
+             && hr(d.hours[3]) && hr(d.hours[4]) && hr(d.hours[5]) && hr(d.hours[6])))
+        && (!('offHol' in d) || d.offHol is bool) && (!('offHide' in d) || d.offHide is bool)
+        && d.type in ['pro', 'seek']
+        && d.lat is number && d.lng is number && d.lat > 34 && d.lat < 42 && d.lng > 19 && d.lng < 30
+        && d.exact is bool && d.shop is bool && (!d.shop || d.exact) && (d.exact || (onGrid(d.lat) && onGrid(d.lng)))
+        && d.contact in ['open', 'request'] && d.hidden is bool && d.adminHidden is bool
+        && str(d.get('customName', ''), 50) && str(d.get('area', ''), 80) && str(d.get('desc', ''), 600) && str(d.get('job', ''), 60)
+        && (d.get('radius', 0) is int && d.get('radius', 0) >= 0 && d.get('radius', 0) <= 100)
+        && (d.get('years', 0) is int && d.get('years', 0) >= 0 && d.get('years', 0) <= 70)
+        && d.ts == request.time;
+    }
+
+    match /kontamou_stats/{rid} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['count'])
+        && ((request.resource.data.count == resource.data.count + 1 && !proBefore(rid) && proAfter(rid))
+         || (request.resource.data.count == resource.data.count - 1 && proBefore(rid) && !proAfter(rid))
+         || (request.resource.data.count == resource.data.count)));
+      // το άνοιγμα μιας περιοχής (πεδίο open) το κάνει μόνο ο διαχειριστής
+    }
+
+    match /kontamou_regions/{rid}/profiles/{uid} {
+      allow read: if isAdmin() || (signedIn() && (me() == uid
+        || (regionOpen(rid) && resource.data.hidden == false && resource.data.adminHidden == false)));
+      allow create: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid)
+        && !exists(/databases/$(database)/documents/kontamou_bans/$(uid))
+        && worldOk(request.resource.data.get('world', 'tech'))
+        && getAfter(ownerP(uid)).data.region == rid
+        && request.resource.data.get('featured', false) == false
+        && request.resource.data.get('verified', false) == false
+        && !('proUntil' in request.resource.data)
+        && request.resource.data.adminHidden == false && !('hideWhy' in request.resource.data)
+        && !('verAt' in request.resource.data) && !('verWhat' in request.resource.data)
+        && !(exists(ownerP(uid)) && exists(profP(get(ownerP(uid)).data.region, uid))
+             && get(profP(get(ownerP(uid)).data.region, uid)).data.adminHidden == true)
+        && (request.resource.data.get('founder', false) == false || !regionOpen(rid))
+        && (!('refBy' in request.resource.data) || (request.resource.data.refBy is string && request.resource.data.refBy != uid))
+        && request.resource.data.created == request.time);
+      allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid)
+        && worldOk(request.resource.data.get('world', 'tech'))
+        && same('featured') && same('proUntil') && same('adminHidden') && same('hideWhy')
+        && same('founder') && same('refBy') && same('created')
+        // το ✓ το δίνει μόνο ο διαχειριστής· ο χρήστης μπορεί μόνο να το χάσει, και το χάνει υποχρεωτικά αν αλλάξει όνομα, ειδικότητα, κόσμο ή αριθμό μητρώου
+        && (same('verified') || request.resource.data.get('verified', false) == false)
+        && ((same('name') && same('trades') && same('world') && same('regNo')) || request.resource.data.get('verified', false) == false)
+        && ((same('verAt') && same('verWhat')) || request.resource.data.get('verified', false) == false)
+        && request.time > resource.data.ts + duration.value(3, 's'));
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    match /kontamou_owner/{uid} {
+      allow read: if isAdmin() || (signedIn() && me() == uid);
+      allow create: if isAdmin() || signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['region']) && request.resource.data.region is string;
+      allow update: if isAdmin() || signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['region']) && request.resource.data.region is string
+        && (request.resource.data.region == resource.data.region || !existsAfter(profP(resource.data.region, uid)));
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    match /kontamou_private/{uid} {
+      allow read, delete: if isAdmin() || (signedIn() && me() == uid);
+      allow create, update: if isAdmin() || signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['uid','acct','phone','email','showPhone','showEmail','lic','termsAt','declAt','kidsAt','ts'])
+        && request.resource.data.uid == uid
+        && str(request.resource.data.get('phone', ''), 20) && str(request.resource.data.get('email', ''), 80)
+        && request.resource.data.get('acct', '') in ['', request.auth.token.email]
+        && (!('lic' in request.resource.data) || (request.resource.data.lic is map
+             && request.resource.data.lic.keys().hasOnly(['name', 'eh', 'key', 'until'])
+             && str(request.resource.data.lic.get('key', ''), 140)))
+        && request.resource.data.ts == request.time;
+    }
+
+    match /kontamou_contact/{uid} {
+      allow get: if isAdmin() || (signedIn() && (me() == uid || (resource.data.mode == 'open' && visibleUid(uid))
+        || (exists(reqP(uid, me())) && get(reqP(uid, me())).data.status == 'accepted')
+        || exists(/databases/$(database)/documents/kontamou_answers/$(uid + '_' + me()))));
+      allow list: if isAdmin();
+      allow create, update: if isAdmin() || signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['uid', 'mode', 'phone', 'email'])
+        && request.resource.data.uid == uid && request.resource.data.mode in ['open', 'request']
+        && str(request.resource.data.get('phone', ''), 20) && str(request.resource.data.get('email', ''), 80);
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    match /kontamou_requests/{rq} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.pro == me() || resource.data.client == me()));
+      allow create: if isAdmin() || (signedIn() && throttled() && notBanned()
+        && rq == request.resource.data.pro + '_' + me()
+        && request.resource.data.client == me() && request.resource.data.pro != me()
+        && request.resource.data.keys().hasOnly(['pro', 'client', 'clientName', 'clientPhone', 'msg', 'status', 'ts'])
+        && request.resource.data.status == 'pending' && request.resource.data.ts == request.time
+        && str(request.resource.data.clientName, 60) && str(request.resource.data.get('msg', ''), 500)
+        && str(request.resource.data.get('clientPhone', ''), 20));
+      allow update: if signedIn() && resource.data.pro == me()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'ts'])
+        && request.resource.data.status in ['accepted', 'declined'] && request.resource.data.ts == request.time;
+      allow delete: if isAdmin() || (signedIn() && (resource.data.client == me() || resource.data.pro == me()));
+    }
+
+    match /kontamou_rate/{uid} {
+      allow read: if signedIn() && me() == uid;
+      allow create: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['t']) && request.resource.data.t == request.time;
+      allow update: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['t']) && request.resource.data.t == request.time
+        && request.time > resource.data.t + duration.value(10, 's');
+      allow delete: if signedIn() && me() == uid;
+    }
+
+    match /kontamou_photos/{uid} {
+      allow read: if isAdmin() || (signedIn() && (me() == uid || visibleUid(uid)));
+      allow create, update: if isAdmin() || (signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['uid', 'photos'])
+        && request.resource.data.photos is list && request.resource.data.photos.size() <= 4
+        && (request.resource.data.photos.size() < 1 || img(request.resource.data.photos[0]))
+        && (request.resource.data.photos.size() < 2 || img(request.resource.data.photos[1]))
+        && (request.resource.data.photos.size() < 3 || img(request.resource.data.photos[2]))
+        && (request.resource.data.photos.size() < 4 || img(request.resource.data.photos[3])));
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    match /kontamou_refs/{uid} {
+      allow read: if signedIn();
+      allow create: if isAdmin() || signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['by', 'region', 'ts'])
+        && request.resource.data.by is string && request.resource.data.by != uid
+        && request.resource.data.ts == request.time
+        && existsAfter(ownerP(uid)) && exists(ownerP(request.resource.data.by));
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    match /kontamou_reviews/{rid} {
+      allow read: if signedIn();
+      allow create, update: if isAdmin() || signedIn() && throttled() && notBanned()
+        && rid == request.resource.data.to + '_' + me()
+        && request.resource.data.from == me() && request.resource.data.to != me()
+        && request.resource.data.keys().hasOnly(['to', 'from', 'name', 'stars', 'text', 'date', 'ts'])
+        && request.resource.data.stars is int && request.resource.data.stars >= 1 && request.resource.data.stars <= 5
+        && str(request.resource.data.get('text', ''), 400) && str(request.resource.data.name, 40)
+        && request.resource.data.ts == request.time;
+      allow delete: if isAdmin() || (signedIn() && resource.data.from == me());
+    }
+
+    // Αναφορές: αριθμός υπόθεσης, κατάσταση και ιστορικό τα αλλάζει μόνο ο διαχειριστής· ο αναφέρων βλέπει μόνο τις δικές του
+    /* Αποδεικτικά αποδοχής ενημέρωσης πριν από αίτημα/ανάθεση: γράφονται μία φορά, δεν αλλάζουν, τα σβήνει μόνο ο διαχειριστής */
+    match /kontamou_acks/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow create: if isOwner() || (signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'role', 'kind', 'ref', 'other', 'stmt', 'terms', 'at'])
+        && request.resource.data.uid == me()
+        && request.resource.data.role in ['client', 'pro', 'deal']
+        && request.resource.data.kind in ['request', 'accept', 'need', 'answer', 'profile', 'deal', 'deal_edit', 'deal_ok']
+        && str(request.resource.data.ref, 120) && str(request.resource.data.other, 128)
+        && str(request.resource.data.stmt, 40) && str(request.resource.data.terms, 20)
+        && request.resource.data.at == request.time);
+      allow update: if false;
+      // Διαγραφή μόνο μετά τον χρόνο διατήρησης (5 χρόνια)
+      allow delete: if isAdmin() && resource.data.at < request.time - duration.value(1825, 'd');
+    }
+
+    /* Καταγραφή συμφωνίας πελάτη–επαγγελματία: μόνο τα δύο μέρη· κάθε αλλαγή μηδενίζει την αποδοχή του άλλου· δεν σβήνεται από τα μέρη */
+    match /kontamou_deals/{id} {
+      function party() { return resource.data.pro == me() || resource.data.client == me(); }
+      function dealBody(d) { return d.keys().hasOnly(['pro', 'client', 'proName', 'clientName', 'text', 'price', 'when', 'by', 'v', 'okP', 'okC', 'ts'])
+        && d.text is string && d.text.size() >= 5 && d.text.size() <= 500 && str(d.get('price', ''), 40) && str(d.get('when', ''), 10)
+        && d.by == me() && d.ts == request.time && d.v is int; }
+      function mineOk(d, pro, client) { return (pro == me() && d.okP == request.time && !('okC' in d))
+        || (client == me() && d.okC == request.time && !('okP' in d)); }
+      allow read: if isAdmin() || (signedIn() && party());
+      allow create: if isOwner() || (signedIn() && dealBody(request.resource.data)
+        && id == request.resource.data.pro + '_' + request.resource.data.client
+        && request.resource.data.pro is string && request.resource.data.client is string
+        && request.resource.data.pro != request.resource.data.client
+        && (request.resource.data.pro == me() || request.resource.data.client == me())
+        && exists(ownerP(request.resource.data.pro))
+        && str(request.resource.data.proName, 60) && str(request.resource.data.clientName, 60) && request.resource.data.v == 1
+        && mineOk(request.resource.data, request.resource.data.pro, request.resource.data.client));
+      allow update: if signedIn() && party() && same('pro') && same('client') && same('proName') && same('clientName')
+        && ((resource.data.pro == me() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['okP']) && request.resource.data.okP == request.time)
+         || (resource.data.client == me() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['okC']) && request.resource.data.okC == request.time)
+         || (dealBody(request.resource.data) && request.resource.data.v == resource.data.v + 1
+             && mineOk(request.resource.data, resource.data.pro, resource.data.client)));
+      allow delete: if isAdmin() && resource.data.ts < request.time - duration.value(1825, 'd');
+    }
+
+    match /kontamou_reports/{id} {
+      // Επαναφορά από αντίγραφο: μόνο ο κύριος διαχειριστής (οι συνδιαχειριστές δεν δημιουργούν αναφορές για λογαριασμό άλλων)
+      allow create: if isOwner() || (signedIn() && throttled()
+        && request.resource.data.from == me() && request.resource.data.to is string
+        && ((request.resource.data.to != me()
+             && (id == request.resource.data.to + '_' + me() || id.matches('^' + request.resource.data.to + '_' + me() + '_[0-9]{1,13}$')))
+          || (request.resource.data.to == me() && id.matches('^' + me() + '_appeal_[0-9]{1,13}$')
+             && request.resource.data.reason == 'Αίτημα επανεξέτασης (ένσταση)'))
+        && request.resource.data.keys().hasOnly(['to', 'from', 'reason', 'text', 'region', 'case', 'status', 'ts'])
+        && str(request.resource.data.reason, 120) && str(request.resource.data.get('text', ''), 500) && str(request.resource.data.get('region', ''), 20)
+        && str(request.resource.data.case, 20) && request.resource.data.status == 'open' && request.resource.data.ts == request.time);
+      allow read: if isAdmin() || (signedIn() && resource.data.from == me());
+      // Ο διαχειριστής αλλάζει μόνο κατάσταση/ιστορικό/αποτέλεσμα. Το ιστορικό μόνο ΜΕΓΑΛΩΝΕΙ κατά μία εγγραφή με το δικό του email,
+      // το περιεχόμενο της αναφοράς δεν αλλάζει, και μια κλειστή υπόθεση δεν ξανανοίγει ούτε αλλάζει αποτέλεσμα.
+      allow update: if isAdmin() && resource.data.status != 'closed'
+        && same('to') && same('from') && same('reason') && same('text') && same('region') && same('case') && same('ts')
+        && request.resource.data.keys().hasOnly(['to', 'from', 'reason', 'text', 'region', 'case', 'status', 'ts', 'hist', 'outcome', 'closedAt', 'upd'])
+        && request.resource.data.status in ['review', 'closed'] && request.resource.data.upd == request.time
+        && request.resource.data.hist is list && request.resource.data.hist.size() <= 60
+        && request.resource.data.hist.size() == resource.data.get('hist', []).size() + 1
+        && request.resource.data.hist[0:resource.data.get('hist', []).size()] == resource.data.get('hist', [])
+        && request.resource.data.hist[request.resource.data.hist.size() - 1].by == request.auth.token.email
+        && (request.resource.data.status == 'closed'
+            ? (request.resource.data.closedAt == request.time && str(request.resource.data.get('outcome', ''), 300))
+            : (!('closedAt' in request.resource.data) && !('outcome' in request.resource.data)));
+      // Διαγραφή μόνο κλειστών υποθέσεων, 180 ημέρες μετά το κλείσιμο (χρόνος διατήρησης)
+      allow delete: if isAdmin() && resource.data.status == 'closed' && resource.data.closedAt < request.time - duration.value(180, 'd');
+    }
+
+    match /kontamou_needs/{id} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.uid == me()
+        || (resource.data.status == 'open' && exists(ownerP(me())))));
+      allow create: if isAdmin() || signedIn() && throttled() && notBanned()
+        && request.resource.data.uid == me()
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'world', 'trade', 'region', 'lat', 'lng', 'area', 'text', 'when', 'status', 'ts'])
+        && request.resource.data.world in ['tech', 'home', 'pets', 'car', 'learn', 'errands']
+        && worldOk(request.resource.data.world)
+        && (request.resource.data.trade in ['electric', 'plumb', 'cool', 'heat', 'gas', 'heatpump', 'solar', 'paint', 'drywall', 'plaster', 'tile', 'marble', 'builder', 'mason', 'paving', 'roof', 'insul', 'thermal', 'gutter', 'wood', 'doors', 'alu', 'iron', 'glass', 'lock', 'awning', 'alarm', 'network', 'smart', 'pc', 'tv', 'appl', 'electronic', 'pos', 'lift', 'pool', 'drain', 'pest', 'cleanpro', 'windows', 'carpet', 'pressure', 'garden', 'tree', 'irrig', 'spray', 'earth', 'handy', 'autoel', 'mobilemech', 'furniture', 'floors', 'sander', 'gardencrew', 'nursery', 'ducts', 'biocl', 'tyre', 'roadside', 'fire', 'evcharge', 'sat', 'refrig', 'fridge', 'coffee', 'proequip', 'extinguisher', 'other', 'd_phone', 'd_help', 'h_rental', 'h_stairs', 'h_iron', 'h_sew', 'h_org', 'h_check', 'h_cook', 'g_lawn', 'h_other', 'p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other', 'c_key', 'c_wash', 'c_glass', 'c_other', 'l_uni', 'l_en', 'l_lang', 'l_gr4f', 'l_music', 'l_art', 'l_pc', 'l_other', 'smalltrans', 'courier', 'mv_bulky', 'e_other'] || request.resource.data.trade in xids(request.resource.data.world))
+        && request.resource.data.lat is number && request.resource.data.lng is number
+        && request.resource.data.lat > 34 && request.resource.data.lat < 42 && request.resource.data.lng > 19 && request.resource.data.lng < 30
+        && onGrid(request.resource.data.lat) && onGrid(request.resource.data.lng)
+        && str(request.resource.data.name, 40) && str(request.resource.data.area, 80) && str(request.resource.data.region, 20)
+        && request.resource.data.text is string && request.resource.data.text.size() >= 10 && request.resource.data.text.size() <= 500
+        && request.resource.data.when in ['now', 'week', 'any']
+        && request.resource.data.status == 'open' && request.resource.data.ts == request.time;
+      allow update: if signedIn() && resource.data.uid == me()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.status == 'closed';
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
+    }
+
+    match /kontamou_answers/{id} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.pro == me() || resource.data.client == me()));
+      allow create, update: if isAdmin() || signedIn() && throttled() && notBanned()
+        && id == me() + '_' + request.resource.data.client
+        && request.resource.data.pro == me() && request.resource.data.client != me()
+        && request.resource.data.keys().hasOnly(['need', 'client', 'pro', 'proName', 'msg', 'ts'])
+        && exists(ownerP(me()))
+        && exists(/databases/$(database)/documents/kontamou_needs/$(request.resource.data.need))
+        && get(/databases/$(database)/documents/kontamou_needs/$(request.resource.data.need)).data.uid == request.resource.data.client
+        && get(/databases/$(database)/documents/kontamou_needs/$(request.resource.data.need)).data.status == 'open'
+        && str(request.resource.data.proName, 60)
+        && request.resource.data.msg is string && request.resource.data.msg.size() >= 1 && request.resource.data.msg.size() <= 300
+        && request.resource.data.ts == request.time;
+      allow delete: if isAdmin() || (signedIn() && (resource.data.pro == me() || resource.data.client == me()));
+    }
+
+    // Αγαπημένοι + προσωπική αξιολόγηση: ιδιωτικά, μόνο ο ίδιος ο χρήστης (ούτε ο διαχειριστής ούτε ο επαγγελματίας)
+    match /kontamou_favs/{uid} {
+      allow read, delete: if signedIn() && me() == uid;
+      allow create, update: if signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['items', 'ts'])
+        && request.resource.data.items is map && request.resource.data.items.size() <= 500
+        && request.resource.data.ts is int;
+    }
+
+    match /kontamou_config/{id} {
+      allow read: if true;
+      // η δημόσια σύνοψη (public) έχει μόνο τελείες, προβεβλημένους και ώρα — τίποτα άλλο
+      allow create, update: if isAdmin() && (id != 'public' || request.resource.data.keys().hasOnly(['cells', 'feat', 'at']));
+      allow delete: if isAdmin();
+    }
+
+    // Συν-διαχειριστές: τους βάζει και τους βγάζει μόνο ο κύριος· ο καθένας βλέπει μόνο αν είναι ο ίδιος διαχειριστής
+    match /kontamou_admins/{email} {
+      allow read: if isOwner() || (signedIn() && request.auth.token.email == email);
+      allow create, update: if isOwner() && request.resource.data.keys().hasOnly(['name', 'by', 'at']);
+      allow delete: if isOwner();
+    }
+
+    // Απόδειξη αποδοχής όρων: έκδοση + ώρα διακομιστή· τη γράφει μόνο ο ίδιος, τη βλέπει ο ίδιος και ο διαχειριστής
+    match /kontamou_consent/{uid} {
+      allow read: if isAdmin() || (signedIn() && me() == uid);
+      allow create, update: if isAdmin() || (signedIn() && me() == uid
+        && request.resource.data.keys().hasOnly(['terms', 'at']) && str(request.resource.data.terms, 10) && request.resource.data.at == request.time);
+      allow delete: if isAdmin() || (signedIn() && me() == uid);
+    }
+
+    // Κάδος 30 ημερών: μόνο ο διαχειριστής
+    match /kontamou_trash/{uid} {
+      allow read, write: if isAdmin();
+    }
+
+    // Αποκλεισμένοι λογαριασμοί: τους γράφει μόνο ο διαχειριστής· ο καθένας βλέπει μόνο αν είναι ο ίδιος αποκλεισμένος
+    match /kontamou_bans/{uid} {
+      allow read: if isAdmin() || (signedIn() && me() == uid);
+      allow write: if isAdmin();
+    }
+
+    // Αρχείο ενεργειών: γράφεται μόνο με την ώρα του διακομιστή και το δικό σου uid (και για διαχειριστές),
+    // δεν αλλάζει ποτέ και σβήνεται μόνο μετά από 12 μήνες
+    match /kontamou_log/{id} {
+      allow create: if signedIn() && request.resource.data.uid == me()
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'act', 'ref', 'ts'])
+        && request.resource.data.act in ['profile_new', 'profile_edit', 'profile_delete', 'account_delete', 'request', 'accept', 'decline', 'review', 'report', 'admin', 'need', 'answer', 'appeal']
+        && str(request.resource.data.get('name', ''), 60) && str(request.resource.data.get('ref', ''), 120)
+        && request.resource.data.ts == request.time;
+      allow read: if isAdmin();
+      allow delete: if isAdmin() && resource.data.ts < request.time - duration.value(365, 'd');
+    }
+  }
+}

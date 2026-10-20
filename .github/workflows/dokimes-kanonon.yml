@@ -1,0 +1,35 @@
+name: Δοκιμές κανόνων βάσης
+on:
+  push:
+    branches: [dokimes-kanonon]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  dokimes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Εγκατάσταση
+        working-directory: dokimes
+        run: npm install --no-audit --no-fund
+      - name: Δοκιμές στον προσομοιωτή
+        working-directory: dokimes
+        run: npx firebase emulators:exec --only firestore --project demo-kontamou "node test.mjs" 2>&1 | tee emulator.log
+      - name: Αποθήκευση αποτελεσμάτων
+        if: always()
+        run: |
+          git config user.name "dokimes-bot"
+          git config user.email "dokimes-bot@users.noreply.github.com"
+          cp dokimes/emulator.log dokimes/emulator.txt || true
+          git add dokimes/apotelesmata.md dokimes/apotelesmata.json dokimes/emulator.txt || true
+          git commit -m "Αποτελέσματα δοκιμών κανόνων" || true
+          git push || true
