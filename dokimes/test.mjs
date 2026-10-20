@@ -154,6 +154,12 @@ await t(G5, "Διαχειριστής δεν σβήνει ανοιχτή κατ�
 await t(G5, "Κλειστή καταγγελία σβήνεται μετά από 180 ημέρες", true, () => deleteDoc(doc(ctx.co(), "kontamou_reports/closedold")));
 const app = extra => ({ to: "alice", from: "alice", reason: "Αίτημα επανεξέτασης (ένσταση)", text: "Τα διόρθωσα", region: "attiki", case: "ΑΝ-261020-DDDD", status: "open", ts: serverTimestamp(), ...extra });
 await t(G5, "Κρυμμένος χρήστης ζητά επανεξέταση", true, () => withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({}))));
+await t(G5, "Αποκλεισμένος χρήστης μπορεί να ζητήσει επανεξέταση", true, async () => {
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_bans/alice"), { name: "Alice", why: "Απάτη", at: now() }));
+  return withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000005"), app({}))); });
+await t(G5, "Αποκλεισμένος χρήστης δεν στέλνει αίτημα επικοινωνίας", false, async () => {
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_bans/eve"), { name: "Eve", why: "Απάτη", at: now() }));
+  return withRate(ctx.eve(), "eve", (b, db) => b.set(doc(db, "kontamou_requests/alice_eve"), { pro: "alice", client: "eve", clientName: "Eve", msg: "x", status: "pending", ts: serverTimestamp() })); });
 await t(G5, "Επανεξέταση με άλλο λόγο απορρίπτεται", false, () => withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({ reason: "Άλλο" }))));
 await t(G5, "Τρίτος δεν ζητά επανεξέταση για άλλον", false, () => withRate(ctx.eve(), "eve", (b, db) => b.set(doc(db, "kontamou_reports/alice_appeal_1700000000000"), app({ from: "eve" }))));
 await t(G5, "Συνδιαχειριστής δεν φτιάχνει καταγγελία για λογαριασμό άλλου", false, () => setDoc(doc(ctx.co(), "kontamou_reports/alice_bob_1700000000009"), rep({ from: "bob" })));
