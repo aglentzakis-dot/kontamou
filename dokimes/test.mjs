@@ -184,6 +184,42 @@ await t(G7, "Ο χρήστης διαβάζει τα αιτήματά του (γ
 await t(G7, "Ο χρήστης διαβάζει τα αποδεικτικά του (για λήψη)", true, () => getDocs(query(collection(ctx.bob(), "kontamou_acks"), where("uid", "==", "bob"))));
 await t(G7, "Ο χρήστης δεν διαβάζει μαζικά ξένα αποδεικτικά", false, () => getDocs(collection(ctx.bob(), "kontamou_acks")));
 
+const G8 = "Βιβλία & Πολιτισμός (1.41)";
+const openCul = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "culture"] }));
+const putW = (id, d) => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_works/" + id), d));
+const work = (uid, extra = {}) => ({ uid, title: "Το βιβλίο μου", by: "Συγγραφέας", genre: "novel", lang: "el", link: "https://drive.google.com/file/d/abc/view", stmt: "ΔΙΚ-2026-11-04", status: "pending", ts: serverTimestamp(), ...extra });
+const ev = (uid, extra = {}) => ({ uid, title: "Παρουσίαση βιβλίου", kind: "present", start: Timestamp.fromMillis(Date.now() + 5 * 864e5), place: "Βιβλιοπωλείο, Οδός 1", area: "Κέντρο", region: "attiki",
+  lat: 37.962, lng: 23.754, adults: true, status: "pending", ts: serverTimestamp(), ...extra });
+const wset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_works/" + id), d));
+const eset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_events/" + id), d));
+await t(G8, "Κλειστός κόσμος: χρήστης δεν προσθέτει έργο", false, () => wset("alice", "alice", "alice_w0", work("alice")));
+await t(G8, "Κλειστός κόσμος: χρήστης δεν διαβάζει δημοσιευμένα έργα", false, async () => { await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return getDocs(query(collection(ctx.bob(), "kontamou_works"), where("status", "==", "ok"))); });
+await t(G8, "Κλειστός κόσμος: ο διαχειριστής δοκιμάζει (προσθέτει έργο)", true, () => setDoc(doc(ctx.owner(), "kontamou_works/owner_w0"), work("owner", { status: "ok" })));
+await t(G8, "Κλειστός κόσμος: χρήστης δεν βάζει προφίλ στον κόσμο πολιτισμού", false, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_bookshop"], ts: serverTimestamp() }));
+await t(G8, "Ανοιχτός: χρήστης προσθέτει έργο για έλεγχο", true, async () => { await openCul(); return wset("alice", "alice", "alice_w0", work("alice")); });
+await t(G8, "Ανοιχτός: χρήστης δεν αυτοεγκρίνει έργο (status ok)", false, async () => { await openCul(); return wset("alice", "alice", "alice_w0", work("alice", { status: "ok" })); });
+await t(G8, "Ανοιχτός: σύνδεσμος χωρίς https απορρίπτεται", false, async () => { await openCul(); return wset("alice", "alice", "alice_w0", work("alice", { link: "http://drive.google.com/x" })); });
+await t(G8, "Ανοιχτός: σύνδεσμος javascript: απορρίπτεται", false, async () => { await openCul(); return wset("alice", "alice", "alice_w0", work("alice", { link: "javascript:alert(1)" })); });
+await t(G8, "Ανοιχτός: έργο με αρχείο μέσα στη βάση απορρίπτεται", false, async () => { await openCul(); return wset("alice", "alice", "alice_w0", work("alice", { file: "data:application/pdf;base64,AAAA" })); });
+await t(G8, "Ανοιχτός: έργο στο όνομα άλλου απορρίπτεται", false, async () => { await openCul(); return wset("eve", "eve", "alice_w1", work("alice")); });
+await t(G8, "Ανοιχτός: πάνω από 100 έργα ανά χρήστη απορρίπτεται (αριθμός θέσης)", false, async () => { await openCul(); return wset("alice", "alice", "alice_w100", work("alice")); });
+await t(G8, "Ανοιχτός: τρίτος δεν διαβάζει έργο σε έλεγχο", false, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), ts: now() }); return getDoc(doc(ctx.bob(), "kontamou_works/alice_w0")); });
+await t(G8, "Ανοιχτός: τρίτος διαβάζει εγκεκριμένο έργο", true, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return getDoc(doc(ctx.bob(), "kontamou_works/alice_w0")); });
+await t(G8, "Ανοιχτός: ο δημιουργός δεν εγκρίνει μόνος του αλλάζοντας το έργο", false, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), ts: now() }); return withRate(ctx.alice(), "alice", (b, db) => b.update(doc(db, "kontamou_works/alice_w0"), { status: "ok", ts: serverTimestamp() })); });
+await t(G8, "Ανοιχτός: ο δημιουργός δεν γράφει σημείωση διαχειριστή", false, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), ts: now() }); return wset("alice", "alice", "alice_w0", work("alice", { note: "εγκρίθηκε" })); });
+await t(G8, "Συνδιαχειριστής εγκρίνει έργο", true, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), ts: now() }); return updateDoc(doc(ctx.co(), "kontamou_works/alice_w0"), { status: "ok" }); });
+await t(G8, "Τρίτος δεν σβήνει ξένο έργο", false, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return deleteDoc(doc(ctx.eve(), "kontamou_works/alice_w0")); });
+await t(G8, "Ο δημιουργός σβήνει το έργο του", true, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return deleteDoc(doc(ctx.alice(), "kontamou_works/alice_w0")); });
+await t(G8, "Ανοιχτός: εκδήλωση για ενήλικες σε μέλλουσα ημερομηνία", true, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice")); });
+await t(G8, "Εκδήλωση χωρίς δήλωση «για ενήλικες» απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { adults: false })); });
+await t(G8, "Εκδήλωση σε παρελθούσα ημερομηνία απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { start: past(1) })); });
+await t(G8, "Εκδήλωση με ακριβές σημείο (όχι στρογγυλεμένο) απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { lat: 37.96234, lng: 23.75411 })); });
+await t(G8, "Εκδήλωση αυτοεγκεκριμένη απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { status: "ok" })); });
+await t(G8, "Συγγραφέας με ακριβές σημείο απορρίπτεται", false, async () => { await openCul(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_author"], exact: true, ts: serverTimestamp() }); });
+await t(G8, "Συγγραφέας μόνο με περιοχή επιτρέπεται", true, async () => { await openCul(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_author"], exact: false, shop: false, ts: serverTimestamp() }); });
+await t(G8, "Βιβλιοπωλείο με ακριβές σημείο καταστήματος επιτρέπεται", true, async () => { await openCul(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_bookshop"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
+await t(G8, "Δήλωση δικαιωμάτων καταγράφεται ως αμετάβλητη απόδειξη", true, () => setDoc(doc(ctx.alice(), "kontamou_acks/r1"), { uid: "alice", role: "pro", kind: "work", ref: "alice_w0", other: "", stmt: "ΔΙΚ-2026-11-04", terms: "2026-10-24", at: serverTimestamp() }));
+
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
   `**Σύνολο: ${pass + fail} · σωστά: ${pass} · λάθος: ${fail}**`, "", "| # | Ομάδα | Δοκιμή | Αναμενόμενο | Αποτέλεσμα |", "|---|---|---|---|---|",

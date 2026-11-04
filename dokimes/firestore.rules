@@ -53,7 +53,10 @@ service cloud.firestore {
          || (d.get('world', 'tech') == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other'].concat(xids('pets'))))
          || (d.get('world', 'tech') == 'car' && d.trades.hasOnly(['roadside', 'mobilemech', 'autoel', 'tyre', 'c_key', 'c_wash', 'c_glass', 'c_other'].concat(xids('car'))))
          || (d.get('world', 'tech') == 'learn' && d.trades.hasOnly(['l_uni', 'l_en', 'l_lang', 'l_gr4f', 'l_music', 'l_art', 'l_pc', 'l_other'].concat(xids('learn'))))
-         || (d.get('world', 'tech') == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands')))))
+         || (d.get('world', 'tech') == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands'))))
+         || (d.get('world', 'tech') == 'culture' && d.trades.hasOnly(['k_bookshop', 'k_library', 'k_reading', 'k_club', 'k_venue', 'k_publisher', 'k_author', 'k_other'].concat(xids('culture')))))
+        // 1.41: συγγραφείς και λέσχες ανάγνωσης δεν έχουν ποτέ ακριβές σημείο ή κατάστημα (μόνο περιοχή)
+        && (!d.trades.hasAny(['k_author', 'k_club']) || (d.exact == false && d.shop == false))
         && (!('levels' in d) || (d.levels is list && d.levels.size() <= 5 && d.levels.hasOnly(['uni', 'adult'])))
         && (!('modes' in d) || (d.modes is list && d.modes.size() <= 3 && d.modes.hasOnly(['go', 'place', 'online'])))
         && (!('availDay' in d) || (d.availDay is string && d.availDay.size() == 10))
@@ -216,7 +219,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid', 'role', 'kind', 'ref', 'other', 'stmt', 'terms', 'at'])
         && request.resource.data.uid == me()
         && request.resource.data.role in ['client', 'pro', 'deal']
-        && request.resource.data.kind in ['request', 'accept', 'need', 'answer', 'profile', 'deal', 'deal_edit', 'deal_ok']
+        && request.resource.data.kind in ['request', 'accept', 'need', 'answer', 'profile', 'deal', 'deal_edit', 'deal_ok', 'work', 'event']
         && str(request.resource.data.ref, 120) && str(request.resource.data.other, 128)
         && str(request.resource.data.stmt, 40) && str(request.resource.data.terms, 20)
         && request.resource.data.at == request.time);
@@ -371,5 +374,57 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow delete: if isAdmin() && resource.data.ts < request.time - duration.value(365, 'd');
     }
-  }
+
+    // ---------- 1.41 «Βιβλία & Πολιτισμός»: έργα και εκδηλώσεις ----------
+    // Κλειστός κόσμος: μέχρι να ανοίξει (kontamou_config/worlds.open) διαβάζει και γράφει ΜΟΝΟ ο διαχειριστής.
+    // Κανένα αρχείο: μόνο στοιχεία και σύνδεσμος https προς τη σελίδα του δημιουργού. Κάθε εγγραφή περνά από έγκριση (status).
+    function culOk() { return worldOk('culture'); }
+    function https(v, n) { return v is string && v.size() <= n && v.matches('^https://[^ <>"]{4,}$'); }
+    function validWork() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['uid', 'title', 'by', 'genre', 'lang', 'desc', 'link', 'sample', 'stmt', 'status', 'ts'])
+        && d.uid == me()
+        && d.title is string && d.title.size() >= 2 && d.title.size() <= 120
+        && d.by is string && d.by.size() >= 2 && d.by.size() <= 80
+        && d.genre in ['novel', 'short', 'poetry', 'essay', 'history', 'science', 'children', 'comic', 'theatre', 'other']
+        && d.lang in ['el', 'en', 'other']
+        && str(d.get('desc', ''), 800) && https(d.link, 300) && (!('sample' in d) || https(d.sample, 300))
+        && str(d.stmt, 40) && d.stmt.size() > 0
+        && d.ts == request.time;
+    }
+    match /kontamou_works/{id} {
+      allow read: if isAdmin() || (signedIn() && culOk() && (resource.data.uid == me() || resource.data.status == 'ok'));
+      allow create: if signedIn() && culOk() && id.matches('^' + me() + '_w[0-9]{1,2}$') && validWork()
+        && (request.resource.data.status == 'pending' || (isAdmin() && request.resource.data.status == 'ok'))
+        && (isAdmin() || (throttled() && notBanned()));
+      allow update: if isAdmin() || (signedIn() && culOk() && resource.data.uid == me() && validWork()
+        && request.resource.data.status == 'pending' && throttled() && notBanned());
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
+    }
+    function validEvent() {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['uid', 'title', 'kind', 'start', 'end', 'place', 'area', 'region', 'lat', 'lng', 'how', 'link', 'adults', 'status', 'ts'])
+        && d.uid == me()
+        && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
+        && d.kind in ['present', 'reading', 'club', 'talk', 'festival', 'exhib', 'other']
+        && d.start is timestamp && d.start > request.time && d.start < request.time + duration.value(400, 'd')
+        && (!('end' in d) || (d.end is timestamp && d.end > d.start && d.end < d.start + duration.value(30, 'd')))
+        && d.place is string && d.place.size() >= 3 && d.place.size() <= 120
+        && str(d.area, 80) && str(d.region, 20)
+        && d.lat is number && d.lng is number && d.lat > 34 && d.lat < 42 && d.lng > 19 && d.lng < 30
+        && onGrid(d.lat) && onGrid(d.lng)
+        && str(d.get('how', ''), 400) && (!('link' in d) || https(d.link, 300))
+        && d.adults == true
+        && d.ts == request.time;
+    }
+    match /kontamou_events/{id} {
+      allow read: if isAdmin() || (signedIn() && culOk() && (resource.data.uid == me() || resource.data.status == 'ok'));
+      allow create: if signedIn() && culOk() && id.matches('^' + me() + '_e[0-9]{1,2}$') && validEvent()
+        && (request.resource.data.status == 'pending' || (isAdmin() && request.resource.data.status == 'ok'))
+        && (isAdmin() || (throttled() && notBanned()));
+      allow update: if isAdmin() || (signedIn() && culOk() && resource.data.uid == me() && validEvent()
+        && request.resource.data.status == 'pending' && throttled() && notBanned());
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
+    }
+}
 }
