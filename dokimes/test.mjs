@@ -256,6 +256,14 @@ await t(G9, "Όριο αξιολόγησης: πλήρες προφίλ τεχν
 await t(G9, "Όριο αξιολόγησης: πλήρες νέο προφίλ κτηνιατρείου (δημιουργία)", true, async () => { await openPx();
   return withRate(ctx.eve(), "eve", (b, db) => { b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" }); b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve", { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, exact: true, shop: true, lat: 37.96234, lng: 23.75411 }), created: serverTimestamp(), ts: serverTimestamp() }); }); });
 
+for (const k of Object.keys(full)) await t("ΔΙΑΓΝΩΣΗ", "τεχνικός + " + k, true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { [k]: full[k], ts: serverTimestamp() }));
+{ const keys = Object.keys(full); const half = (a) => Object.fromEntries(a.map(k => [k, full[k]]));
+  await t("ΔΙΑΓΝΩΣΗ", "τεχνικός + πρώτο μισό", true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...half(keys.slice(0, 10)), ts: serverTimestamp() }));
+  await t("ΔΙΑΓΝΩΣΗ", "τεχνικός + δεύτερο μισό", true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...half(keys.slice(10)), ts: serverTimestamp() }));
+  await t("ΔΙΑΓΝΩΣΗ", "τεχνικός + όλα χωρίς ωράριο", true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...half(keys.filter(k => k !== "hours")), ts: serverTimestamp() }));
+  await t("ΔΙΑΓΝΩΣΗ", "τεχνικός + ωράριο + ζώα + τρόποι + συχνότητα + επίπεδα", true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...half(["hours","animals","modes","freq","levels"]), ts: serverTimestamp() }));
+}
+
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
   `**Σύνολο: ${pass + fail} · σωστά: ${pass} · λάθος: ${fail}**`, "", "| # | Ομάδα | Δοκιμή | Αναμενόμενο | Αποτέλεσμα |", "|---|---|---|---|---|",
