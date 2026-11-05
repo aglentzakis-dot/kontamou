@@ -1,6 +1,6 @@
 {
- "pass": 142,
- "fail": 1,
+ "pass": 143,
+ "fail": 0,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -979,8 +979,8 @@
    "group": "ΔΙΑΓΝΩΣΗ",
    "name": "pets p_shop χωρίς σημείο",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΔΙΑΓΝΩΣΗ",
