@@ -244,10 +244,17 @@ await t(G9, "Ο διαχειριστής διαβάζει τα αιτήματα"
 await t(G9, "Χρήστης δεν κρύβει σημεία (ρύθμιση osmhide)", false, () => setDoc(doc(ctx.alice(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 await t(G9, "Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)", true, () => setDoc(doc(ctx.co(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 
-await t("ΔΙΑΓΝΩΣΗ", "pets p_shop χωρίς σημείο", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_shop"], ts: serverTimestamp() }); });
-await t("ΔΙΑΓΝΩΣΗ", "pets p_walk με σημείο καταστήματος", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_walk"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
-await t("ΔΙΑΓΝΩΣΗ", "pets p_shop με σημείο, ανοιχτό και culture", true, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture"] })); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_shop"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
-await t("ΔΙΑΓΝΩΣΗ", "seed: προφίλ alice", true, async () => { const d = await env.withSecurityRulesDisabled(c => getDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice")).then(x => { console.log("ALICE", JSON.stringify(x.data())); })); return Promise.resolve(); });
+const full = { hours: ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00",""], animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
+  freq: ["once","week","2week","month"], levels: ["uni","adult"], desc: "Περιγραφή ".repeat(50), price: "π.χ. 15 € / ώρα", regNo: "ΑΜ 1234 Κτηνιατρικός Σύλλογος", customName: "Όνομα καταστήματος",
+  area: "Παγκράτι, Αθήνα", job: "Δουλειά", radius: 20, years: 15, supplies: true, offHol: true, offHide: false, availDay: "2026-11-05", hasPhone: true, hasEmail: true };
+
+await t(G9, "Ανοιχτό: pet shop χωρίς σημείο καταστήματος", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_shop"], ts: serverTimestamp() }); });
+await t(G9, "Βόλτα σκύλων με σημείο καταστήματος (υπάρχουσα λειτουργία)", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_walk"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
+await t(G9, "Όριο αξιολόγησης: πλήρες προφίλ κτηνιατρείου (όλα τα πεδία, 3 ειδικότητες)", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, ts: serverTimestamp() }); });
+await t(G9, "Όριο αξιολόγησης: πλήρες προφίλ κτηνιατρείου με σημείο καταστήματος", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
+await t(G9, "Όριο αξιολόγησης: πλήρες προφίλ τεχνικού (όλα τα πεδία)", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "tech", trades: ["electric", "plumb", "other"], ...full, ts: serverTimestamp() }); });
+await t(G9, "Όριο αξιολόγησης: πλήρες νέο προφίλ κτηνιατρείου (δημιουργία)", true, async () => { await openPx();
+  return withRate(ctx.eve(), "eve", (b, db) => { b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" }); b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve", { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, exact: true, shop: true, lat: 37.96234, lng: 23.75411 }), created: serverTimestamp(), ts: serverTimestamp() }); }); });
 
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
