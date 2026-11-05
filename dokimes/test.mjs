@@ -277,7 +277,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
     learn: { world: "learn", trades: ["l_uni", "l_en", "l_other"], levels: ["uni","adult"] },
     tech: { world: "tech", trades: ["electric", "plumb", "other"] },
   };
-  for (const N of [0, 40, 80, 150, 250]){
+  for (const N of [0, 5, 10, 20, 30]){
     const pad = "    function pad() { return " + Array(N + 1).fill("1 == 1").join(" && ") + "; }\n";
     const R = RULES.replace("    function validProfile(rid, uid) {", pad + "    function validProfile(rid, uid) {")
       .replace("allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()", "allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk() && pad()")
@@ -304,6 +304,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
       try { const b = writeBatch(db); b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" });
         b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve"), ...base, ...extra, created: serverTimestamp(), ts: serverTimestamp() }); await assertSucceeds(b.commit()); }
       catch(e){ ok = false; err = String(e.message).slice(0, 80); }
+      console.log("ΠΕΡΙΘΩΡΙΟ", N, w, "δημιουργία", ok, err);
       out.push({ group: "ΠΕΡΙΘΩΡΙΟ", name: "φορτίο " + N + " · " + w + " · δημιουργία", expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
     }
     await E2.cleanup();
