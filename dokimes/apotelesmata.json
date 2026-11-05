@@ -1,6 +1,6 @@
 {
- "pass": 137,
- "fail": 2,
+ "pass": 140,
+ "fail": 3,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -930,8 +930,8 @@
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
    "name": "Αίτημα με λάθος κλειδί (σύμβολα) απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Invalid document reference. Document references must have an even number of segments, but kontamou_osmreq/alice_n1/2 has 3."
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
@@ -971,6 +971,34 @@
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
    "name": "Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΔΙΑΓΝΩΣΗ",
+   "name": "pets p_shop χωρίς σημείο",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΛΑΘΟΣ",
+   "err": "7 PERMISSION_DENIED: "
+  },
+  {
+   "group": "ΔΙΑΓΝΩΣΗ",
+   "name": "pets p_walk με σημείο καταστήματος",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΔΙΑΓΝΩΣΗ",
+   "name": "pets p_shop με σημείο, ανοιχτό και culture",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΛΑΘΟΣ",
+   "err": "7 PERMISSION_DENIED: "
+  },
+  {
+   "group": "ΔΙΑΓΝΩΣΗ",
+   "name": "seed: προφίλ alice",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
    "result": "ΣΩΣΤΟ",
    "err": ""
