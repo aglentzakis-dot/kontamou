@@ -244,7 +244,7 @@ await t(G9, "Ο διαχειριστής διαβάζει τα αιτήματα"
 await t(G9, "Χρήστης δεν κρύβει σημεία (ρύθμιση osmhide)", false, () => setDoc(doc(ctx.alice(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 await t(G9, "Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)", true, () => setDoc(doc(ctx.co(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 
-const full = { hours: ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00",""], animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
+const full = { hours: "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|", animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
   freq: ["once","week","2week","month"], levels: ["uni","adult"], desc: "Περιγραφή ".repeat(50), price: "π.χ. 15 € / ώρα", regNo: "ΑΜ 1234 Κτηνιατρικός Σύλλογος", customName: "Όνομα καταστήματος",
   area: "Παγκράτι, Αθήνα", job: "Δουλειά", radius: 20, years: 15, supplies: true, offHol: true, offHide: false, availDay: "2026-11-05", hasPhone: true, hasEmail: true };
 
@@ -257,9 +257,12 @@ await t(G9, "Όριο αξιολόγησης: πλήρες νέο προφίλ �
   return withRate(ctx.eve(), "eve", (b, db) => { b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" }); b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve", { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, exact: true, shop: true, lat: 37.96234, lng: 23.75411 }), created: serverTimestamp(), ts: serverTimestamp() }); }); });
 
 const upA = (o) => () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...o, ts: serverTimestamp() });
-await t(G9, "Ωράριο: όλες οι μέρες με ώρες", true, upA({ hours: ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00","10:00-14:00"], offHol: true, offHide: false }));
-await t(G9, "Ωράριο: κείμενο μεγαλύτερο από 11 χαρακτήρες απορρίπτεται", false, upA({ hours: ["<script>alert(1)</script>","","","","","",""] }));
-await t(G9, "Ωράριο: λάθος αριθμός ημερών απορρίπτεται", false, upA({ hours: ["09:00-17:00"] }));
+await t(G9, "Ωράριο: όλες οι μέρες με ώρες", true, upA({ hours: "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|10:00-14:00", offHol: true, offHide: false }));
+await t(G9, "Ωράριο: κακόβουλο κείμενο απορρίπτεται", false, upA({ hours: "<img src=x onerror=alert(1)>||||||" }));
+await t(G9, "Ωράριο: παλιά μορφή (πίνακας) απορρίπτεται", false, upA({ hours: ["09:00-17:00","","","","","",""] }));
+await t(G9, "Ωράριο: κλειστές μέρες (κενές) επιτρέπονται", true, upA({ hours: "09:00-17:00||||||" }));
+await t(G9, "Ωράριο: λάθος αριθμός ημερών απορρίπτεται", false, upA({ hours: "09:00-17:00|09:00-17:00" }));
+await t(G9, "Ωράριο: μη έγκυρη ώρα (25:00) απορρίπτεται", false, upA({ hours: "25:00-17:00||||||" }));
 await t(G9, "Δεν αλλάζει μόνος του το ★ (featured)", false, upA({ featured: true }));
 await t(G9, "Δεν δίνει μόνος του το ✓", false, upA({ verified: true }));
 await t(G9, "Με ✓: αλλαγή ονόματος χωρίς να χάσει το ✓ απορρίπτεται", false, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ name: "Άλλο όνομα" })(); });
@@ -268,7 +271,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
 
 // ---------- ΠΕΡΙΘΩΡΙΟ ΟΡΙΟΥ 1000 ΠΡΑΞΕΩΝ: ρεαλιστικά μέγιστα προφίλ ανά κόσμο, με τεχνητό «φορτίο» N πράξεων ----------
 {
-  const H = ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00","10:00-14:00"];
+  const H = "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|10:00-14:00";
   const base = { hours: H, offHol: true, offHide: false, modes: ["go","place","online"], price: "π".repeat(40), desc: "δ".repeat(600), customName: "κ".repeat(50),
     area: "α".repeat(80), job: "j".repeat(60), radius: 100, years: 70, availDay: "2026-11-05", hasPhone: true, hasEmail: true, fromDromologio: true };
   const P = {
@@ -277,7 +280,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
     learn: { world: "learn", trades: ["l_uni", "l_en", "l_other"], levels: ["uni","adult"] },
     tech: { world: "tech", trades: ["electric", "plumb", "other"] },
   };
-  for (const N of [0, 5, 10, 20, 30]){
+  for (const N of [0, 20, 40, 60, 90]){
     const pad = "    function pad() { return " + Array(N + 1).fill("1 == 1").join(" && ") + "; }\n";
     const R = RULES.replace("    function validProfile(rid, uid) {", pad + "    function validProfile(rid, uid) {")
       .replace("allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()", "allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk() && pad()")

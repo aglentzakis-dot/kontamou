@@ -39,12 +39,8 @@ service cloud.firestore {
         && regionOpen(get(o).data.region);
     }
 
-    // 1.42: καταστήματα και χώροι κατοικιδίων — κλειστά μέχρι να ανοίξει το «petsx»
-    function petsxOk() {
-      // (ο διαχειριστής περνά ήδη από το isAdmin() του κανόνα· εδώ λίγες πράξεις, λόγω ορίου αξιολόγησης)
-      return !request.resource.data.trades.hasAny(['p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc'])
-        || 'petsx' in get(cfgP()).data.get('open', []);
-    }
+    // 1.42: κόσμος ανοιχτός — εκδοχή για τον απλό χρήστη (ο διαχειριστής έχει ήδη περάσει από το isAdmin() του κανόνα)· λιγότερες πράξεις
+    function worldOkU(w) { return w == 'tech' || w in get(cfgP()).data.get('open', []); }
     function validProfile(rid, uid) {
       let d = request.resource.data;
       let w = d.get('world', 'tech');
@@ -57,26 +53,25 @@ service cloud.firestore {
         && d.trades is list && d.trades.size() >= 1 && d.trades.size() <= 3
         && ((w == 'tech' && d.trades.hasOnly(['electric', 'plumb', 'cool', 'heat', 'gas', 'heatpump', 'solar', 'paint', 'drywall', 'plaster', 'tile', 'marble', 'builder', 'mason', 'paving', 'roof', 'insul', 'thermal', 'gutter', 'wood', 'doors', 'alu', 'iron', 'glass', 'lock', 'awning', 'alarm', 'network', 'smart', 'pc', 'tv', 'appl', 'electronic', 'pos', 'lift', 'pool', 'drain', 'pest', 'cleanpro', 'windows', 'carpet', 'pressure', 'garden', 'tree', 'irrig', 'spray', 'earth', 'handy', 'autoel', 'mobilemech', 'furniture', 'floors', 'sander', 'gardencrew', 'nursery', 'ducts', 'biocl', 'tyre', 'roadside', 'fire', 'evcharge', 'sat', 'refrig', 'fridge', 'coffee', 'proequip', 'extinguisher', 'other', 'd_phone', 'd_help'].concat(xids('tech'))))
          || (w == 'home' && d.trades.hasOnly(['cleanpro', 'h_rental', 'h_stairs', 'windows', 'carpet', 'pressure', 'h_iron', 'h_sew', 'handy', 'furniture', 'h_org', 'h_check', 'h_cook', 'garden', 'tree', 'irrig', 'g_lawn', 'pest', 'biocl', 'h_other', 'smalltrans', 'mv_bulky', 'courier', 'e_other'].concat(xids('home'))))
-         || (w == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other', 'p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc'].concat(xids('pets'))))
+         || (w == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other', 'p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc'].concat(xids('pets')))
+             // 1.42: καταστήματα και χώροι κατοικιδίων — κλειστά μέχρι να ανοίξει το «petsx»
+             && (!d.trades.hasAny(['p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc']) || 'petsx' in get(cfgP()).data.get('open', [])))
          || (w == 'car' && d.trades.hasOnly(['roadside', 'mobilemech', 'autoel', 'tyre', 'c_key', 'c_wash', 'c_glass', 'c_other'].concat(xids('car'))))
          || (w == 'learn' && d.trades.hasOnly(['l_uni', 'l_en', 'l_lang', 'l_gr4f', 'l_music', 'l_art', 'l_pc', 'l_other'].concat(xids('learn'))))
          || (w == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands'))))
-         || (w == 'culture' && d.trades.hasOnly(['k_bookshop', 'k_library', 'k_reading', 'k_club', 'k_venue', 'k_publisher', 'k_author', 'k_other'].concat(xids('culture')))))
-        // 1.41: συγγραφείς και λέσχες ανάγνωσης δεν έχουν ποτέ ακριβές σημείο ή κατάστημα (μόνο περιοχή)
-        && (!d.trades.hasAny(['k_author', 'k_club']) || (d.exact == false && d.shop == false))
+         || (w == 'culture' && d.trades.hasOnly(['k_bookshop', 'k_library', 'k_reading', 'k_club', 'k_venue', 'k_publisher', 'k_author', 'k_other'].concat(xids('culture')))
+             // 1.41: συγγραφείς και λέσχες ανάγνωσης δεν έχουν ποτέ ακριβές σημείο ή κατάστημα (μόνο περιοχή)
+             && (!d.trades.hasAny(['k_author', 'k_club']) || (d.exact == false && d.shop == false))))
         && (!('levels' in d) || (d.levels is list && d.levels.size() <= 5 && d.levels.hasOnly(['uni', 'adult'])))
         && (!('modes' in d) || (d.modes is list && d.modes.size() <= 3 && d.modes.hasOnly(['go', 'place', 'online'])))
         && (!('availDay' in d) || (d.availDay is string && d.availDay.size() == 10))
-        && str(d.get('price', ''), 40) && str(d.get('regNo', ''), 80) && str(d.get('hideWhy', ''), 200) && str(d.get('verWhat', ''), 120)
+        && str(d.get('price', ''), 40) && str(d.get('regNo', ''), 80) && str(d.get('verWhat', ''), 120)   // hideWhy: μόνο ο διαχειριστής (προστατευμένο στις αλλαγές)
         && (!('freq' in d) || (d.freq is list && d.freq.size() <= 4 && d.freq.hasOnly(['once', 'week', '2week', 'month'])))
         && (!('supplies' in d) || d.supplies is bool)
         && (!('animals' in d) || (d.animals is list && d.animals.size() <= 5 && d.animals.hasOnly(['dog', 'cat', 'small', 'bird', 'fish'])))
-        // 1.42: απλός έλεγχος (κείμενο έως 11 χαρακτήρες ανά μέρα) — η μορφή ελέγχεται στο κινητό· όριο 1000 πράξεων
-        && (!('hours' in d) || (d.hours is list && d.hours.size() == 7
-             && d.hours[0] is string && d.hours[0].size() <= 11 && d.hours[1] is string && d.hours[1].size() <= 11
-             && d.hours[2] is string && d.hours[2].size() <= 11 && d.hours[3] is string && d.hours[3].size() <= 11
-             && d.hours[4] is string && d.hours[4].size() <= 11 && d.hours[5] is string && d.hours[5].size() <= 11
-             && d.hours[6] is string && d.hours[6].size() <= 11))
+        // 1.42: ωράριο ως ένα κείμενο «Δευ|Τρι|…|Κυρ» (7 μέρες, «08:00-16:00» ή κενό) — ένας πλήρης έλεγχος αντί για 7, λόγω ορίου 1000 πράξεων
+        && (!('hours' in d) || (d.hours is string && d.hours.size() <= 83
+             && d.hours.matches('^(([01][0-9]|2[0-3]):[0-5][0-9]-([01][0-9]|2[0-3]):[0-5][0-9])?([|](([01][0-9]|2[0-3]):[0-5][0-9]-([01][0-9]|2[0-3]):[0-5][0-9])?){6}$')))
         && (!('offHol' in d) || d.offHol is bool) && (!('offHide' in d) || d.offHide is bool)
         && d.type in ['pro', 'seek']
         && d.lat is number && d.lng is number && d.lat > 34 && d.lat < 42 && d.lng > 19 && d.lng < 30
@@ -102,9 +97,9 @@ service cloud.firestore {
     match /kontamou_regions/{rid}/profiles/{uid} {
       allow read: if isAdmin() || (signedIn() && (me() == uid
         || (regionOpen(rid) && resource.data.hidden == false && resource.data.adminHidden == false)));
-      allow create: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()
+      allow create: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid)
         && !exists(/databases/$(database)/documents/kontamou_bans/$(uid))
-        && worldOk(request.resource.data.get('world', 'tech'))
+        && worldOkU(request.resource.data.get('world', 'tech'))
         && getAfter(ownerP(uid)).data.region == rid
         && request.resource.data.get('featured', false) == false
         && request.resource.data.get('verified', false) == false
@@ -116,8 +111,8 @@ service cloud.firestore {
         && (request.resource.data.get('founder', false) == false || !regionOpen(rid))
         && (!('refBy' in request.resource.data) || (request.resource.data.refBy is string && request.resource.data.refBy != uid))
         && request.resource.data.created == request.time);
-      allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()
-        && worldOk(request.resource.data.get('world', 'tech'))
+      allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid)
+        && worldOkU(request.resource.data.get('world', 'tech'))
         // 1.42: ένας έλεγχος αλλαγών αντί για πολλά same() — όριο 1000 πράξεων ανά αίτημα
         && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['featured', 'proUntil', 'adminHidden', 'hideWhy', 'founder', 'refBy', 'created'])
         // το ✓ το δίνει μόνο ο διαχειριστής· ο χρήστης μπορεί μόνο να το χάσει, και το χάνει υποχρεωτικά αν αλλάξει όνομα, ειδικότητα, κόσμο ή αριθμό μητρώου
