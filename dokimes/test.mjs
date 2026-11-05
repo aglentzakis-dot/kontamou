@@ -266,6 +266,50 @@ await t(G9, "Με ✓: αλλαγή ονόματος χωρίς να χάσει 
 await t(G9, "Με ✓: αλλαγή ονόματος με απώλεια του ✓ επιτρέπεται", true, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ name: "Άλλο όνομα", verified: false })(); });
 await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", true, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ desc: "Νέα περιγραφή" })(); });
 
+// ---------- ΠΕΡΙΘΩΡΙΟ ΟΡΙΟΥ 1000 ΠΡΑΞΕΩΝ: ρεαλιστικά μέγιστα προφίλ ανά κόσμο, με τεχνητό «φορτίο» N πράξεων ----------
+{
+  const H = ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00","10:00-14:00"];
+  const base = { hours: H, offHol: true, offHide: false, modes: ["go","place","online"], price: "π".repeat(40), desc: "δ".repeat(600), customName: "κ".repeat(50),
+    area: "α".repeat(80), job: "j".repeat(60), radius: 100, years: 70, availDay: "2026-11-05", hasPhone: true, hasEmail: true, fromDromologio: true };
+  const P = {
+    pets: { world: "pets", trades: ["p_vet", "p_shop", "p_salon"], animals: ["dog","cat","small","bird","fish"], regNo: "ρ".repeat(80) },
+    home: { world: "home", trades: ["cleanpro", "h_iron", "h_other"], freq: ["once","week","2week","month"], supplies: true },
+    learn: { world: "learn", trades: ["l_uni", "l_en", "l_other"], levels: ["uni","adult"] },
+    tech: { world: "tech", trades: ["electric", "plumb", "other"] },
+  };
+  for (const N of [0, 40, 80, 150, 250]){
+    const pad = "    function pad() { return " + Array(N + 1).fill("1 == 1").join(" && ") + "; }\n";
+    const R = RULES.replace("    function validProfile(rid, uid) {", pad + "    function validProfile(rid, uid) {")
+      .replace("allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()", "allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk() && pad()")
+      .replace("allow create: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()", "allow create: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk() && pad()");
+    const E2 = await initializeTestEnvironment({ projectId: "demo-pad" + N, firestore: { rules: R, host: "127.0.0.1", port: 8080 } });
+    for (const [w, extra] of Object.entries(P)){
+      for (const ex of [false, true]){
+        await E2.clearFirestore();
+        await E2.withSecurityRulesDisabled(async c => { const db = c.firestore();
+          await setDoc(doc(db, "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture"] });
+          await setDoc(doc(db, "kontamou_owner/alice"), { region: "attiki" });
+          await setDoc(doc(db, "kontamou_regions/attiki/profiles/alice"), profile("alice")); });
+        const db = E2.authenticatedContext("alice", { email: "alice@example.com", email_verified: true }).firestore();
+        const d = { ...base, ...extra, ...(ex ? { exact: true, shop: w !== "learn", lat: 37.96234, lng: 23.75411 } : {}), ts: serverTimestamp() };
+        let ok = true, err = ""; try { await assertSucceeds(updateDoc(doc(db, "kontamou_regions/attiki/profiles/alice"), d)); } catch(e){ ok = false; err = String(e.message).slice(0, 80); }
+        out.push({ group: "ΠΕΡΙΘΩΡΙΟ", name: "φορτίο " + N + " · " + w + (ex ? " · κατάστημα" : " · περιοχή"), expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
+        console.log("ΠΕΡΙΘΩΡΙΟ", N, w, ex, ok);
+      }
+      // δημιουργία νέου προφίλ
+      await E2.clearFirestore();
+      await E2.withSecurityRulesDisabled(async c => { await setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture"] }); });
+      const db = E2.authenticatedContext("eve", { email: "eve@example.com", email_verified: true }).firestore();
+      let ok = true, err = "";
+      try { const b = writeBatch(db); b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" });
+        b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve"), ...base, ...extra, created: serverTimestamp(), ts: serverTimestamp() }); await assertSucceeds(b.commit()); }
+      catch(e){ ok = false; err = String(e.message).slice(0, 80); }
+      out.push({ group: "ΠΕΡΙΘΩΡΙΟ", name: "φορτίο " + N + " · " + w + " · δημιουργία", expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
+    }
+    await E2.cleanup();
+  }
+}
+
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
   `**Σύνολο: ${pass + fail} · σωστά: ${pass} · λάθος: ${fail}**`, "", "| # | Ομάδα | Δοκιμή | Αναμενόμενο | Αποτέλεσμα |", "|---|---|---|---|---|",
