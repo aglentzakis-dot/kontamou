@@ -41,8 +41,9 @@ service cloud.firestore {
 
     // 1.42: καταστήματα και χώροι κατοικιδίων — κλειστά μέχρι να ανοίξει το «petsx»
     function petsxOk() {
+      // (ο διαχειριστής περνά ήδη από το isAdmin() του κανόνα· εδώ λίγες πράξεις, λόγω ορίου αξιολόγησης)
       return !request.resource.data.trades.hasAny(['p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc'])
-        || isAdmin() || (exists(cfgP()) && 'petsx' in get(cfgP()).data.get('open', []));
+        || 'petsx' in get(cfgP()).data.get('open', []);
     }
     function validProfile(rid, uid) {
       let d = request.resource.data;
