@@ -9,195 +9,195 @@
 [36m[1mi [22m[39m Running script: [1mnode test.mjs[22m
 ✓ [Απομόνωση χρηστών] Ανώνυμος δεν διαβάζει προφίλ
 ✓ [Απομόνωση χρηστών] Άλλος χρήστης δεν διαβάζει ιδιωτικά στοιχεία
-[2026-11-04T21:44:39.487Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a66 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L132:32 for 'create' @ L132, evaluation error at L132:32 for 'update' @ L132, false for 'update' @ L132
+[2026-11-05T07:07:02.300Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1299 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L134:32 for 'create' @ L134, evaluation error at L134:32 for 'update' @ L134, false for 'update' @ L134
 ✓ [Απομόνωση χρηστών] Άλλος χρήστης δεν αλλάζει ιδιωτικά στοιχεία
-[2026-11-04T21:44:39.628Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a68 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L108:24 for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:02.405Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff129b error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L110:24 for 'update' @ L110, false for 'update' @ L110
 ✓ [Απομόνωση χρηστών] Άλλος χρήστης δεν αλλάζει ξένο προφίλ
-[2026-11-04T21:44:39.760Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a6a error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L117:24 for 'delete' @ L117, false for 'delete' @ L117
+[2026-11-05T07:07:02.488Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff129d error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L119:24 for 'delete' @ L119, false for 'delete' @ L119
 ✓ [Απομόνωση χρηστών] Άλλος χρήστης δεν σβήνει ξένο προφίλ
 ✓ [Απομόνωση χρηστών] Τηλέφωνο με «αίτημα επικοινωνίας» δεν φαίνεται χωρίς αποδοχή
 ✓ [Απομόνωση χρηστών] Τρίτος δεν διαβάζει ξένο αίτημα
-[2026-11-04T21:44:40.048Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a70 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L164:24 for 'update' @ L164, false for 'update' @ L164
+[2026-11-05T07:07:02.694Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12a3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L166:24 for 'update' @ L166, false for 'update' @ L166
 ✓ [Απομόνωση χρηστών] Ο πελάτης δεν αποδέχεται μόνος του το αίτημά του
 ✓ [Απομόνωση χρηστών] Ο επαγγελματίας αποδέχεται αίτημα (έλεγχος ελέγχου)
-[2026-11-04T21:44:40.230Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a74 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L157:24 for 'create' @ L157, evaluation error at L164:24 for 'update' @ L164, false for 'create' @ L172, false for 'update' @ L164
+[2026-11-05T07:07:02.824Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12a7 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L159:24 for 'create' @ L159, evaluation error at L166:24 for 'update' @ L166, false for 'create' @ L174, false for 'update' @ L166
 ✓ [Απομόνωση χρηστών] Τρίτος δεν στέλνει αίτημα στο όνομα άλλου
 ✓ [Απομόνωση χρηστών] Τρίτος δεν διαβάζει ξένα αγαπημένα
 ✓ [Απομόνωση χρηστών] Τρίτος δεν διαβάζει ξένη αποδοχή όρων
 ✓ [Απομόνωση χρηστών] Τρίτος χωρίς προφίλ δεν διαβάζει ζητήσεις
-[2026-11-04T21:44:40.559Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a7c error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L305:24 for 'delete' @ L305, false for 'delete' @ L305
+[2026-11-05T07:07:03.091Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12af error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L307:24 for 'delete' @ L307, false for 'delete' @ L307
 ✓ [Απομόνωση χρηστών] Τρίτος δεν σβήνει ξένη ζήτηση
-[2026-11-04T21:44:40.677Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a7e error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:03.188Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12b1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Απομόνωση χρηστών] Ο χρήστης δεν βάζει μόνος του ✓ «ελεγμένος»
-[2026-11-04T21:44:40.802Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a80 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:03.267Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12b3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Απομόνωση χρηστών] Ο χρήστης δεν βάζει μόνος του προνομιακή προβολή
-[2026-11-04T21:44:40.940Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a83 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:03.344Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12b6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Απομόνωση χρηστών] Ο χρήστης δεν ξεκρύβει προφίλ που έκρυψε ο διαχειριστής
-[2026-11-04T21:44:41.020Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a85 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L343, false for 'update' @ L343
+[2026-11-05T07:07:03.413Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12b8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L345, false for 'update' @ L345
 ✓ [Απομόνωση χρηστών] Χρήστης δεν γίνεται διαχειριστής
-[2026-11-04T21:44:41.095Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a87 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L343, false for 'update' @ L343
+[2026-11-05T07:07:03.485Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ba error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L345, false for 'update' @ L345
 ✓ [Απομόνωση χρηστών] Συνδιαχειριστής δεν προσθέτει άλλους διαχειριστές
 ✓ [Απομόνωση χρηστών] Ψεύτικος «κύριος» με μη επιβεβαιωμένο email δεν περνά
-[2026-11-04T21:44:41.259Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a8b error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L83:24 for 'update' @ L83, false for 'update' @ L83
+[2026-11-05T07:07:03.594Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12be error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L85:24 for 'update' @ L85, false for 'update' @ L85
 ✓ [Απομόνωση χρηστών] Χρήστης δεν ανοίγει περιοχή
 ✓ [Απομόνωση χρηστών] Χρήστης δεν διαβάζει αποκλεισμούς άλλων
 ✓ [Απομόνωση χρηστών] Χρήστης δεν διαβάζει τον κάδο
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Έλεγχος ελέγχου: κανονικό προφίλ μαθημάτων για ενήλικες
-[2026-11-04T21:44:41.656Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a93 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:03.874Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12c6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Προφίλ στον κόσμο «Υγεία» απορρίπτεται
-[2026-11-04T21:44:41.753Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a95 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:03.945Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12c8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Μαθήματα για Δημοτικό απορρίπτονται
-[2026-11-04T21:44:41.863Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a97 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:04.015Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ca error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Σχολικά μαθήματα (μαθηματικά) απορρίπτονται
-[2026-11-04T21:44:41.956Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a99 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:04.099Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12cc error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Ειδική αγωγή απορρίπτεται
-[2026-11-04T21:44:42.044Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a9b error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:04.162Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ce error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Βοήθεια ηλικιωμένων (ψώνια) απορρίπτεται
-[2026-11-04T21:44:42.139Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a9d error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L122, evaluation error at L124:24 for 'update' @ L124, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L94, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'create' @ L122, false for 'create' @ L94
+[2026-11-05T07:07:04.231Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12d0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L124, evaluation error at L126:24 for 'update' @ L126, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'create' @ L96, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'create' @ L124, false for 'create' @ L96
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Ειδικότητα υγείας μέσα σε άλλο κόσμο απορρίπτεται
-[2026-11-04T21:44:42.213Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2a9f error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:04.292Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12d2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Υπάρχον προφίλ δεν μεταφέρεται στην «Υγεία»
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Έλεγχος ελέγχου: κανονική ζήτηση
-[2026-11-04T21:44:42.396Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aa3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L289:24 for 'create' @ L289, evaluation error at L302:24 for 'update' @ L302, false for 'create' @ L289
+[2026-11-05T07:07:04.416Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12d6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L291:24 for 'create' @ L291, evaluation error at L304:24 for 'update' @ L304, false for 'create' @ L291
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Ζήτηση στον κόσμο «Υγεία» απορρίπτεται
-[2026-11-04T21:44:42.472Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aa5 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L289:24 for 'create' @ L289, evaluation error at L302:24 for 'update' @ L302, false for 'create' @ L289
+[2026-11-05T07:07:04.479Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12d8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L291:24 for 'create' @ L291, evaluation error at L304:24 for 'update' @ L304, false for 'create' @ L291
 ✓ [Αποκλεισμός υγείας και ανηλίκων] Ζήτηση για ειδική αγωγή απορρίπτεται
 ✓ [Αποδεικτικά αποδοχής] Ο χρήστης γράφει δικό του αποδεικτικό (έλεγχος ελέγχου)
-[2026-11-04T21:44:42.612Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aa9 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L218:24 for 'create' @ L218, false for 'update' @ L226, false for 'create' @ L218
+[2026-11-05T07:07:04.590Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12dc error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L220:24 for 'create' @ L220, false for 'update' @ L228, false for 'create' @ L220
 ✓ [Αποδεικτικά αποδοχής] Πλαστό αποδεικτικό στο όνομα άλλου απορρίπτεται
-[2026-11-04T21:44:42.697Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aab error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L218, false for 'update' @ L226
+[2026-11-05T07:07:04.650Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12de error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L220, false for 'update' @ L228
 ✓ [Αποδεικτικά αποδοχής] Αποδεικτικό με ψεύτικη (παλιά) ημερομηνία απορρίπτεται
-[2026-11-04T21:44:42.795Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aad error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L218:24 for 'create' @ L218, false for 'update' @ L226, false for 'create' @ L218
+[2026-11-05T07:07:04.706Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12e0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L220:24 for 'create' @ L220, false for 'update' @ L228, false for 'create' @ L220
 ✓ [Αποδεικτικά αποδοχής] Άγνωστο είδος αποδεικτικού απορρίπτεται
-[2026-11-04T21:44:42.880Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aaf error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'update' @ L226
+[2026-11-05T07:07:04.762Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12e2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'update' @ L228
 ✓ [Αποδεικτικά αποδοχής] Ο χρήστης δεν αλλάζει το αποδεικτικό του
-[2026-11-04T21:44:42.936Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ab1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L228:24 for 'delete' @ L228, false for 'delete' @ L228
+[2026-11-05T07:07:04.810Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12e4 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L230:24 for 'delete' @ L230, false for 'delete' @ L230
 ✓ [Αποδεικτικά αποδοχής] Ο χρήστης δεν σβήνει το αποδεικτικό του
 ✓ [Αποδεικτικά αποδοχής] Τρίτος δεν διαβάζει ξένο αποδεικτικό
 ✓ [Αποδεικτικά αποδοχής] Ο ίδιος διαβάζει το αποδεικτικό του
-[2026-11-04T21:44:43.154Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ab7 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L218:24 for 'create' @ L218, false for 'update' @ L226, false for 'create' @ L218
+[2026-11-05T07:07:04.956Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ea error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L220:24 for 'create' @ L220, false for 'update' @ L228, false for 'create' @ L220
 ✓ [Αποδεικτικά αποδοχής] Συνδιαχειριστής δεν πλαστογραφεί αποδεικτικό
-[2026-11-04T21:44:43.231Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ab9 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'update' @ L226
+[2026-11-05T07:07:05.005Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ec error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'update' @ L228
 ✓ [Αποδεικτικά αποδοχής] Διαχειριστής δεν αλλάζει αποδεικτικό
-[2026-11-04T21:44:43.301Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2abb error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L228:24 for 'delete' @ L228, false for 'delete' @ L228
+[2026-11-05T07:07:05.059Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ee error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L230:24 for 'delete' @ L230, false for 'delete' @ L230
 ✓ [Αποδεικτικά αποδοχής] Διαχειριστής δεν σβήνει πρόσφατο αποδεικτικό
 ✓ [Αποδεικτικά αποδοχής] Διαχειριστής σβήνει αποδεικτικό μετά από 5 χρόνια
-[2026-11-04T21:44:43.448Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2abf error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L218:24 for 'create' @ L218, false for 'update' @ L226, false for 'create' @ L218
+[2026-11-05T07:07:05.154Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12f2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L220:24 for 'create' @ L220, false for 'update' @ L228, false for 'create' @ L220
 ✓ [Αποδεικτικά αποδοχής] Δήλωση ανεξαρτησίας: τρίτος δεν τη γράφει για άλλον
 ✓ [Καταγραφές συμφωνίας] Τρίτος δεν διαβάζει ξένη συμφωνία
-[2026-11-04T21:44:43.607Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ac3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L240:24 for 'create' @ L240, evaluation error at L248:24 for 'update' @ L248, false for 'create' @ L240
+[2026-11-05T07:07:05.257Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12f6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L242:24 for 'create' @ L242, evaluation error at L250:24 for 'update' @ L250, false for 'create' @ L242
 ✓ [Καταγραφές συμφωνίας] Τρίτος δεν φτιάχνει συμφωνία για άλλους
-[2026-11-04T21:44:43.680Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ac5 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L248:24 for 'update' @ L248, false for 'update' @ L248
+[2026-11-05T07:07:05.301Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12f8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L250:24 for 'update' @ L250, false for 'update' @ L250
 ✓ [Καταγραφές συμφωνίας] Ο πελάτης δεν αποδέχεται για λογαριασμό του επαγγελματία
 ✓ [Καταγραφές συμφωνίας] Ο επαγγελματίας αποδέχεται (έλεγχος ελέγχου)
-[2026-11-04T21:44:43.820Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ac9 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L248:24 for 'update' @ L248, false for 'update' @ L248
+[2026-11-05T07:07:05.394Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12fc error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L250:24 for 'update' @ L250, false for 'update' @ L250
 ✓ [Καταγραφές συμφωνίας] Αλλαγή χωρίς νέα έκδοση απορρίπτεται
-[2026-11-04T21:44:43.886Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2acc error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L248:24 for 'update' @ L248, false for 'update' @ L248
+[2026-11-05T07:07:05.445Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff12ff error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L250:24 for 'update' @ L250, false for 'update' @ L250
 ✓ [Καταγραφές συμφωνίας] Αλλαγή που κρατά την αποδοχή του άλλου απορρίπτεται
 ✓ [Καταγραφές συμφωνίας] Σωστή αλλαγή (νέα έκδοση, μόνο η δική μου αποδοχή)
-[2026-11-04T21:44:43.991Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ad0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L253:24 for 'delete' @ L253, false for 'delete' @ L253
+[2026-11-05T07:07:05.539Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1303 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L255:24 for 'delete' @ L255, false for 'delete' @ L255
 ✓ [Καταγραφές συμφωνίας] Τα μέρη δεν σβήνουν τη συμφωνία
-[2026-11-04T21:44:44.067Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ad2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L253:24 for 'delete' @ L253, false for 'delete' @ L253
+[2026-11-05T07:07:05.599Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1305 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L255:24 for 'delete' @ L255, false for 'delete' @ L255
 ✓ [Καταγραφές συμφωνίας] Διαχειριστής δεν σβήνει πρόσφατη συμφωνία
 ✓ [Καταγγελίες και επανεξέταση] Ο χρήστης κάνει καταγγελία (έλεγχος ελέγχου)
-[2026-11-04T21:44:44.189Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ad6 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L258:24 for 'create' @ L258, evaluation error at L270:24 for 'update' @ L270, false for 'create' @ L172, false for 'create' @ L258
+[2026-11-05T07:07:05.704Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1309 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L260:24 for 'create' @ L260, evaluation error at L272:24 for 'update' @ L272, false for 'create' @ L174, false for 'create' @ L260
 ✓ [Καταγγελίες και επανεξέταση] Καταγγελία στο όνομα άλλου απορρίπτεται
-[2026-11-04T21:44:44.250Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ad8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L258:24 for 'create' @ L258, evaluation error at L270:24 for 'update' @ L270, false for 'create' @ L172, false for 'create' @ L258
+[2026-11-05T07:07:05.759Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff130b error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L260:24 for 'create' @ L260, evaluation error at L272:24 for 'update' @ L272, false for 'create' @ L174, false for 'create' @ L260
 ✓ [Καταγγελίες και επανεξέταση] Καταγγελία που γεννιέται «κλειστή» απορρίπτεται
 ✓ [Καταγγελίες και επανεξέταση] Ο καταγγέλλων βλέπει την καταγγελία του
 ✓ [Καταγγελίες και επανεξέταση] Ο καταγγελλόμενος δεν βλέπει την καταγγελία
-[2026-11-04T21:44:44.431Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ade error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:05.899Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1311 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Ο καταγγέλλων δεν αλλάζει την κατάσταση
 ✓ [Καταγγελίες και επανεξέταση] Διαχειριστής βάζει «σε εξέταση» με νέα εγγραφή ιστορικού
-[2026-11-04T21:44:44.555Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ae2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:05.992Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1315 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Εγγραφή ιστορικού με ξένο email απορρίπτεται
 ✓ [Καταγγελίες και επανεξέταση] Δεύτερη εγγραφή σε υπάρχον ιστορικό επιτρέπεται
-[2026-11-04T21:44:44.707Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2ae8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:06.107Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff131b error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Διαχειριστής δεν ξαναγράφει παλιό ιστορικό
-[2026-11-04T21:44:44.794Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aeb error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:06.158Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff131e error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Διαχειριστής δεν σβήνει ιστορικό
-[2026-11-04T21:44:44.855Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aed error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:06.198Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1320 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Διαχειριστής δεν αλλάζει το κείμενο της καταγγελίας
 ✓ [Καταγγελίες και επανεξέταση] Κλείσιμο με αποτέλεσμα
-[2026-11-04T21:44:44.957Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2af1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L270:24 for 'update' @ L270, false for 'update' @ L270
+[2026-11-05T07:07:06.284Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1324 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L272:24 for 'update' @ L272, false for 'update' @ L272
 ✓ [Καταγγελίες και επανεξέταση] Κλειστή υπόθεση δεν αλλάζει αποτέλεσμα
-[2026-11-04T21:44:45.017Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2af3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L283:24 for 'delete' @ L283, false for 'delete' @ L283
+[2026-11-05T07:07:06.335Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1326 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L285:24 for 'delete' @ L285, false for 'delete' @ L285
 ✓ [Καταγγελίες και επανεξέταση] Διαχειριστής δεν σβήνει ανοιχτή καταγγελία
 ✓ [Καταγγελίες και επανεξέταση] Κλειστή καταγγελία σβήνεται μετά από 180 ημέρες
 ✓ [Καταγγελίες και επανεξέταση] Κρυμμένος χρήστης ζητά επανεξέταση
 ✓ [Καταγγελίες και επανεξέταση] Αποκλεισμένος χρήστης μπορεί να ζητήσει επανεξέταση
-[2026-11-04T21:44:45.285Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2afd error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L157:24 for 'create' @ L157, evaluation error at L164:24 for 'update' @ L164, false for 'create' @ L172, false for 'create' @ L157
+[2026-11-05T07:07:06.522Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1330 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L159:24 for 'create' @ L159, evaluation error at L166:24 for 'update' @ L166, false for 'create' @ L174, false for 'create' @ L159
 ✓ [Καταγγελίες και επανεξέταση] Αποκλεισμένος χρήστης δεν στέλνει αίτημα επικοινωνίας
-[2026-11-04T21:44:45.346Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2aff error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L258:24 for 'create' @ L258, evaluation error at L270:24 for 'update' @ L270, false for 'create' @ L172, false for 'create' @ L258
+[2026-11-05T07:07:06.560Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1332 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L260:24 for 'create' @ L260, evaluation error at L272:24 for 'update' @ L272, false for 'create' @ L174, false for 'create' @ L260
 ✓ [Καταγγελίες και επανεξέταση] Επανεξέταση με άλλο λόγο απορρίπτεται
-[2026-11-04T21:44:45.405Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b01 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L258:24 for 'create' @ L258, evaluation error at L270:24 for 'update' @ L270, false for 'create' @ L172, false for 'create' @ L258
+[2026-11-05T07:07:06.598Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1334 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L260:24 for 'create' @ L260, evaluation error at L272:24 for 'update' @ L272, false for 'create' @ L174, false for 'create' @ L260
 ✓ [Καταγγελίες και επανεξέταση] Τρίτος δεν ζητά επανεξέταση για άλλον
-[2026-11-04T21:44:45.460Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b03 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L258:24 for 'create' @ L258, evaluation error at L270:24 for 'update' @ L270, false for 'create' @ L258
+[2026-11-05T07:07:06.639Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1336 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L260:24 for 'create' @ L260, evaluation error at L272:24 for 'update' @ L272, false for 'create' @ L260
 ✓ [Καταγγελίες και επανεξέταση] Συνδιαχειριστής δεν φτιάχνει καταγγελία για λογαριασμό άλλου
 ✓ [Αρχείο ενεργειών] Χρήστης γράφει δική του εγγραφή (έλεγχος ελέγχου)
-[2026-11-04T21:44:45.565Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b07 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L369:24 for 'create' @ L369, false for 'create' @ L369
+[2026-11-05T07:07:06.720Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff133a error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L371:24 for 'create' @ L371, false for 'create' @ L371
 ✓ [Αρχείο ενεργειών] Πλαστή εγγραφή στο όνομα άλλου απορρίπτεται
-[2026-11-04T21:44:45.618Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b09 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L369:24 for 'create' @ L369, false for 'create' @ L369
+[2026-11-05T07:07:06.755Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff133c error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L371:24 for 'create' @ L371, false for 'create' @ L371
 ✓ [Αρχείο ενεργειών] Διαχειριστής δεν γράφει εγγραφή στο όνομα άλλου
-[2026-11-04T21:44:45.664Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b0b error. Code: 7 Message: 7 PERMISSION_DENIED: 
-false for 'create' @ L369
+[2026-11-05T07:07:06.790Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff133e error. Code: 7 Message: 7 PERMISSION_DENIED: 
+false for 'create' @ L371
 ✓ [Αρχείο ενεργειών] Διαχειριστής δεν γράφει εγγραφή με παλιά ημερομηνία
 ✓ [Αρχείο ενεργειών] Διαχειριστής καταγράφει τη δική του ενέργεια
-[2026-11-04T21:44:45.779Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b0f error. Code: 7 Message: 7 PERMISSION_DENIED: No matching allow statements
+[2026-11-05T07:07:06.858Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1342 error. Code: 7 Message: 7 PERMISSION_DENIED: No matching allow statements
 ✓ [Αρχείο ενεργειών] Κανείς δεν αλλάζει εγγραφή
-[2026-11-04T21:44:45.823Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b11 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L375:24 for 'delete' @ L375, false for 'delete' @ L375
+[2026-11-05T07:07:06.898Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1344 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L377:24 for 'delete' @ L377, false for 'delete' @ L377
 ✓ [Αρχείο ενεργειών] Κύριος διαχειριστής δεν σβήνει πρόσφατη εγγραφή
 ✓ [Αρχείο ενεργειών] Εγγραφή σβήνεται μόνο μετά από 12 μήνες
 ✓ [Αρχείο ενεργειών] Χρήστης δεν διαβάζει το αρχείο
@@ -207,67 +207,106 @@ evaluation error at L375:24 for 'delete' @ L375, false for 'delete' @ L375
 ✓ [Διαγραφή και λήψη δεδομένων από τον ίδιο] Ο χρήστης διαβάζει τα αιτήματά του (για λήψη)
 ✓ [Διαγραφή και λήψη δεδομένων από τον ίδιο] Ο χρήστης διαβάζει τα αποδεικτικά του (για λήψη)
 ✓ [Διαγραφή και λήψη δεδομένων από τον ίδιο] Ο χρήστης δεν διαβάζει μαζικά ξένα αποδεικτικά
-[2026-11-04T21:44:46.303Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b23 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.282Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1356 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Κλειστός κόσμος: χρήστης δεν προσθέτει έργο
 ✓ [Βιβλία & Πολιτισμός (1.41)] Κλειστός κόσμος: χρήστης δεν διαβάζει δημοσιευμένα έργα
 ✓ [Βιβλία & Πολιτισμός (1.41)] Κλειστός κόσμος: ο διαχειριστής δοκιμάζει (προσθέτει έργο)
-[2026-11-04T21:44:46.492Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b2a error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:07.417Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff135d error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Βιβλία & Πολιτισμός (1.41)] Κλειστός κόσμος: χρήστης δεν βάζει προφίλ στον κόσμο πολιτισμού
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: χρήστης προσθέτει έργο για έλεγχο
-[2026-11-04T21:44:46.634Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b30 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.528Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1363 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: χρήστης δεν αυτοεγκρίνει έργο (status ok)
-[2026-11-04T21:44:46.733Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b33 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.579Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1366 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: σύνδεσμος χωρίς https απορρίπτεται
-[2026-11-04T21:44:46.815Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b36 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.637Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1369 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: σύνδεσμος javascript: απορρίπτεται
-[2026-11-04T21:44:46.877Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b39 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.683Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff136c error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: έργο με αρχείο μέσα στη βάση απορρίπτεται
-[2026-11-04T21:44:46.940Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b3c error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, false for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L397
+[2026-11-05T07:07:07.732Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff136f error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, false for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: έργο στο όνομα άλλου απορρίπτεται
-[2026-11-04T21:44:46.998Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b3f error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, false for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'create' @ L397
+[2026-11-05T07:07:07.778Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1372 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, false for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'create' @ L399
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: πάνω από 100 έργα ανά χρήστη απορρίπτεται (αριθμός θέσης)
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: τρίτος δεν διαβάζει έργο σε έλεγχο
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: τρίτος διαβάζει εγκεκριμένο έργο
-[2026-11-04T21:44:47.227Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b4b error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'update' @ L400
+[2026-11-05T07:07:07.957Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff137e error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'update' @ L402
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: ο δημιουργός δεν εγκρίνει μόνος του αλλάζοντας το έργο
-[2026-11-04T21:44:47.311Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b4f error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L397:24 for 'create' @ L397, evaluation error at L400:24 for 'update' @ L400, false for 'create' @ L172, false for 'update' @ L400
+[2026-11-05T07:07:08.033Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1382 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L399:24 for 'create' @ L399, evaluation error at L402:24 for 'update' @ L402, false for 'create' @ L174, false for 'update' @ L402
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: ο δημιουργός δεν γράφει σημείωση διαχειριστή
 ✓ [Βιβλία & Πολιτισμός (1.41)] Συνδιαχειριστής εγκρίνει έργο
-[2026-11-04T21:44:47.453Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b57 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L402:24 for 'delete' @ L402, false for 'delete' @ L402
+[2026-11-05T07:07:08.149Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff138a error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L404:24 for 'delete' @ L404, false for 'delete' @ L404
 ✓ [Βιβλία & Πολιτισμός (1.41)] Τρίτος δεν σβήνει ξένο έργο
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ο δημιουργός σβήνει το έργο του
 ✓ [Βιβλία & Πολιτισμός (1.41)] Ανοιχτός: εκδήλωση για ενήλικες σε μέλλουσα ημερομηνία
-[2026-11-04T21:44:47.658Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b61 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L422:24 for 'create' @ L422, evaluation error at L425:24 for 'update' @ L425, false for 'create' @ L172, false for 'create' @ L422
+[2026-11-05T07:07:08.305Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1394 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
 ✓ [Βιβλία & Πολιτισμός (1.41)] Εκδήλωση χωρίς δήλωση «για ενήλικες» απορρίπτεται
-[2026-11-04T21:44:47.728Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b64 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L422:24 for 'create' @ L422, evaluation error at L425:24 for 'update' @ L425, false for 'create' @ L172, false for 'create' @ L422
+[2026-11-05T07:07:08.355Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff1397 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
 ✓ [Βιβλία & Πολιτισμός (1.41)] Εκδήλωση σε παρελθούσα ημερομηνία απορρίπτεται
-[2026-11-04T21:44:47.793Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b67 error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L422:24 for 'create' @ L422, evaluation error at L425:24 for 'update' @ L425, false for 'create' @ L172, false for 'create' @ L422
+[2026-11-05T07:07:08.399Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff139a error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
 ✓ [Βιβλία & Πολιτισμός (1.41)] Εκδήλωση με ακριβές σημείο (όχι στρογγυλεμένο) απορρίπτεται
-[2026-11-04T21:44:47.856Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b6a error. Code: 7 Message: 7 PERMISSION_DENIED: 
-evaluation error at L172:24 for 'create' @ L172, evaluation error at L174:24 for 'update' @ L174, evaluation error at L422:24 for 'create' @ L422, evaluation error at L425:24 for 'update' @ L425, false for 'create' @ L172, false for 'create' @ L422
+[2026-11-05T07:07:08.445Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff139d error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
 ✓ [Βιβλία & Πολιτισμός (1.41)] Εκδήλωση αυτοεγκεκριμένη απορρίπτεται
-[2026-11-04T21:44:47.917Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x61ef2b6d error. Code: 7 Message: 7 PERMISSION_DENIED: 
-Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L108, false for 'update' @ L108
+[2026-11-05T07:07:08.495Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13a0 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
 ✓ [Βιβλία & Πολιτισμός (1.41)] Συγγραφέας με ακριβές σημείο απορρίπτεται
 ✓ [Βιβλία & Πολιτισμός (1.41)] Συγγραφέας μόνο με περιοχή επιτρέπεται
 ✓ [Βιβλία & Πολιτισμός (1.41)] Βιβλιοπωλείο με ακριβές σημείο καταστήματος επιτρέπεται
 ✓ [Βιβλία & Πολιτισμός (1.41)] Δήλωση δικαιωμάτων καταγράφεται ως αμετάβλητη απόδειξη
+[2026-11-05T07:07:08.665Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13aa error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, false for 'update' @ L110
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Κλειστό: χρήστης δεν δηλώνει pet shop
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Κλειστό: οι υπάρχουσες υπηρεσίες (βόλτα σκύλου) δουλεύουν κανονικά
+[2026-11-05T07:07:08.745Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13af error. Code: 7 Message: 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110, Unable to evaluate the expression as the maximum of 1000 expressions to evaluate has been reached. for 'update' @ L110
+✗ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ανοιχτό: χρήστης δηλώνει pet shop με σημείο καταστήματος  → 7 PERMISSION_DENIED: 
+[2026-11-05T07:07:08.794Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13b1 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Κλειστό: εκδήλωση κατοικιδίων απορρίπτεται
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ανοιχτό: ημέρα υιοθεσίας για ενήλικες
+[2026-11-05T07:07:08.904Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13b7 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ανοιχτό: είδος εκδήλωσης άλλου κόσμου απορρίπτεται
+[2026-11-05T07:07:08.958Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13ba error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, Property world is undefined on object. for 'create' @ L427
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Εκδήλωση χωρίς κόσμο απορρίπτεται
+[2026-11-05T07:07:09.021Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13bd error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L427:24 for 'create' @ L427, evaluation error at L430:24 for 'update' @ L430, false for 'create' @ L174, false for 'create' @ L427
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Εκδήλωση σε άγνωστο κόσμο απορρίπτεται
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Κλειστό: τρίτος δεν διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ανοιχτό: τρίτος διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Αίτημα αφαίρεσης σημείου ανοιχτών δεδομένων
+[2026-11-05T07:07:09.207Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13c8 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L437:24 for 'create' @ L437, evaluation error at L446:24 for 'update' @ L446, false for 'create' @ L437
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Αίτημα στο όνομα άλλου απορρίπτεται
+✗ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Αίτημα με λάθος κλειδί (σύμβολα) απορρίπτεται  → Invalid document reference. Document references must have an even number of segments, but kontamou_osmreq/alice_n1/2 has 3.
+[2026-11-05T07:07:09.285Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13cb error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L437:24 for 'create' @ L437, evaluation error at L446:24 for 'update' @ L446, false for 'create' @ L437
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Αίτημα με άγνωστο είδος απορρίπτεται
+[2026-11-05T07:07:09.324Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13cd error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L174:24 for 'create' @ L174, evaluation error at L176:24 for 'update' @ L176, evaluation error at L437:24 for 'create' @ L437, evaluation error at L446:24 for 'update' @ L446, false for 'create' @ L437
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Αίτημα χωρίς λόγο απορρίπτεται
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Τρίτος δεν διαβάζει ξένο αίτημα
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ο διαχειριστής διαβάζει τα αιτήματα
+[2026-11-05T07:07:09.442Z]  @firebase/firestore: Firestore (10.12.2): GrpcConnection RPC 'Write' stream 0x8cff13d5 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L338:32 for 'create' @ L338, evaluation error at L338:32 for 'update' @ L338, false for 'create' @ L338
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Χρήστης δεν κρύβει σημεία (ρύθμιση osmhide)
+✓ [Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)] Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)
 
-ΣΥΝΟΛΟ 120 · ΣΩΣΤΑ 120 · ΛΑΘΟΣ 0
+ΣΥΝΟΛΟ 139 · ΣΩΣΤΑ 137 · ΛΑΘΟΣ 2
 [32m[1m✔ [22m[39m Script exited successfully (code 0)
 [36m[1mi  emulators:[22m[39m Shutting down emulators.
 [36m[1mi  firestore:[22m[39m Stopping Firestore Emulator
