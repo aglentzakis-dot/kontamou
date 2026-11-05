@@ -280,7 +280,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
     learn: { world: "learn", trades: ["l_uni", "l_en", "l_other"], levels: ["uni","adult"] },
     tech: { world: "tech", trades: ["electric", "plumb", "other"] },
   };
-  for (const N of [0, 20, 40, 60, 90]){
+  for (const N of [90]){                 // φύλακας: μέγιστα προφίλ περνούν ακόμα κι αν προστεθούν ~270 πράξεις στο μέλλον
     const pad = "    function pad() { return " + Array(N + 1).fill("1 == 1").join(" && ") + "; }\n";
     const R = RULES.replace("    function validProfile(rid, uid) {", pad + "    function validProfile(rid, uid) {")
       .replace("allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk()", "allow update: if isAdmin() || (signedIn() && me() == uid && validProfile(rid, uid) && petsxOk() && pad()")
@@ -296,7 +296,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
         const db = E2.authenticatedContext("alice", { email: "alice@example.com", email_verified: true }).firestore();
         const d = { ...base, ...extra, ...(ex ? { exact: true, shop: w !== "learn", lat: 37.96234, lng: 23.75411 } : {}), ts: serverTimestamp() };
         let ok = true, err = ""; try { await assertSucceeds(updateDoc(doc(db, "kontamou_regions/attiki/profiles/alice"), d)); } catch(e){ ok = false; err = String(e.message).slice(0, 80); }
-        out.push({ group: "ΠΕΡΙΘΩΡΙΟ", name: "φορτίο " + N + " · " + w + (ex ? " · κατάστημα" : " · περιοχή"), expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
+        ok ? pass++ : fail++; out.push({ group: "Περιθώριο ορίου 1000 πράξεων", name: "μέγιστο προφίλ · " + w + (ex ? " · κατάστημα" : " · περιοχή") + " · +" + N + " πράξεις", expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
         console.log("ΠΕΡΙΘΩΡΙΟ", N, w, ex, ok);
       }
       // δημιουργία νέου προφίλ
@@ -308,7 +308,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
         b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve"), ...base, ...extra, created: serverTimestamp(), ts: serverTimestamp() }); await assertSucceeds(b.commit()); }
       catch(e){ ok = false; err = String(e.message).slice(0, 80); }
       console.log("ΠΕΡΙΘΩΡΙΟ", N, w, "δημιουργία", ok, err);
-      out.push({ group: "ΠΕΡΙΘΩΡΙΟ", name: "φορτίο " + N + " · " + w + " · δημιουργία", expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
+      ok ? pass++ : fail++; out.push({ group: "Περιθώριο ορίου 1000 πράξεων", name: "μέγιστο νέο προφίλ · " + w + " · +" + N + " πράξεις", expect: "ΕΠΙΤΡΕΠΕΤΑΙ", result: ok ? "ΣΩΣΤΟ" : "ΛΑΘΟΣ", err });
     }
     await E2.cleanup();
   }
