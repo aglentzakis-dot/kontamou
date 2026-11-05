@@ -1,6 +1,6 @@
 {
- "pass": 151,
- "fail": 2,
+ "pass": 156,
+ "fail": 0,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -993,8 +993,8 @@
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
    "name": "Όριο αξιολόγησης: πλήρες προφίλ κτηνιατρείου (όλα τα πεδία, 3 ειδικότητες)",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
@@ -1014,8 +1014,8 @@
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
    "name": "Όριο αξιολόγησης: πλήρες νέο προφίλ κτηνιατρείου (δημιουργία)",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
@@ -1026,14 +1026,35 @@
   },
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
-   "name": "Ωράριο: κείμενο μεγαλύτερο από 11 χαρακτήρες απορρίπτεται",
+   "name": "Ωράριο: κακόβουλο κείμενο απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
    "result": "ΣΩΣΤΟ",
    "err": ""
   },
   {
    "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
+   "name": "Ωράριο: παλιά μορφή (πίνακας) απορρίπτεται",
+   "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
+   "name": "Ωράριο: κλειστές μέρες (κενές) επιτρέπονται",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
    "name": "Ωράριο: λάθος αριθμός ημερών απορρίπτεται",
+   "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)",
+   "name": "Ωράριο: μη έγκυρη ώρα (25:00) απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
    "result": "ΣΩΣΤΟ",
    "err": ""
@@ -1091,8 +1112,8 @@
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 0 · pets · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
@@ -1112,8 +1133,8 @@
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 0 · home · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
@@ -1133,8 +1154,8 @@
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 0 · learn · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
@@ -1154,246 +1175,78 @@
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 0 · tech · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · pets · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · pets · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
    "result": "ΣΩΣΤΟ",
    "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · pets · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · home · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · home · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · home · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · learn · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · learn · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · learn · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · tech · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · tech · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 5 · tech · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · pets · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · pets · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · pets · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · home · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · home · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · home · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · learn · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · learn · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · learn · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · tech · περιοχή",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · tech · κατάστημα",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΣΩΣΤΟ",
-   "err": ""
-  },
-  {
-   "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 10 · tech · δημιουργία",
-   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · pets · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · pets · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · pets · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · home · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · home · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · home · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · learn · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · learn · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · learn · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · tech · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
@@ -1406,92 +1259,260 @@
    "group": "ΠΕΡΙΘΩΡΙΟ",
    "name": "φορτίο 20 · tech · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · pets · περιοχή",
+   "name": "φορτίο 40 · pets · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · pets · κατάστημα",
+   "name": "φορτίο 40 · pets · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · pets · δημιουργία",
+   "name": "φορτίο 40 · pets · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · home · περιοχή",
+   "name": "φορτίο 40 · home · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · home · κατάστημα",
+   "name": "φορτίο 40 · home · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · home · δημιουργία",
+   "name": "φορτίο 40 · home · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · learn · περιοχή",
+   "name": "φορτίο 40 · learn · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · learn · κατάστημα",
+   "name": "φορτίο 40 · learn · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · learn · δημιουργία",
+   "name": "φορτίο 40 · learn · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · tech · περιοχή",
+   "name": "φορτίο 40 · tech · περιοχή",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · tech · κατάστημα",
+   "name": "φορτίο 40 · tech · κατάστημα",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nUnable to evaluate the expression as the maximum of 1000 e"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "ΠΕΡΙΘΩΡΙΟ",
-   "name": "φορτίο 30 · tech · δημιουργία",
+   "name": "φορτίο 40 · tech · δημιουργία",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: \nfalse for 'create' @ L133, evaluation error at L135:24 for"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · pets · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · pets · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · pets · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · home · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · home · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · home · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · learn · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · learn · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · learn · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · tech · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · tech · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 60 · tech · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · pets · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · pets · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · pets · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · home · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · home · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · home · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · learn · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · learn · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · learn · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · tech · περιοχή",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · tech · κατάστημα",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
+  },
+  {
+   "group": "ΠΕΡΙΘΩΡΙΟ",
+   "name": "φορτίο 90 · tech · δημιουργία",
+   "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   }
  ]
 }
