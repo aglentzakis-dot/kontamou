@@ -50,7 +50,9 @@ service cloud.firestore {
         && d.trades is list && d.trades.size() >= 1 && d.trades.size() <= 3
         && ((d.get('world', 'tech') == 'tech' && d.trades.hasOnly(['electric', 'plumb', 'cool', 'heat', 'gas', 'heatpump', 'solar', 'paint', 'drywall', 'plaster', 'tile', 'marble', 'builder', 'mason', 'paving', 'roof', 'insul', 'thermal', 'gutter', 'wood', 'doors', 'alu', 'iron', 'glass', 'lock', 'awning', 'alarm', 'network', 'smart', 'pc', 'tv', 'appl', 'electronic', 'pos', 'lift', 'pool', 'drain', 'pest', 'cleanpro', 'windows', 'carpet', 'pressure', 'garden', 'tree', 'irrig', 'spray', 'earth', 'handy', 'autoel', 'mobilemech', 'furniture', 'floors', 'sander', 'gardencrew', 'nursery', 'ducts', 'biocl', 'tyre', 'roadside', 'fire', 'evcharge', 'sat', 'refrig', 'fridge', 'coffee', 'proequip', 'extinguisher', 'other', 'd_phone', 'd_help'].concat(xids('tech'))))
          || (d.get('world', 'tech') == 'home' && d.trades.hasOnly(['cleanpro', 'h_rental', 'h_stairs', 'windows', 'carpet', 'pressure', 'h_iron', 'h_sew', 'handy', 'furniture', 'h_org', 'h_check', 'h_cook', 'garden', 'tree', 'irrig', 'g_lawn', 'pest', 'biocl', 'h_other', 'smalltrans', 'mv_bulky', 'courier', 'e_other'].concat(xids('home'))))
-         || (d.get('world', 'tech') == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other'].concat(xids('pets'))))
+         || (d.get('world', 'tech') == 'pets' && d.trades.hasOnly(['p_walk', 'p_sit', 'p_board', 'p_taxi', 'p_train', 'p_groom', 'p_aqua', 'p_other', 'p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc'].concat(xids('pets')))
+             // 1.42: καταστήματα και χώροι κατοικιδίων — κλειστά μέχρι να ανοίξει το «petsx»
+             && (!d.trades.hasAny(['p_shop', 'p_vet', 'p_salon', 'p_school', 'p_hotel', 'p_assoc']) || worldOk('petsx')))
          || (d.get('world', 'tech') == 'car' && d.trades.hasOnly(['roadside', 'mobilemech', 'autoel', 'tyre', 'c_key', 'c_wash', 'c_glass', 'c_other'].concat(xids('car'))))
          || (d.get('world', 'tech') == 'learn' && d.trades.hasOnly(['l_uni', 'l_en', 'l_lang', 'l_gr4f', 'l_music', 'l_art', 'l_pc', 'l_other'].concat(xids('learn'))))
          || (d.get('world', 'tech') == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands'))))
@@ -401,12 +403,15 @@ service cloud.firestore {
         && request.resource.data.status == 'pending' && throttled() && notBanned());
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
     }
+    // 1.42: εκδηλώσεις για περισσότερους κόσμους (πολιτισμός, κατοικίδια) — ο καθένας κλειστός μέχρι να ανοίξει
+    function evOk(w) { return (w == 'culture' && worldOk('culture')) || (w == 'pets' && worldOk('pets') && worldOk('petsx')); }
     function validEvent() {
       let d = request.resource.data;
-      return d.keys().hasOnly(['uid', 'title', 'kind', 'start', 'end', 'place', 'area', 'region', 'lat', 'lng', 'how', 'link', 'adults', 'status', 'ts'])
-        && d.uid == me()
+      return d.keys().hasOnly(['uid', 'world', 'title', 'kind', 'start', 'end', 'place', 'area', 'region', 'lat', 'lng', 'how', 'link', 'adults', 'status', 'ts'])
+        && d.uid == me() && d.world in ['culture', 'pets']
         && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
-        && d.kind in ['present', 'reading', 'club', 'talk', 'festival', 'exhib', 'other']
+        && ((d.world == 'culture' && d.kind in ['present', 'reading', 'club', 'talk', 'festival', 'exhib', 'other'])
+          || (d.world == 'pets' && d.kind in ['adopt', 'seminar', 'expo', 'vetinfo', 'other']))
         && d.start is timestamp && d.start > request.time && d.start < request.time + duration.value(400, 'd')
         && (!('end' in d) || (d.end is timestamp && d.end > d.start && d.end < d.start + duration.value(30, 'd')))
         && d.place is string && d.place.size() >= 3 && d.place.size() <= 120
@@ -418,13 +423,27 @@ service cloud.firestore {
         && d.ts == request.time;
     }
     match /kontamou_events/{id} {
-      allow read: if isAdmin() || (signedIn() && culOk() && (resource.data.uid == me() || resource.data.status == 'ok'));
-      allow create: if signedIn() && culOk() && id.matches('^' + me() + '_e[0-9]{1,2}$') && validEvent()
+      allow read: if isAdmin() || (signedIn() && (resource.data.uid == me() || (resource.data.status == 'ok' && evOk(resource.data.get('world', 'culture')))));
+      allow create: if signedIn() && id.matches('^' + me() + '_e[0-9]{1,2}$') && validEvent() && evOk(request.resource.data.world)
         && (request.resource.data.status == 'pending' || (isAdmin() && request.resource.data.status == 'ok'))
         && (isAdmin() || (throttled() && notBanned()));
-      allow update: if isAdmin() || (signedIn() && culOk() && resource.data.uid == me() && validEvent()
+      allow update: if isAdmin() || (signedIn() && resource.data.uid == me() && validEvent() && evOk(request.resource.data.world)
         && request.resource.data.status == 'pending' && throttled() && notBanned());
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
+    }
+    // 1.42: αιτήματα ιδιοκτητών για σημεία ανοιχτών δεδομένων (αφαίρεση ή διόρθωση) — τα βλέπει μόνο ο διαχειριστής και ο ίδιος
+    match /kontamou_osmreq/{id} {
+      allow read, delete: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow create: if signedIn() && notBanned() && throttled()
+        && id == me() + '_' + request.resource.data.key
+        && request.resource.data.keys().hasOnly(['uid', 'key', 'world', 'name', 'kind', 'why', 'ts'])
+        && request.resource.data.uid == me()
+        && request.resource.data.key is string && request.resource.data.key.matches('^[a-z0-9]{1,24}$')
+        && request.resource.data.world in ['culture', 'pets']
+        && str(request.resource.data.name, 80) && request.resource.data.kind in ['remove', 'fix']
+        && request.resource.data.why is string && request.resource.data.why.size() >= 1 && request.resource.data.why.size() <= 300
+        && request.resource.data.ts == request.time;
+      allow update: if isAdmin();
     }
 }
 }

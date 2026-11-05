@@ -188,7 +188,7 @@ const G8 = "Βιβλία & Πολιτισμός (1.41)";
 const openCul = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "culture"] }));
 const putW = (id, d) => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_works/" + id), d));
 const work = (uid, extra = {}) => ({ uid, title: "Το βιβλίο μου", by: "Συγγραφέας", genre: "novel", lang: "el", link: "https://drive.google.com/file/d/abc/view", stmt: "ΔΙΚ-2026-11-04", status: "pending", ts: serverTimestamp(), ...extra });
-const ev = (uid, extra = {}) => ({ uid, title: "Παρουσίαση βιβλίου", kind: "present", start: Timestamp.fromMillis(Date.now() + 5 * 864e5), place: "Βιβλιοπωλείο, Οδός 1", area: "Κέντρο", region: "attiki",
+const ev = (uid, extra = {}) => ({ uid, world: "culture", title: "Παρουσίαση βιβλίου", kind: "present", start: Timestamp.fromMillis(Date.now() + 5 * 864e5), place: "Βιβλιοπωλείο, Οδός 1", area: "Κέντρο", region: "attiki",
   lat: 37.962, lng: 23.754, adults: true, status: "pending", ts: serverTimestamp(), ...extra });
 const wset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_works/" + id), d));
 const eset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_events/" + id), d));
@@ -219,6 +219,30 @@ await t(G8, "Συγγραφέας με ακριβές σημείο απορρί�
 await t(G8, "Συγγραφέας μόνο με περιοχή επιτρέπεται", true, async () => { await openCul(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_author"], exact: false, shop: false, ts: serverTimestamp() }); });
 await t(G8, "Βιβλιοπωλείο με ακριβές σημείο καταστήματος επιτρέπεται", true, async () => { await openCul(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "culture", trades: ["k_bookshop"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
 await t(G8, "Δήλωση δικαιωμάτων καταγράφεται ως αμετάβλητη απόδειξη", true, () => setDoc(doc(ctx.alice(), "kontamou_acks/r1"), { uid: "alice", role: "pro", kind: "work", ref: "alice_w0", other: "", stmt: "ΔΙΚ-2026-11-04", terms: "2026-10-24", at: serverTimestamp() }));
+
+const G9 = "Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42)";
+const openPx = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx"] }));
+const req = (uid, key, extra = {}) => ({ uid, key, world: "pets", name: "Pet shop", kind: "remove", why: "Έκλεισε", ts: serverTimestamp(), ...extra });
+const rset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_osmreq/" + id), d));
+await t(G9, "Κλειστό: χρήστης δεν δηλώνει pet shop", false, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_shop"], exact: true, shop: true, ts: serverTimestamp() }));
+await t(G9, "Κλειστό: οι υπάρχουσες υπηρεσίες (βόλτα σκύλου) δουλεύουν κανονικά", true, () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_walk"], ts: serverTimestamp() }));
+await t(G9, "Ανοιχτό: χρήστης δηλώνει pet shop με σημείο καταστήματος", true, async () => { await openPx(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { world: "pets", trades: ["p_shop"], exact: true, shop: true, lat: 37.96234, lng: 23.75411, ts: serverTimestamp() }); });
+await t(G9, "Κλειστό: εκδήλωση κατοικιδίων απορρίπτεται", false, () => eset("alice", "alice", "alice_e0", ev("alice", { world: "pets", kind: "adopt" })));
+await t(G9, "Ανοιχτό: ημέρα υιοθεσίας για ενήλικες", true, async () => { await openPx(); return eset("alice", "alice", "alice_e0", ev("alice", { world: "pets", kind: "adopt" })); });
+await t(G9, "Ανοιχτό: είδος εκδήλωσης άλλου κόσμου απορρίπτεται", false, async () => { await openPx(); return eset("alice", "alice", "alice_e0", ev("alice", { world: "pets", kind: "present" })); });
+await t(G9, "Εκδήλωση χωρίς κόσμο απορρίπτεται", false, async () => { await openCul(); const d = ev("alice"); delete d.world; return eset("alice", "alice", "alice_e0", d); });
+await t(G9, "Εκδήλωση σε άγνωστο κόσμο απορρίπτεται", false, async () => { await openPx(); return eset("alice", "alice", "alice_e0", ev("alice", { world: "tech", kind: "other" })); });
+await t(G9, "Κλειστό: τρίτος δεν διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων", false, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_events/alice_e0"), { ...ev("alice", { world: "pets", kind: "adopt", status: "ok" }), ts: now() })); return getDoc(doc(ctx.bob(), "kontamou_events/alice_e0")); });
+await t(G9, "Ανοιχτό: τρίτος διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων", true, async () => { await openPx(); await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_events/alice_e0"), { ...ev("alice", { world: "pets", kind: "adopt", status: "ok" }), ts: now() })); return getDoc(doc(ctx.bob(), "kontamou_events/alice_e0")); });
+await t(G9, "Αίτημα αφαίρεσης σημείου ανοιχτών δεδομένων", true, () => rset("alice", "alice", "alice_n12345", req("alice", "n12345")));
+await t(G9, "Αίτημα στο όνομα άλλου απορρίπτεται", false, () => rset("eve", "eve", "alice_n12345", req("alice", "n12345")));
+await t(G9, "Αίτημα με λάθος κλειδί (σύμβολα) απορρίπτεται", false, () => rset("alice", "alice", "alice_n1/2", req("alice", "n1/2")));
+await t(G9, "Αίτημα με άγνωστο είδος απορρίπτεται", false, () => rset("alice", "alice", "alice_n12345", req("alice", "n12345", { kind: "delete_all" })));
+await t(G9, "Αίτημα χωρίς λόγο απορρίπτεται", false, () => rset("alice", "alice", "alice_n12345", req("alice", "n12345", { why: "" })));
+await t(G9, "Τρίτος δεν διαβάζει ξένο αίτημα", false, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_osmreq/alice_n12345"), { ...req("alice", "n12345"), ts: now() })); return getDoc(doc(ctx.bob(), "kontamou_osmreq/alice_n12345")); });
+await t(G9, "Ο διαχειριστής διαβάζει τα αιτήματα", true, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_osmreq/alice_n12345"), { ...req("alice", "n12345"), ts: now() })); return getDocs(collection(ctx.co(), "kontamou_osmreq")); });
+await t(G9, "Χρήστης δεν κρύβει σημεία (ρύθμιση osmhide)", false, () => setDoc(doc(ctx.alice(), "kontamou_config/osmhide"), { keys: ["n1"] }));
+await t(G9, "Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)", true, () => setDoc(doc(ctx.co(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
