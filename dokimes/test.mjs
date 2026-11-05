@@ -257,11 +257,14 @@ await t(G9, "Όριο αξιολόγησης: πλήρες νέο προφίλ �
   return withRate(ctx.eve(), "eve", (b, db) => { b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" }); b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve", { world: "pets", trades: ["p_vet", "p_shop", "p_walk"], ...full, exact: true, shop: true, lat: 37.96234, lng: 23.75411 }), created: serverTimestamp(), ts: serverTimestamp() }); }); });
 
 const upA = (o) => () => updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { ...o, ts: serverTimestamp() });
-await t("ΔΙΑΓΝΩΣΗ", "ωράριο όλο κενό", true, upA({ hours: ["","","","","","",""] }));
-await t("ΔΙΑΓΝΩΣΗ", "ωράριο μία μέρα", true, upA({ hours: ["09:00-17:00","","","","","",""] }));
-await t("ΔΙΑΓΝΩΣΗ", "ωράριο τρεις μέρες", true, upA({ hours: ["09:00-17:00","09:00-17:00","09:00-17:00","","","",""] }));
-await t("ΔΙΑΓΝΩΣΗ", "ωράριο έξι μέρες", true, upA({ hours: ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00",""] }));
-await t("ΔΙΑΓΝΩΣΗ", "ωράριο + offHol", true, upA({ hours: ["09:00-17:00","","","","","",""], offHol: true, offHide: false }));
+await t(G9, "Ωράριο: όλες οι μέρες με ώρες", true, upA({ hours: ["09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","09:00-17:00","10:00-14:00","10:00-14:00"], offHol: true, offHide: false }));
+await t(G9, "Ωράριο: κείμενο μεγαλύτερο από 11 χαρακτήρες απορρίπτεται", false, upA({ hours: ["<script>alert(1)</script>","","","","","",""] }));
+await t(G9, "Ωράριο: λάθος αριθμός ημερών απορρίπτεται", false, upA({ hours: ["09:00-17:00"] }));
+await t(G9, "Δεν αλλάζει μόνος του το ★ (featured)", false, upA({ featured: true }));
+await t(G9, "Δεν δίνει μόνος του το ✓", false, upA({ verified: true }));
+await t(G9, "Με ✓: αλλαγή ονόματος χωρίς να χάσει το ✓ απορρίπτεται", false, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ name: "Άλλο όνομα" })(); });
+await t(G9, "Με ✓: αλλαγή ονόματος με απώλεια του ✓ επιτρέπεται", true, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ name: "Άλλο όνομα", verified: false })(); });
+await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", true, async () => { await env.withSecurityRulesDisabled(c => updateDoc(doc(c.firestore(), "kontamou_regions/attiki/profiles/alice"), { verified: true })); return upA({ desc: "Νέα περιγραφή" })(); });
 
 await env.cleanup();
 const md = ["# Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»", "", "Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: " + new Date().toISOString(), "",
