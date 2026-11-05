@@ -1,6 +1,6 @@
 # Αποτελέσματα δοκιμών κανόνων βάσης «Κοντά μου»
 
-Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: 2026-11-05T07:22:36.509Z
+Προσομοιωτής: Firebase Firestore Emulator · κανόνες: firestore.rules · ημερομηνία: 2026-11-05T07:26:19.205Z
 
 **Σύνολο: 153 · σωστά: 151 · λάθος: 2**
 
@@ -159,3 +159,105 @@
 | 151 | Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42) | Με ✓: αλλαγή ονόματος χωρίς να χάσει το ✓ απορρίπτεται | ΑΠΟΡΡΙΠΤΕΤΑΙ | ✓ σωστό |
 | 152 | Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42) | Με ✓: αλλαγή ονόματος με απώλεια του ✓ επιτρέπεται | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
 | 153 | Κατοικίδια: καταστήματα, εκδηλώσεις, ανοιχτά δεδομένα (1.42) | Με ✓: αλλαγή περιγραφής κρατά το ✓ | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 154 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · pets · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 155 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · pets · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 156 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · pets · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 157 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · home · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 158 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · home · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 159 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · home · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 160 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · learn · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 161 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · learn · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 162 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · learn · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 163 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · tech · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 164 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · tech · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 165 | ΠΕΡΙΘΩΡΙΟ | φορτίο 0 · tech · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 166 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · pets · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 167 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · pets · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 168 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · pets · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 169 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · home · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 170 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · home · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 171 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · home · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 172 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · learn · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 173 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · learn · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 174 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · learn · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 175 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · tech · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 176 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · tech · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 177 | ΠΕΡΙΘΩΡΙΟ | φορτίο 5 · tech · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 178 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · pets · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 179 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · pets · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 180 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · pets · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 181 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · home · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 182 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · home · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 183 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · home · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 184 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · learn · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 185 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · learn · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 186 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · learn · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 187 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · tech · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 188 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · tech · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 189 | ΠΕΡΙΘΩΡΙΟ | φορτίο 10 · tech · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 190 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · pets · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 191 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · pets · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 192 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · pets · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 193 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · home · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 194 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · home · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 195 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · home · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 196 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · learn · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 197 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · learn · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 198 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · learn · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 199 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · tech · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 200 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · tech · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✓ σωστό |
+| 201 | ΠΕΡΙΘΩΡΙΟ | φορτίο 20 · tech · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 202 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · pets · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 203 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · pets · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 204 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · pets · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 205 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · home · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 206 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · home · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 207 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · home · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 208 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · learn · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 209 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · learn · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 210 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · learn · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
+| 211 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · tech · περιοχή | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 212 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · tech · κατάστημα | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+Unable to evaluate the expression as the maximum of 1000 e |
+| 213 | ΠΕΡΙΘΩΡΙΟ | φορτίο 30 · tech · δημιουργία | ΕΠΙΤΡΕΠΕΤΑΙ | ✗ ΛΑΘΟΣ — 7 PERMISSION_DENIED: 
+false for 'create' @ L133, evaluation error at L135:24 for |
