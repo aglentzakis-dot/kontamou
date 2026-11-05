@@ -1,0 +1,78 @@
+name: Ανοιχτά δεδομένα OpenStreetMap — καταστήματα ανά κόσμο
+# Μία φορά τον μήνα κατεβάζει από το OpenStreetMap καταστήματα και χώρους της Ελλάδας σε στατικά αρχεία
+# (ένα ανά κόσμο). Έτσι η εφαρμογή δεν ρωτά ποτέ τρίτο διακομιστή με τη θέση του χρήστη.
+# Δεδομένα: © συντελεστές OpenStreetMap, άδεια ODbL.
+on:
+  schedule:
+    - cron: "17 3 1 * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: [".github/workflows/anoixta-dedomena-osm.yml"]
+permissions:
+  contents: write
+jobs:
+  osm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Λήψη και μετατροπή
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse, datetime, time
+          SETS = {
+            "politismos-osm.json": [("books", 'nwr["shop"="books"](area.gr);'), ("library", 'nwr["amenity"="library"](area.gr);')],
+            "katoikidia-osm.json": [("pet", 'nwr["shop"="pet"](area.gr);'), ("vet", 'nwr["amenity"="veterinary"](area.gr);'),
+                                    ("groom", 'nwr["shop"="pet_grooming"](area.gr);'), ("dogpark", 'nwr["leisure"="dog_park"](area.gr);'),
+                                    ("shelter", 'nwr["amenity"="animal_shelter"](area.gr);')],
+          }
+          URLS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]
+          def fetch(q):
+              data = urllib.parse.urlencode({"data": q}).encode()
+              for url in URLS:
+                  for attempt in range(3):
+                      try:
+                          req = urllib.request.Request(url, data=data, headers={"User-Agent": "GlenApps-KontaMou/1.0 (monthly open-data refresh)", "Content-Type": "application/x-www-form-urlencoded"})
+                          els = json.load(urllib.request.urlopen(req, timeout=240)).get("elements", [])
+                          print("πηγή:", url, "στοιχεία:", len(els)); return els
+                      except Exception as ex:
+                          print("αποτυχία", url, attempt, repr(ex)[:200]); time.sleep(20)
+              raise SystemExit("Δεν ήταν δυνατή η λήψη από το OpenStreetMap")
+          for fname, parts in SETS.items():
+              out = []
+              for k, sel in parts:
+                  q = '[out:json][timeout:180];area["ISO3166-1"="GR"][admin_level=2]->.gr;(' + sel + ');out center tags;'
+                  for e in fetch(q):
+                      t = e.get("tags", {}); lat = e.get("lat", (e.get("center") or {}).get("lat")); lng = e.get("lon", (e.get("center") or {}).get("lon"))
+                      n = (t.get("name:el") or t.get("name") or "").strip()
+                      if lat is None or lng is None: continue
+                      if not n and k != "dogpark": continue
+                      if not (34 < lat < 42 and 19 < lng < 30): continue
+                      a = " ".join(x for x in [t.get("addr:street", ""), t.get("addr:housenumber", "")] if x).strip()
+                      city = t.get("addr:city", "")
+                      a = (a + (", " if a and city else "") + city)[:100]
+                      w = (t.get("website") or t.get("contact:website") or "").strip()
+                      it = {"id": e.get("type", "x")[0] + str(e.get("id", "")), "k": k, "n": n[:80], "lat": round(lat, 5), "lng": round(lng, 5)}
+                      if a: it["a"] = a
+                      if w.startswith("https://") and len(w) <= 200 and not any(c in w for c in ' <>"'): it["w"] = w
+                      h = (t.get("opening_hours") or "").strip()
+                      if h and len(h) <= 120: it["h"] = h
+                      out.append(it)
+                  time.sleep(5)
+              seen = set(); uniq = []
+              for it in out:
+                  if it["id"] in seen: continue
+                  seen.add(it["id"]); uniq.append(it)
+              uniq.sort(key=lambda x: (x["k"], x["n"]))
+              if len(uniq) < 50: raise SystemExit("%s: πολύ λίγα αποτελέσματα (%d) — δεν αντικαθίσταται" % (fname, len(uniq)))
+              doc = {"source": "OpenStreetMap", "license": "ODbL 1.0 — © συντελεστές OpenStreetMap", "updated": datetime.date.today().isoformat(), "items": uniq}
+              json.dump(doc, open(fname, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+              print(fname, "σημεία:", len(uniq))
+          PY
+      - name: Αποθήκευση
+        run: |
+          git config user.name "osm-bot"
+          git config user.email "osm-bot@users.noreply.github.com"
+          git add politismos-osm.json katoikidia-osm.json
+          git diff --cached --quiet || (git commit -m "Ανανέωση ανοιχτών δεδομένων OpenStreetMap" && git push)
