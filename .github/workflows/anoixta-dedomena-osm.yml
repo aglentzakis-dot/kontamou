@@ -1,15 +1,18 @@
 name: Ανοιχτά δεδομένα OpenStreetMap — καταστήματα ανά κόσμο
-# Μία φορά τον μήνα κατεβάζει από το OpenStreetMap καταστήματα και χώρους της Ελλάδας σε στατικά αρχεία
+# Μία φορά την εβδομάδα κατεβάζει από το OpenStreetMap καταστήματα και χώρους της Ελλάδας σε στατικά αρχεία
 # (ένα ανά κόσμο). Έτσι η εφαρμογή δεν ρωτά ποτέ τρίτο διακομιστή με τη θέση του χρήστη.
 # Δεδομένα: © συντελεστές OpenStreetMap, άδεια ODbL.
 # Ένα αίτημα ανά αρχείο· αν αποτύχει, μένει το προηγούμενο αρχείο. Κάθε αρχείο αποθηκεύεται μόλις κατέβει.
+# Εξαιρέσεις: οι κωδικοί του exaireseis.json (αφαιρέσεις μετά από επιβεβαιωμένο αίτημα) δεν μπαίνουν ποτέ στα αρχεία.
+# Δικλίδα: αν λείπει πάνω από το 10% των σημείων σε σχέση με το προηγούμενο αρχείο, ή το αποτέλεσμα είναι χαλασμένο,
+# το αρχείο ΔΕΝ ενημερώνεται και η εργασία τελειώνει με αποτυχία — το GitHub στέλνει ειδοποίηση με email.
 on:
   schedule:
-    - cron: "17 3 1 * *"
+    - cron: "17 3 * * 1"
   workflow_dispatch: {}
   push:
     branches: [main]
-    paths: [".github/workflows/anoixta-dedomena-osm.yml"]
+    paths: [".github/workflows/anoixta-dedomena-osm.yml", "exaireseis.json"]
 permissions:
   contents: write
 concurrency:
@@ -26,7 +29,11 @@ jobs:
           git config user.name "osm-bot"
           git config user.email "osm-bot@users.noreply.github.com"
           python3 - <<'PY'
-          import json, re, urllib.request, urllib.parse, datetime, time, subprocess
+          import json, re, os, sys, urllib.request, urllib.parse, datetime, time, subprocess
+          norm = lambda v: re.sub(r"[^a-z0-9]", "", str(v or "").lower())[:24]
+          EXC = set(norm(e.get("id")) for e in json.load(open("exaireseis.json", encoding="utf-8")).get("items", []) if isinstance(e, dict))
+          EXC.discard(""); print("εξαιρέσεις:", len(EXC), flush=True)
+          PROBLEMS = []
           # είδος: [(κλειδί OSM, τιμή ή κανονική έκφραση)]
           SETS = {
             "politismos-osm.json": {"books": [("shop", "books")], "library": [("amenity", "library")]},
@@ -60,7 +67,7 @@ jobs:
               sel = "".join('nwr["%s"~"^(%s)$"](area.gr);' % (key, val) for rules in kinds.values() for key, val in rules)
               q = '[out:json][timeout:180];area["ISO3166-1"="GR"][admin_level=2]->.gr;(' + sel + ');out center tags;'
               els = fetch(q)
-              if els is None: print(fname, "— απέτυχε, μένει το προηγούμενο αρχείο", flush=True); continue
+              if els is None: PROBLEMS.append(fname + ": η λήψη απέτυχε"); print(fname, "— απέτυχε, μένει το προηγούμενο αρχείο", flush=True); continue
               out = []
               for e in els:
                   t = e.get("tags", {})
@@ -85,8 +92,17 @@ jobs:
               for it in out:
                   if it["id"] in seen: continue
                   seen.add(it["id"]); uniq.append(it)
+              uniq = [x for x in uniq if norm(x["id"]) not in EXC]
               uniq.sort(key=lambda x: (x["k"], x["n"]))
-              if len(uniq) < 50: print("%s: πολύ λίγα αποτελέσματα (%d) — δεν αντικαθίσταται" % (fname, len(uniq)), flush=True); continue
+              prev = 0
+              try:
+                  if os.path.exists(fname): prev = sum(1 for x in json.load(open(fname, encoding="utf-8")).get("items", []) if norm(x.get("id")) not in EXC)
+              except Exception: prev = 0
+              broken = len(uniq) < 50 or any(not isinstance(x.get("lat"), float) or not x.get("k") in kinds for x in uniq)
+              if broken or (prev and len(uniq) < prev * 0.9):
+                  msg = "%s: %d σημεία αντί για %d%s — ΔΕΝ ενημερώνεται" % (fname, len(uniq), prev, " (χαλασμένο αποτέλεσμα)" if broken else " (λείπει πάνω από 10%)")
+                  PROBLEMS.append(msg); print(msg, flush=True); continue
+              # τα προηγούμενα αρχεία καθαρίζονται από νέες εξαιρέσεις ακόμη κι αν δεν άλλαξε τίποτε άλλο
               doc = {"source": "OpenStreetMap", "license": "ODbL 1.0 — © συντελεστές OpenStreetMap", "updated": datetime.date.today().isoformat(), "items": uniq}
               json.dump(doc, open(fname, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
               cnt = {}
@@ -99,4 +115,18 @@ jobs:
                       if subprocess.run(["git", "pull", "-q", "--rebase"]).returncode == 0 and subprocess.run(["git", "push", "-q"]).returncode == 0: break
                       time.sleep(5)
               time.sleep(20)
+          # εξαιρέσεις και σε αρχεία που δεν ανανεώθηκαν απόψε (π.χ. αποτυχία λήψης)
+          for fname in SETS:
+              try: d = json.load(open(fname, encoding="utf-8"))
+              except Exception: continue
+              keep = [x for x in d.get("items", []) if norm(x.get("id")) not in EXC]
+              if len(keep) != len(d.get("items", [])):
+                  d["items"] = keep; json.dump(d, open(fname, "w", encoding="utf-8"), ensure_ascii=False, separators=(",", ":"))
+                  subprocess.run(["git", "add", fname], check=True)
+                  subprocess.run(["git", "commit", "-q", "-m", "Εξαιρέσεις ανοιχτών δεδομένων: " + fname], check=True)
+                  for _ in range(3):
+                      if subprocess.run(["git", "pull", "-q", "--rebase"]).returncode == 0 and subprocess.run(["git", "push", "-q"]).returncode == 0: break
+                      time.sleep(5)
+          if PROBLEMS:
+              print("ΠΡΟΒΛΗΜΑΤΑ:\n" + "\n".join(PROBLEMS), flush=True); sys.exit(1)
           PY
