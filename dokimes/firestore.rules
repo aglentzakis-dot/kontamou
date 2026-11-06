@@ -442,7 +442,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid', 'key', 'world', 'name', 'kind', 'why', 'ts'])
         && request.resource.data.uid == me()
         && request.resource.data.key is string && request.resource.data.key.matches('^[a-z0-9]{1,24}$')
-        && request.resource.data.world in ['culture', 'pets']
+        && request.resource.data.world in ['culture', 'pets', 'car', 'tech']
         && str(request.resource.data.name, 80) && request.resource.data.kind in ['remove', 'fix']
         && request.resource.data.why is string && request.resource.data.why.size() >= 1 && request.resource.data.why.size() <= 300
         && request.resource.data.ts == request.time;

@@ -235,6 +235,9 @@ await t(G9, "Εκδήλωση σε άγνωστο κόσμο απορρίπτε�
 await t(G9, "Κλειστό: τρίτος δεν διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων", false, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_events/alice_e0"), { ...ev("alice", { world: "pets", kind: "adopt", status: "ok" }), ts: now() })); return getDoc(doc(ctx.bob(), "kontamou_events/alice_e0")); });
 await t(G9, "Ανοιχτό: τρίτος διαβάζει εγκεκριμένη εκδήλωση κατοικιδίων", true, async () => { await openPx(); await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_events/alice_e0"), { ...ev("alice", { world: "pets", kind: "adopt", status: "ok" }), ts: now() })); return getDoc(doc(ctx.bob(), "kontamou_events/alice_e0")); });
 await t(G9, "Αίτημα αφαίρεσης σημείου ανοιχτών δεδομένων", true, () => rset("alice", "alice", "alice_n12345", req("alice", "n12345")));
+await t(G9, "1.43: αίτημα για συνεργείο αυτοκινήτων (ανοιχτά δεδομένα)", true, () => rset("alice", "alice", "alice_n777", req("alice", "n777", { world: "car", name: "Συνεργείο" })));
+await t(G9, "1.43: αίτημα για σιδηρικά (μάστορες)", true, () => rset("alice", "alice", "alice_w888", req("alice", "w888", { world: "tech", name: "Σιδηρικά" })));
+await t(G9, "1.43: αίτημα σε άγνωστο κόσμο απορρίπτεται", false, () => rset("alice", "alice", "alice_n999", req("alice", "n999", { world: "health" })));
 await t(G9, "Αίτημα στο όνομα άλλου απορρίπτεται", false, () => rset("eve", "eve", "alice_n12345", req("alice", "n12345")));
 await t(G9, "Αίτημα με λάθος κλειδί (σύμβολα) απορρίπτεται", false, () => rset("alice", "alice", "alice_n1-2", req("alice", "n1-2")));
 await t(G9, "Αίτημα με άγνωστο είδος απορρίπτεται", false, () => rset("alice", "alice", "alice_n12345", req("alice", "n12345", { kind: "delete_all" })));
