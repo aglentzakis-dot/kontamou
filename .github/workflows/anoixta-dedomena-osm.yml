@@ -14,7 +14,7 @@ permissions:
 jobs:
   osm:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - name: Λήψη και μετατροπή
@@ -26,6 +26,17 @@ jobs:
             "katoikidia-osm.json": [("pet", 'nwr["shop"="pet"](area.gr);'), ("vet", 'nwr["amenity"="veterinary"](area.gr);'),
                                     ("groom", 'nwr["shop"="pet_grooming"](area.gr);'), ("dogpark", 'nwr["leisure"="dog_park"](area.gr);'),
                                     ("shelter", 'nwr["amenity"="animal_shelter"](area.gr);')],
+            "autokinito-osm.json": [("repair", 'nwr["shop"="car_repair"](area.gr);'), ("tyres", 'nwr["shop"="tyres"](area.gr);'), ("wash", 'nwr["amenity"="car_wash"](area.gr);'),
+                                    ("parts", 'nwr["shop"="car_parts"](area.gr);'), ("dealer", 'nwr["shop"="car"](area.gr);'), ("moto", 'nwr["shop"="motorcycle"](area.gr);'),
+                                    ("ktep", 'nwr["amenity"="vehicle_inspection"](area.gr);'), ("fuel", 'nwr["amenity"="fuel"](area.gr);'),
+                                    ("ev", 'nwr["amenity"="charging_station"](area.gr);'), ("rent", 'nwr["amenity"="car_rental"](area.gr);'),
+                                    ("school", 'nwr["amenity"="driving_school"](area.gr);')],
+            "mastores-osm.json": [("hw", 'nwr["shop"~"^(hardware|doityourself)$"](area.gr);'), ("trade", 'nwr["shop"="trade"](area.gr);'), ("paint", 'nwr["shop"="paint"](area.gr);'),
+                                  ("elec", 'nwr["shop"="electrical"](area.gr);'), ("bath", 'nwr["shop"="bathroom_furnishing"](area.gr);'), ("tiles", 'nwr["shop"="tiles"](area.gr);'),
+                                  ("lock", 'nwr["shop"="locksmith"](area.gr);nwr["craft"="locksmith"](area.gr);'), ("glass", 'nwr["shop"="glaziery"](area.gr);nwr["craft"="glaziery"](area.gr);'),
+                                  ("wood", 'nwr["craft"~"^(carpenter|joiner|cabinet_maker)$"](area.gr);'), ("metal", 'nwr["craft"~"^(metal_construction|blacksmith|welder)$"](area.gr);'),
+                                  ("electrician", 'nwr["craft"="electrician"](area.gr);'), ("plumber", 'nwr["craft"="plumber"](area.gr);'), ("hvac", 'nwr["craft"="hvac"](area.gr);'),
+                                  ("pc", 'nwr["shop"="computer"](area.gr);'), ("appl", 'nwr["shop"="appliance"](area.gr);')],
           }
           URLS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"]
           def fetch(q):
@@ -45,7 +56,7 @@ jobs:
                   q = '[out:json][timeout:180];area["ISO3166-1"="GR"][admin_level=2]->.gr;(' + sel + ');out center tags;'
                   for e in fetch(q):
                       t = e.get("tags", {}); lat = e.get("lat", (e.get("center") or {}).get("lat")); lng = e.get("lon", (e.get("center") or {}).get("lon"))
-                      n = (t.get("name:el") or t.get("name") or "").strip()
+                      n = (t.get("name:el") or t.get("name") or t.get("brand") or t.get("operator") or "").strip()
                       if lat is None or lng is None: continue
                       if not n and k != "dogpark": continue
                       if not (34 < lat < 42 and 19 < lng < 30): continue
@@ -74,5 +85,5 @@ jobs:
         run: |
           git config user.name "osm-bot"
           git config user.email "osm-bot@users.noreply.github.com"
-          git add politismos-osm.json katoikidia-osm.json
+          git add politismos-osm.json katoikidia-osm.json autokinito-osm.json mastores-osm.json
           git diff --cached --quiet || (git commit -m "Ανανέωση ανοιχτών δεδομένων OpenStreetMap" && git push)
