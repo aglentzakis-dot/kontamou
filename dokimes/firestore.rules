@@ -434,19 +434,10 @@ service cloud.firestore {
         && request.resource.data.status == 'pending' && throttled() && notBanned());
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
     }
-    // 1.42: αιτήματα ιδιοκτητών για σημεία ανοιχτών δεδομένων (αφαίρεση ή διόρθωση) — τα βλέπει μόνο ο διαχειριστής και ο ίδιος
+    // 1.44: τα αιτήματα για καταστήματα από ανοιχτά δεδομένα ΔΕΝ περνούν πια από τη βάση (διόρθωση στο OpenStreetMap, αφαίρεση με email).
+    // Η συλλογή κλείνει: καμία νέα εγγραφή· ο διαχειριστής μπορεί μόνο να δει και να σβήσει ό,τι τυχόν έμεινε.
     match /kontamou_osmreq/{id} {
-      allow read, delete: if isAdmin() || (signedIn() && resource.data.uid == me());
-      allow create: if signedIn() && notBanned() && throttled()
-        && id == me() + '_' + request.resource.data.key
-        && request.resource.data.keys().hasOnly(['uid', 'key', 'world', 'name', 'kind', 'why', 'ts'])
-        && request.resource.data.uid == me()
-        && request.resource.data.key is string && request.resource.data.key.matches('^[a-z0-9]{1,24}$')
-        && request.resource.data.world in ['culture', 'pets', 'car', 'tech']
-        && str(request.resource.data.name, 80) && request.resource.data.kind in ['remove', 'fix']
-        && request.resource.data.why is string && request.resource.data.why.size() >= 1 && request.resource.data.why.size() <= 300
-        && request.resource.data.ts == request.time;
-      allow update: if isAdmin();
+      allow read, delete: if isAdmin();
     }
 }
 }
