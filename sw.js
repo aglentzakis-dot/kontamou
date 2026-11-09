@@ -3,7 +3,18 @@
    Ρόλος: να εγκαθίσταται η εφαρμογή στο κινητό και να ανοίγει γρήγορα.
    ΣΗΜΑΝΤΙΚΟ: σε κάθε νέα έκδοση αλλάζει ο αριθμός στη γραμμή CACHE,
    ώστε το κινητό να παίρνει αμέσως την καινούργια. */
-const CACHE = "kontamou-1.77";
+/* ΚΑΝΟΝΑΣ GlenApps (10/11/2026): η εφαρμογή ανοίγει αμέσως από τη συσκευή· δίκτυο το πολύ 3″ — ΜΗΝ αφαιρεθεί.
+   gaNet(δίκτυο, αποθήκη, συμβάν): αν το δίκτυο δεν απαντήσει σε 3″ και υπάρχει αποθηκευμένο αντίγραφο, δίνεται αυτό
+   (το δίκτυο συνεχίζει στο παρασκήνιο και ενημερώνει την αποθήκη)· μετά από καθυστέρηση, για 30″ όλα κατευθείαν από τη συσκευή.
+   Σφάλμα διακομιστή (5xx) δεν αντικαθιστά το αποθηκευμένο. Οι αναβαθμίσεις έρχονται όπως πριν (νέο όνομα αποθήκης σε κάθε έκδοση). */
+var GA_MS=3000,gaSlow=0;
+function gaNet(net,fromCache,ev){var p=Promise.resolve(net);try{ev&&ev.waitUntil&&ev.waitUntil(p.catch(function(){}))}catch(x){}
+  function fc(){try{return Promise.resolve(fromCache()).catch(function(){})}catch(x){return Promise.resolve()}}
+  if(Date.now()<gaSlow)return fc().then(function(c){return c||p});
+  return new Promise(function(ok){var done=false,t;function fin(r){if(!done){done=true;clearTimeout(t);ok(r)}}
+    t=setTimeout(function(){fc().then(function(c){if(c){gaSlow=Date.now()+30000;fin(c)}})},GA_MS);
+    p.then(function(r){if(r&&r.status>=500)fc().then(function(c){fin(c||r)});else fin(r)},function(){fc().then(function(c){fin(c||Response.error())})});});}
+const CACHE = "kontamou-1.78";
 const SHELL = ["./", "./index.html","./plaisio.js", "./koino/glenread-apostoli.js", "./metafora-rythmisi.js", "./metafora-lipsi.js", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-512-maskable.png", "./apple-touch-icon.png", "./othoni-enarxis.js", "./othoni-enarxis.webp", "./pineza-g.png", "./lang-en.js"];
 // Βιβλιοθήκες με σταθερή έκδοση: φυλάγονται μία φορά
 const LIBS = ["cdnjs.cloudflare.com", "www.gstatic.com"];
@@ -22,8 +33,8 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   // Η ίδια η εφαρμογή: πρώτα από το διαδίκτυο (για να έρχονται οι ενημερώσεις), αλλιώς από τη μνήμη
   if (url.origin === self.location.origin){
-    e.respondWith(fetch(req, {cache:"no-cache"}).then(r => { const cp = r.clone(); if (r.ok) caches.open(CACHE).then(c => c.put(req, cp)); return r; })
-      .catch(() => caches.match(req).then(r => r || caches.match("./index.html"))));
+    e.respondWith(gaNet(fetch(req, {cache:"no-cache"}).then(r => { const cp = r.clone(); if (r.ok) caches.open(CACHE).then(c => c.put(req, cp)); return r; })
+      ,() => caches.match(req).then(r => r || caches.match("./index.html")),e));
     return;
   }
   // Βιβλιοθήκες χάρτη και βάσης: από τη μνήμη αν υπάρχουν
