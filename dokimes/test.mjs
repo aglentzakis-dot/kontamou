@@ -210,7 +210,7 @@ await t(G8, "Ανοιχτός: ο δημιουργός δεν γράφει ση�
 await t(G8, "Συνδιαχειριστής εγκρίνει έργο", true, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), ts: now() }); return updateDoc(doc(ctx.co(), "kontamou_works/alice_w0"), { status: "ok" }); });
 await t(G8, "Τρίτος δεν σβήνει ξένο έργο", false, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return deleteDoc(doc(ctx.eve(), "kontamou_works/alice_w0")); });
 await t(G8, "Ο δημιουργός σβήνει το έργο του", true, async () => { await openCul(); await putW("alice_w0", { ...work("alice"), status: "ok", ts: now() }); return deleteDoc(doc(ctx.alice(), "kontamou_works/alice_w0")); });
-await t(G8, "Ανοιχτός: εκδήλωση για ενήλικες σε μέλλουσα ημερομηνία", true, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice")); });
+await t(G8, "1.45: εκδήλωση πολιτισμού στη βάση δεν γίνεται πια (πέρασε στον κόσμο «Εκδηλώσεις»)", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice")); });
 await t(G8, "Εκδήλωση χωρίς δήλωση «για ενήλικες» απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { adults: false })); });
 await t(G8, "Εκδήλωση σε παρελθούσα ημερομηνία απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { start: past(1) })); });
 await t(G8, "Εκδήλωση με ακριβές σημείο (όχι στρογγυλεμένο) απορρίπτεται", false, async () => { await openCul(); return eset("alice", "alice", "alice_e0", ev("alice", { lat: 37.96234, lng: 23.75411 })); });
@@ -248,6 +248,52 @@ await t(G9, "1.44: ο διαχειριστής σβήνει παλιό αίτη�
 await t(G9, "Ο διαχειριστής διαβάζει τα αιτήματα", true, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_osmreq/alice_n12345"), { ...req("alice", "n12345"), ts: now() })); return getDocs(collection(ctx.co(), "kontamou_osmreq")); });
 await t(G9, "Χρήστης δεν κρύβει σημεία (ρύθμιση osmhide)", false, () => setDoc(doc(ctx.alice(), "kontamou_config/osmhide"), { keys: ["n1"] }));
 await t(G9, "Ο διαχειριστής κρύβει σημείο (ρύθμιση osmhide)", true, () => setDoc(doc(ctx.co(), "kontamou_config/osmhide"), { keys: ["n1"] }));
+
+// ---------- G10: κόσμος «Εκδηλώσεις» — αναφορές λάθους (1.45) ----------
+const G10 = "Εκδηλώσεις: αναφορές λάθους (1.45)";
+const openEkd = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "ekd"] }));
+const later = () => Timestamp.fromMillis(Date.now() + 10 * 864e5);
+const erep = (uid, extra = {}) => ({ uid, ev: "pan-agiou-1", ep: "20261110", why: "cancelled", until: later(), ts: serverTimestamp(), ...extra });
+// πλήρης αναφορά: ρυθμός + αναφορά + μετρητής (+1 στην αιτία)
+const report = (who, uid, r, cnt, cid = "pan-agiou-1_20261110") => withRate(ctx[who](), uid, (b, db) => {
+  b.set(doc(db, "kontamou_evrep/" + (r.ev + "_" + r.ep + "_" + uid)), r);
+  if (cnt) b.set(doc(db, "kontamou_evcnt/" + cid), cnt, { merge: true }); });
+const cntNow = async (cid = "pan-agiou-1_20261110") => { let v = null; await env.withSecurityRulesDisabled(async c => { const d = await getDoc(doc(c.firestore(), "kontamou_evcnt/" + cid)); v = d.exists() ? d.data() : null; }); return v; };
+const until0 = later();
+await t(G10, "Κλειστός κόσμος: χρήστης δεν κάνει αναφορά", false, () => report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }));
+await t(G10, "Ανοιχτός: πρώτη αναφορά (μετρητής 1)", true, async () => { await openEkd(); return report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); });
+await t(G10, "Δεύτερη αναφορά του ΙΔΙΟΥ χρήστη για την ίδια εκδήλωση απορρίπτεται", false, async () => { await openEkd();
+  await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); await new Promise(r => setTimeout(r, 10500));
+  const c = await cntNow(); return report("alice", "alice", erep("alice", { until: until0 }), { cancelled: (c.cancelled || 0) + 1 }); });
+await t(G10, "Δεύτερος χρήστης με την ίδια αιτία (μετρητής 2)", true, async () => { await openEkd();
+  await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return report("bob", "bob", erep("bob", { until: until0 }), { cancelled: 2 }); });
+await t(G10, "Αύξηση μετρητή κατά 2 απορρίπτεται", false, async () => { await openEkd();
+  await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return report("bob", "bob", erep("bob", { until: until0 }), { cancelled: 3 }); });
+await t(G10, "Αύξηση μετρητή σε ΑΛΛΗ αιτία από αυτή της αναφοράς απορρίπτεται", false, async () => { await openEkd();
+  await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return report("bob", "bob", erep("bob", { until: until0 }), { date: 1 }); });
+await t(G10, "Αύξηση μετρητή χωρίς αναφορά απορρίπτεται", false, async () => { await openEkd();
+  await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return setDoc(doc(ctx.eve(), "kontamou_evcnt/pan-agiou-1_20261110"), { cancelled: 2 }, { merge: true }); });
+await t(G10, "Αναφορά χωρίς αύξηση μετρητή απορρίπτεται", false, async () => { await openEkd(); return report("alice", "alice", erep("alice"), null); });
+await t(G10, "Αναφορά στο όνομα άλλου απορρίπτεται", false, async () => { await openEkd(); const r = erep("alice", { until: until0 });
+  return withRate(ctx.eve(), "eve", (b, db) => { b.set(doc(db, "kontamou_evrep/pan-agiou-1_20261110_alice"), r); b.set(doc(db, "kontamou_evcnt/pan-agiou-1_20261110"), { cancelled: 1, until: until0 }); }); });
+await t(G10, "Άγνωστη αιτία απορρίπτεται", false, async () => { await openEkd(); return report("alice", "alice", erep("alice", { why: "spam", until: until0 }), { spam: 1, until: until0 }); });
+await t(G10, "Επιπλέον πεδίο (π.χ. email) απορρίπτεται", false, async () => { await openEkd(); return report("alice", "alice", erep("alice", { email: "a@b.gr", until: until0 }), { cancelled: 1, until: until0 }); });
+await t(G10, "Λάθος κωδικός εκδήλωσης (σύμβολα) απορρίπτεται", false, async () => { await openEkd(); return report("alice", "alice", erep("alice", { ev: "pan/../x", until: until0 }), { cancelled: 1, until: until0 }, "pan-x_20261110"); });
+await t(G10, "Χρήστης που έχασε το δικαίωμα δεν κάνει αναφορά (σιωπηλά)", false, async () => { await openEkd();
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_noreport/alice"), { at: now() })); return report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); });
+await t(G10, "Αποκλεισμένος χρήστης δεν κάνει αναφορά", false, async () => { await openEkd();
+  await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_bans/alice"), { at: now() })); return report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); });
+await t(G10, "Ο καθένας διαβάζει τους μετρητές (μόνο αριθμοί)", true, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return getDoc(doc(ctx.anon(), "kontamou_evcnt/pan-agiou-1_20261110")); });
+await t(G10, "Τρίτος δεν διαβάζει ξένη αναφορά", false, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return getDoc(doc(ctx.bob(), "kontamou_evrep/pan-agiou-1_20261110_alice")); });
+await t(G10, "Ο ίδιος διαβάζει την αναφορά του", true, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return getDoc(doc(ctx.alice(), "kontamou_evrep/pan-agiou-1_20261110_alice")); });
+await t(G10, "Ο ίδιος δεν σβήνει την αναφορά πριν περάσει η εκδήλωση", false, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return deleteDoc(doc(ctx.alice(), "kontamou_evrep/pan-agiou-1_20261110_alice")); });
+await t(G10, "Ο ίδιος σβήνει την αναφορά αφού περάσει η εκδήλωση", true, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_evrep/pan-agiou-1_20261110_alice"), { ...rep("alice"), until: past(1), ts: now() })); return deleteDoc(doc(ctx.alice(), "kontamou_evrep/pan-agiou-1_20261110_alice")); });
+await t(G10, "Ο διαχειριστής σβήνει αναφορές", true, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return deleteDoc(doc(ctx.co(), "kontamou_evrep/pan-agiou-1_20261110_alice")); });
+await t(G10, "Τρίτος δεν σβήνει μετρητή πριν περάσει η εκδήλωση", false, async () => { await openEkd(); await report("alice", "alice", erep("alice", { until: until0 }), { cancelled: 1, until: until0 }); return deleteDoc(doc(ctx.eve(), "kontamou_evcnt/pan-agiou-1_20261110")); });
+await t(G10, "Χρήστης δεν βλέπει τη λίστα «χωρίς δικαίωμα αναφοράς»", false, () => getDoc(doc(ctx.alice(), "kontamou_noreport/alice")));
+await t(G10, "Χρήστης δεν βγάζει μόνος του τον εαυτό του από τη λίστα", false, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_noreport/alice"), { at: now() })); return deleteDoc(doc(ctx.alice(), "kontamou_noreport/alice")); });
+await t(G10, "Ο διαχειριστής γράφει στη λίστα «χωρίς δικαίωμα αναφοράς»", true, () => setDoc(doc(ctx.co(), "kontamou_noreport/alice"), { at: now() }));
+await t(G10, "Εκδήλωση κατοικιδίων συνεχίζει να δουλεύει", true, async () => { await openPx(); return eset("alice", "alice", "alice_e0", ev("alice", { world: "pets", kind: "adopt" })); });
 
 const full = { hours: "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|", animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
   freq: ["once","week","2week","month"], levels: ["uni","adult"], desc: "Περιγραφή ".repeat(50), price: "π.χ. 15 € / ώρα", regNo: "ΑΜ 1234 Κτηνιατρικός Σύλλογος", customName: "Όνομα καταστήματος",

@@ -407,14 +407,14 @@ service cloud.firestore {
       allow delete: if isAdmin() || (signedIn() && resource.data.uid == me());
     }
     // 1.42: εκδηλώσεις για περισσότερους κόσμους (πολιτισμός, κατοικίδια) — ο καθένας κλειστός μέχρι να ανοίξει
-    function evOk(w) { return (w == 'culture' && worldOk('culture')) || (w == 'pets' && worldOk('pets') && worldOk('petsx')); }
+    // 1.45: οι εκδηλώσεις του πολιτισμού πέρασαν στον κόσμο «Εκδηλώσεις» (στατικό αρχείο, όχι βάση)· εδώ μένουν μόνο των κατοικιδίων
+    function evOk(w) { return w == 'pets' && worldOk('pets') && worldOk('petsx'); }
     function validEvent() {
       let d = request.resource.data;
       return d.keys().hasOnly(['uid', 'world', 'title', 'kind', 'start', 'end', 'place', 'area', 'region', 'lat', 'lng', 'how', 'link', 'adults', 'status', 'ts'])
-        && d.uid == me() && d.world in ['culture', 'pets']
+        && d.uid == me() && d.world == 'pets'
         && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
-        && ((d.world == 'culture' && d.kind in ['present', 'reading', 'club', 'talk', 'festival', 'exhib', 'other'])
-          || (d.world == 'pets' && d.kind in ['adopt', 'seminar', 'expo', 'vetinfo', 'other']))
+        && d.kind in ['adopt', 'seminar', 'expo', 'vetinfo', 'other']
         && d.start is timestamp && d.start > request.time && d.start < request.time + duration.value(400, 'd')
         && (!('end' in d) || (d.end is timestamp && d.end > d.start && d.end < d.start + duration.value(30, 'd')))
         && d.place is string && d.place.size() >= 3 && d.place.size() <= 120
@@ -438,6 +438,46 @@ service cloud.firestore {
     // Η συλλογή κλείνει: καμία νέα εγγραφή· ο διαχειριστής μπορεί μόνο να δει και να σβήσει ό,τι τυχόν έμεινε.
     match /kontamou_osmreq/{id} {
       allow read, delete: if isAdmin();
+    }
+
+    // 1.45: κόσμος «Εκδηλώσεις» — ΑΝΑΦΟΡΕΣ ΛΑΘΟΥΣ. Οι ίδιες οι εκδηλώσεις ΔΕΝ είναι στη βάση (στατικό αρχείο ekdiloseis.json).
+    // Μία αναφορά ανά χρήστη, ανά εκδήλωση και ανά έλεγχο της πηγής (ep). Ο δημόσιος μετρητής ανά αιτία αυξάνεται ΜΟΝΟ κατά 1
+    // και ΜΟΝΟ μαζί με νέα αναφορά του ίδιου χρήστη — κανείς δεν «φουσκώνει» μετρητή. Φυλάσσονται μόνο χρήστης, εκδήλωση, αιτία.
+    function evRepP(id) { return /databases/$(database)/documents/kontamou_evrep/$(id); }
+    function evCntP(id) { return /databases/$(database)/documents/kontamou_evcnt/$(id); }
+    match /kontamou_evrep/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow create: if signedIn() && notBanned() && throttled() && worldOk('ekd')
+        && !exists(/databases/$(database)/documents/kontamou_noreport/$(me()))
+        && request.resource.data.keys().hasOnly(['uid', 'ev', 'ep', 'why', 'until', 'ts'])
+        && request.resource.data.uid == me()
+        && request.resource.data.ev is string && request.resource.data.ev.matches('^[a-z0-9-]{3,40}$')
+        && request.resource.data.ep is string && request.resource.data.ep.matches('^[0-9]{1,14}$')
+        && id == request.resource.data.ev + '_' + request.resource.data.ep + '_' + me()
+        && request.resource.data.why in ['cancelled', 'date', 'place', 'other']
+        && request.resource.data.until is timestamp && request.resource.data.until > request.time
+        && request.resource.data.until < request.time + duration.value(400, 'd')
+        && request.resource.data.ts == request.time
+        && existsAfter(evCntP(request.resource.data.ev + '_' + request.resource.data.ep));
+      // ο ίδιος σβήνει μόνο αφού περάσει η εκδήλωση (αλλιώς θα μπορούσε να ξαναμετρηθεί)· ο διαχειριστής καθαρίζει
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == me() && request.time > resource.data.until);
+    }
+    match /kontamou_evcnt/{cid} {
+      allow read: if true;   // μόνο αριθμοί ανά αιτία — κανένα στοιχείο χρήστη
+      allow create: if signedIn() && cid.matches('^[a-z0-9-]{3,40}_[0-9]{1,14}$')
+        && !exists(evRepP(cid + '_' + me())) && existsAfter(evRepP(cid + '_' + me()))
+        && request.resource.data.keys().hasOnly([getAfter(evRepP(cid + '_' + me())).data.why, 'until'])
+        && request.resource.data[getAfter(evRepP(cid + '_' + me())).data.why] == 1
+        && request.resource.data.until == getAfter(evRepP(cid + '_' + me())).data.until;
+      allow update: if signedIn()
+        && !exists(evRepP(cid + '_' + me())) && existsAfter(evRepP(cid + '_' + me()))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([getAfter(evRepP(cid + '_' + me())).data.why])
+        && request.resource.data[getAfter(evRepP(cid + '_' + me())).data.why] == resource.data.get(getAfter(evRepP(cid + '_' + me())).data.why, 0) + 1;
+      allow delete: if isAdmin() || (signedIn() && request.time > resource.data.until);
+    }
+    // Όσοι έκαναν επανειλημμένα ψευδείς αναφορές: χάνουν σιωπηλά το δικαίωμα. Μόνο ο διαχειριστής βλέπει και γράφει.
+    match /kontamou_noreport/{uid} {
+      allow read, write: if isAdmin();
     }
 }
 }
