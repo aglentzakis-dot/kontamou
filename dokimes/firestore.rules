@@ -516,11 +516,13 @@ service cloud.firestore {
       allow delete: if isAdmin() || (signedIn() && (resource.data.uid == me() || !exists(lostP(id)) || get(lostP(id)).data.exp < request.time));
     }
     // επικοινωνία ΜΟΝΟ μέσα από την εφαρμογή: κανένα στοιχείο δεν φαίνεται, εκτός αν ο καθένας το γράψει ο ίδιος (cFrom / cOwner)
+    // ώρα μηνύματος μέσα σε λίστα (η βάση δεν δέχεται «ώρα διακομιστή» μέσα σε λίστες): ±10 λεπτά από την ώρα της αίτησης
+    function okAt(t) { return t is timestamp && t > request.time - duration.value(10, 'm') && t < request.time + duration.value(10, 'm'); }
     function msgAppend() {
       let n = request.resource.data.msgs; let o = resource.data.msgs;
       return n.size() == o.size() + 1 && n.size() <= 60 && n[0:o.size()] == o
         && n[o.size()].keys().hasOnly(['by', 't', 'at']) && n[o.size()].by == me()
-        && n[o.size()].t is string && n[o.size()].t.size() >= 1 && n[o.size()].t.size() <= 500 && n[o.size()].at == request.time;
+        && n[o.size()].t is string && n[o.size()].t.size() >= 1 && n[o.size()].t.size() <= 500 && okAt(n[o.size()].at);
     }
     match /kontamou_lostmsg/{id} {
       allow read: if isAdmin() || (signedIn() && (resource.data.from == me() || resource.data.owner == me()));
@@ -531,7 +533,7 @@ service cloud.firestore {
         && request.resource.data.owner != me() && get(lostP(request.resource.data.lost)).data.status == 'open'
         && request.resource.data.msgs.size() == 1 && request.resource.data.msgs[0].keys().hasOnly(['by', 't', 'at'])
         && request.resource.data.msgs[0].by == me() && request.resource.data.msgs[0].t is string
-        && request.resource.data.msgs[0].t.size() >= 1 && request.resource.data.msgs[0].t.size() <= 500 && request.resource.data.msgs[0].at == request.time
+        && request.resource.data.msgs[0].t.size() >= 1 && request.resource.data.msgs[0].t.size() <= 500 && okAt(request.resource.data.msgs[0].at)
         && request.resource.data.ts == request.time;
       allow update: if signedIn() && notBanned() && (resource.data.from == me() || resource.data.owner == me())
         && request.resource.data.lost == resource.data.lost && request.resource.data.owner == resource.data.owner && request.resource.data.from == resource.data.from
