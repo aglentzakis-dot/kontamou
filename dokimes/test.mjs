@@ -295,6 +295,58 @@ await t(G10, "Χρήστης δεν βγάζει μόνος του τον εαυ
 await t(G10, "Ο διαχειριστής γράφει στη λίστα «χωρίς δικαίωμα αναφοράς»", true, () => setDoc(doc(ctx.co(), "kontamou_noreport/alice"), { at: now() }));
 await t(G10, "Εκδήλωση κατοικιδίων συνεχίζει να δουλεύει", true, async () => { await openPx(); return eset("alice", "alice", "alice_e0", ev("alice", { world: "pets", kind: "adopt" })); });
 
+// ---------- G11: Χαμένα & βρεθέντα (1.46) ----------
+const G11 = "Χαμένα & βρεθέντα (1.46)";
+const openLost = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "lostx", "prod"] }));
+const in30 = (d = 20) => Timestamp.fromMillis(Date.now() + d * 864e5);
+const lost = (uid, extra = {}) => ({ uid, type: "lost", animal: "dog", breed: "Κόκερ", color: "Καφέ", marks: "Κόκκινο κολάρο", date: past(1), area: "Παγκράτι", lat: 37.965, lng: 23.75,
+  hasPh: false, status: "open", exp: in30(), ts: serverTimestamp(), ...extra });
+const lset = (who, uid, id, d) => withRate(ctx[who](), uid, (b, db) => b.set(doc(db, "kontamou_lost/" + id), d));
+const putL = (id, d) => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_lost/" + id), { ...d, ts: now() }));
+const IMG = "data:image/jpeg;base64," + "A".repeat(4000);
+await t(G11, "Κλειστό: χρήστης δεν βάζει αγγελία", false, () => lset("alice", "alice", "alice_l0", lost("alice")));
+await t(G11, "Ανοιχτό: αγγελία «Χάθηκε» με περιοχή", true, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice")); });
+await t(G11, "Ακριβές σημείο (όχι πλέγμα ~550 μ.) απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice", { lat: 37.96234, lng: 23.75411 })); });
+await t(G11, "Αριθμός τσιπ στα χαρακτηριστικά απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice", { marks: "Τσιπ 941000012345678" })); });
+await t(G11, "Τηλέφωνο στην περιοχή απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice", { area: "Παγκράτι 69 1234 5678" })); });
+await t(G11, "Επιπλέον πεδίο (π.χ. phone) απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice", { phone: "x" })); });
+await t(G11, "Λήξη πάνω από 30 ημέρες απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l0", lost("alice", { exp: in30(45) })); });
+await t(G11, "Πάνω από 5 αγγελίες ανά χρήστη (θέση l5) απορρίπτεται", false, async () => { await openLost(); return lset("alice", "alice", "alice_l5", lost("alice")); });
+await t(G11, "Αγγελία στο όνομα άλλου απορρίπτεται", false, async () => { await openLost(); return lset("eve", "eve", "alice_l0", lost("alice")); });
+await t(G11, "Ανώνυμος δεν βλέπει αγγελίες", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return getDoc(doc(ctx.anon(), "kontamou_lost/alice_l0")); });
+await t(G11, "Συνδεδεμένος βλέπει αγγελίες (ανοιχτό)", true, async () => { await openLost(); await putL("alice_l0", lost("alice")); return getDoc(doc(ctx.bob(), "kontamou_lost/alice_l0")); });
+await t(G11, "Ανανέωση: ο ίδιος μεταθέτει τη λήξη +30", true, async () => { await openLost(); await putL("alice_l0", lost("alice", { exp: in30(2) })); return updateDoc(doc(ctx.alice(), "kontamou_lost/alice_l0"), { exp: in30(30), ts: serverTimestamp() }); });
+await t(G11, "«Επέστρεψε στο σπίτι»: λήξη σε 7 ημέρες", true, async () => { await openLost(); await putL("alice_l0", lost("alice")); return updateDoc(doc(ctx.alice(), "kontamou_lost/alice_l0"), { status: "home", homeAt: serverTimestamp(), exp: in30(7), ts: serverTimestamp() }); });
+await t(G11, "«Επέστρεψε στο σπίτι» με λήξη 30 ημερών απορρίπτεται", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return updateDoc(doc(ctx.alice(), "kontamou_lost/alice_l0"), { status: "home", homeAt: serverTimestamp(), exp: in30(29), ts: serverTimestamp() }); });
+await t(G11, "Τρίτος δεν αλλάζει ξένη αγγελία", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return updateDoc(doc(ctx.eve(), "kontamou_lost/alice_l0"), { color: "Μαύρο", ts: serverTimestamp() }); });
+await t(G11, "Τρίτος σβήνει αγγελία που έληξε (καθάρισμα)", true, async () => { await openLost(); await putL("alice_l0", lost("alice", { exp: past(1) })); return deleteDoc(doc(ctx.eve(), "kontamou_lost/alice_l0")); });
+await t(G11, "Τρίτος δεν σβήνει ενεργή αγγελία", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return deleteDoc(doc(ctx.eve(), "kontamou_lost/alice_l0")); });
+await t(G11, "Φωτογραφία από τον ίδιο", true, async () => { await openLost(); return setDoc(doc(ctx.alice(), "kontamou_lostph/alice_l0"), { uid: "alice", img: IMG }); });
+await t(G11, "Φωτογραφία που δεν είναι εικόνα απορρίπτεται", false, async () => { await openLost(); return setDoc(doc(ctx.alice(), "kontamou_lostph/alice_l0"), { uid: "alice", img: "data:text/html;base64,PHNjcmlwdD4=" }); });
+await t(G11, "Φωτογραφία σε ξένη αγγελία απορρίπτεται", false, async () => { await openLost(); return setDoc(doc(ctx.eve(), "kontamou_lostph/alice_l0"), { uid: "eve", img: IMG }); });
+const msg0 = (from, t = "Νομίζω τον είδα στο πάρκο") => ({ lost: "alice_l0", owner: "alice", from, msgs: [{ by: from, t, at: serverTimestamp() }], ts: serverTimestamp() });
+const mset = (who, d) => withRate(ctx[who](), who, (b, db) => b.set(doc(db, "kontamou_lostmsg/alice_l0__" + who), d));
+await t(G11, "Μήνυμα μέσα από την εφαρμογή", true, async () => { await openLost(); await putL("alice_l0", lost("alice")); return mset("bob", msg0("bob")); });
+await t(G11, "Μήνυμα σε λάθος «ιδιοκτήτη» απορρίπτεται", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return mset("bob", { ...msg0("bob"), owner: "eve" }); });
+await t(G11, "Μήνυμα στη δική σου αγγελία απορρίπτεται", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); return withRate(ctx.alice(), "alice", (b, db) => b.set(doc(db, "kontamou_lostmsg/alice_l0__alice"), { ...msg0("alice"), owner: "alice" })); });
+const putM = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_lostmsg/alice_l0__bob"), { lost: "alice_l0", owner: "alice", from: "bob", msgs: [{ by: "bob", t: "Γεια", at: now() }], ts: now() }));
+await t(G11, "Ο ιδιοκτήτης απαντά (προσθήκη μηνύματος)", true, async () => { await openLost(); await putL("alice_l0", lost("alice")); await putM();
+  return updateDoc(doc(ctx.alice(), "kontamou_lostmsg/alice_l0__bob"), { msgs: [{ by: "bob", t: "Γεια", at: (await (async () => { let v; await env.withSecurityRulesDisabled(async c => { v = (await getDoc(doc(c.firestore(), "kontamou_lostmsg/alice_l0__bob"))).data().msgs[0].at; }); return v; })()) }, { by: "alice", t: "Ευχαριστώ!", at: serverTimestamp() }], ts: serverTimestamp() }); });
+await t(G11, "Αλλοίωση παλιού μηνύματος απορρίπτεται", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); await putM();
+  return updateDoc(doc(ctx.alice(), "kontamou_lostmsg/alice_l0__bob"), { msgs: [{ by: "bob", t: "ΑΛΛΑΓΜΕΝΟ", at: now() }, { by: "alice", t: "x", at: serverTimestamp() }], ts: serverTimestamp() }); });
+await t(G11, "Ο καθένας γράφει μόνο το δικό του στοιχείο επικοινωνίας", true, async () => { await openLost(); await putL("alice_l0", lost("alice")); await putM(); return updateDoc(doc(ctx.bob(), "kontamou_lostmsg/alice_l0__bob"), { cFrom: "6900000000", ts: serverTimestamp() }); });
+await t(G11, "Δεν γράφει στοιχείο επικοινωνίας στη θέση του άλλου", false, async () => { await openLost(); await putL("alice_l0", lost("alice")); await putM(); return updateDoc(doc(ctx.bob(), "kontamou_lostmsg/alice_l0__bob"), { cOwner: "ψέμα", ts: serverTimestamp() }); });
+await t(G11, "Τρίτος δεν διαβάζει ξένη συνομιλία", false, async () => { await openLost(); await putM(); return getDoc(doc(ctx.eve(), "kontamou_lostmsg/alice_l0__bob")); });
+// κοινές αναφορές
+const xrep = (uid, extra = {}) => ({ uid, kind: "lost", item: "alice_l0", why: "fake", until: in30(30), ts: serverTimestamp(), ...extra });
+const xreport = (who, r, cnt) => withRate(ctx[who](), who, (b, db) => { b.set(doc(db, "kontamou_xrep/" + r.kind + "~" + r.item + "~" + who), r); if (cnt) b.set(doc(db, "kontamou_xcnt/" + r.kind + "~" + r.item), cnt, { merge: true }); });
+const u30 = in30(30);
+await t(G11, "Αναφορά «Απάτη / ψεύτικη αγγελία»", true, async () => { await openLost(); return xreport("bob", xrep("bob", { until: u30 }), { fake: 1, until: u30 }); });
+await t(G11, "Δεύτερη αναφορά του ίδιου απορρίπτεται", false, async () => { await openLost(); await xreport("bob", xrep("bob", { until: u30 }), { fake: 1, until: u30 }); await new Promise(r => setTimeout(r, 10500)); return xreport("bob", xrep("bob", { until: u30 }), { fake: 2 }); });
+await t(G11, "Τρίτη διαφορετική αναφορά (μετρητής 3)", true, async () => { await openLost(); await xreport("bob", xrep("bob", { until: u30 }), { fake: 1, until: u30 }); await xreport("eve", xrep("eve", { until: u30 }), { fake: 2 }); return xreport("alice", xrep("alice", { until: u30 }), { fake: 3 }); });
+await t(G11, "Αιτία παραγωγών σε αγγελία απορρίπτεται", false, async () => { await openLost(); return xreport("bob", xrep("bob", { why: "banned", until: u30 }), { banned: 1, until: u30 }); });
+await t(G11, "Μετρητής χωρίς αναφορά απορρίπτεται", false, async () => { await openLost(); return setDoc(doc(ctx.eve(), "kontamou_xcnt/lost~alice_l0"), { fake: 1, until: u30 }); });
+
 const full = { hours: "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|", animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
   freq: ["once","week","2week","month"], levels: ["uni","adult"], desc: "Περιγραφή ".repeat(50), price: "π.χ. 15 € / ώρα", regNo: "ΑΜ 1234 Κτηνιατρικός Σύλλογος", customName: "Όνομα καταστήματος",
   area: "Παγκράτι, Αθήνα", job: "Δουλειά", radius: 20, years: 15, supplies: true, offHol: true, offHide: false, availDay: "2026-11-05", hasPhone: true, hasEmail: true };

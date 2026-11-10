@@ -479,5 +479,102 @@ service cloud.firestore {
     match /kontamou_noreport/{uid} {
       allow read, write: if isAdmin();
     }
+
+    // ===== 1.46: «Χαμένα & βρεθέντα» (μέσα στα Κατοικίδια) — κλειστό με το κλειδί 'lostx' =====
+    // Θέση ΜΟΝΟ ως περιοχή (πλέγμα ~550 μ.), ποτέ ακριβές σημείο· ΠΟΤΕ αριθμός τσιπ, διεύθυνση ή τηλέφωνο στα κείμενα (8+ ψηφία απορρίπτονται).
+    // Λήξη σε 30 ημέρες (ανανεώσιμη)· «Επέστρεψε στο σπίτι» → λήξη σε 7 ημέρες· όσες έληξαν σβήνονται από οποιονδήποτε συνδεδεμένο (καθάρισμα).
+    function lostOk() { return worldOk('pets') && worldOk('lostx'); }
+    function grid5(x) { return math.abs(x * 200 - math.round(x * 200)) < 0.001; }
+    function noNum(v) { return !v.matches('.*[0-9][0-9 .-]{7,}[0-9].*'); }
+    function lostP(id) { return /databases/$(database)/documents/kontamou_lost/$(id); }
+    function validLost(id) {
+      let d = request.resource.data;
+      return d.keys().hasOnly(['uid', 'type', 'animal', 'breed', 'color', 'marks', 'date', 'area', 'lat', 'lng', 'hasPh', 'status', 'exp', 'homeAt', 'ts'])
+        && d.uid == me() && id.matches('^' + me() + '_l[0-4]$')
+        && d.type in ['lost', 'found'] && d.animal in ['dog', 'cat', 'bird', 'small', 'other']
+        && str(d.breed, 60) && str(d.color, 60) && str(d.marks, 300) && str(d.area, 80)
+        && noNum(d.breed) && noNum(d.color) && noNum(d.marks) && noNum(d.area)
+        && d.date is timestamp && d.date <= request.time + duration.value(1, 'h') && d.date > request.time - duration.value(120, 'd')
+        && d.lat is number && d.lng is number && d.lat > 34 && d.lat < 42 && d.lng > 19 && d.lng < 30 && grid5(d.lat) && grid5(d.lng)
+        && d.hasPh is bool && d.status in ['open', 'home']
+        && d.exp is timestamp && d.exp > request.time
+        && ((d.status == 'open' && d.exp <= request.time + duration.value(30, 'd') && !('homeAt' in d))
+          || (d.status == 'home' && d.homeAt == request.time && d.exp <= request.time + duration.value(7, 'd')))
+        && d.ts == request.time;
+    }
+    match /kontamou_lost/{id} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.uid == me() || lostOk()));
+      allow create: if signedIn() && notBanned() && throttled() && lostOk() && validLost(id);
+      allow update: if isAdmin() || (signedIn() && resource.data.uid == me() && validLost(id));
+      allow delete: if isAdmin() || (signedIn() && (resource.data.uid == me() || resource.data.exp < request.time));
+    }
+    // φωτογραφία χωριστά (φορτώνεται μόνο όταν ανοίγει η αγγελία)· τα κρυφά στοιχεία σβήνονται στη συσκευή πριν ανέβει
+    match /kontamou_lostph/{id} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.uid == me() || lostOk()));
+      allow create, update: if signedIn() && id.matches('^' + me() + '_l[0-4]$') && lostOk()
+        && request.resource.data.keys().hasOnly(['uid', 'img']) && request.resource.data.uid == me() && img(request.resource.data.img);
+      allow delete: if isAdmin() || (signedIn() && (resource.data.uid == me() || !exists(lostP(id)) || get(lostP(id)).data.exp < request.time));
+    }
+    // επικοινωνία ΜΟΝΟ μέσα από την εφαρμογή: κανένα στοιχείο δεν φαίνεται, εκτός αν ο καθένας το γράψει ο ίδιος (cFrom / cOwner)
+    function msgAppend() {
+      let n = request.resource.data.msgs; let o = resource.data.msgs;
+      return n.size() == o.size() + 1 && n.size() <= 60 && n[0:o.size()] == o
+        && n[o.size()].keys().hasOnly(['by', 't', 'at']) && n[o.size()].by == me()
+        && n[o.size()].t is string && n[o.size()].t.size() >= 1 && n[o.size()].t.size() <= 500 && n[o.size()].at == request.time;
+    }
+    match /kontamou_lostmsg/{id} {
+      allow read: if isAdmin() || (signedIn() && (resource.data.from == me() || resource.data.owner == me()));
+      allow create: if signedIn() && notBanned() && throttled() && lostOk()
+        && request.resource.data.keys().hasOnly(['lost', 'owner', 'from', 'msgs', 'ts'])
+        && request.resource.data.from == me() && id == request.resource.data.lost + '__' + me()
+        && exists(lostP(request.resource.data.lost)) && get(lostP(request.resource.data.lost)).data.uid == request.resource.data.owner
+        && request.resource.data.owner != me() && get(lostP(request.resource.data.lost)).data.status == 'open'
+        && request.resource.data.msgs.size() == 1 && request.resource.data.msgs[0].keys().hasOnly(['by', 't', 'at'])
+        && request.resource.data.msgs[0].by == me() && request.resource.data.msgs[0].t is string
+        && request.resource.data.msgs[0].t.size() >= 1 && request.resource.data.msgs[0].t.size() <= 500 && request.resource.data.msgs[0].at == request.time
+        && request.resource.data.ts == request.time;
+      allow update: if signedIn() && notBanned() && (resource.data.from == me() || resource.data.owner == me())
+        && request.resource.data.lost == resource.data.lost && request.resource.data.owner == resource.data.owner && request.resource.data.from == resource.data.from
+        && request.resource.data.ts == request.time
+        && ((request.resource.data.diff(resource.data).affectedKeys().hasOnly(['msgs', 'ts']) && msgAppend())
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly([resource.data.from == me() ? 'cFrom' : 'cOwner', 'ts'])
+              && str(request.resource.data.get(resource.data.from == me() ? 'cFrom' : 'cOwner', ''), 100)));
+      allow delete: if isAdmin() || (signedIn() && (resource.data.from == me() || resource.data.owner == me()
+        || !exists(lostP(resource.data.lost)) || get(lostP(resource.data.lost)).data.exp < request.time));
+    }
+
+    // ===== 1.46: ΚΟΙΝΕΣ αναφορές κατά της κατάχρησης (Χαμένα & βρεθέντα, Τοπικοί παραγωγοί) — ίδια λογική με τις Εκδηλώσεις =====
+    // Μία αναφορά ανά χρήστη ανά αντικείμενο· μετρητής ανά αιτία +1 ΜΟΝΟ μαζί με νέα αναφορά· απόκρυψη στις 3 (στην εφαρμογή).
+    function xRepP(id) { return /databases/$(database)/documents/kontamou_xrep/$(id); }
+    function xWhy(k, w) { return (k == 'lost' && w in ['fake', 'gone', 'other']) || (k == 'prod' && w in ['banned', 'fake', 'closed', 'other']); }
+    function xOpen(k) { return (k == 'lost' && lostOk()) || (k == 'prod' && worldOk('prod')); }
+    match /kontamou_xrep/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow create: if signedIn() && notBanned() && throttled()
+        && !exists(/databases/$(database)/documents/kontamou_noreport/$(me()))
+        && request.resource.data.keys().hasOnly(['uid', 'kind', 'item', 'why', 'until', 'ts'])
+        && request.resource.data.uid == me() && request.resource.data.kind in ['lost', 'prod'] && xOpen(request.resource.data.kind)
+        && request.resource.data.item is string && request.resource.data.item.matches('^[A-Za-z0-9_]{3,48}$')
+        && id == request.resource.data.kind + '~' + request.resource.data.item + '~' + me()
+        && xWhy(request.resource.data.kind, request.resource.data.why)
+        && request.resource.data.until is timestamp && request.resource.data.until > request.time
+        && request.resource.data.until < request.time + duration.value(400, 'd')
+        && request.resource.data.ts == request.time
+        && existsAfter(/databases/$(database)/documents/kontamou_xcnt/$(request.resource.data.kind + '~' + request.resource.data.item));
+      allow delete: if isAdmin() || (signedIn() && resource.data.uid == me() && request.time > resource.data.until);
+    }
+    match /kontamou_xcnt/{cid} {
+      allow read: if true;
+      allow create: if signedIn() && cid.matches('^(lost|prod)~[A-Za-z0-9_]{3,48}$')
+        && !exists(xRepP(cid + '~' + me())) && existsAfter(xRepP(cid + '~' + me()))
+        && request.resource.data.keys().hasOnly([getAfter(xRepP(cid + '~' + me())).data.why, 'until'])
+        && request.resource.data[getAfter(xRepP(cid + '~' + me())).data.why] == 1
+        && request.resource.data.until == getAfter(xRepP(cid + '~' + me())).data.until;
+      allow update: if signedIn()
+        && !exists(xRepP(cid + '~' + me())) && existsAfter(xRepP(cid + '~' + me()))
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([getAfter(xRepP(cid + '~' + me())).data.why])
+        && request.resource.data[getAfter(xRepP(cid + '~' + me())).data.why] == resource.data.get(getAfter(xRepP(cid + '~' + me())).data.why, 0) + 1;
+      allow delete: if isAdmin() || (signedIn() && request.time > resource.data.until);
+    }
 }
 }
