@@ -1,6 +1,6 @@
 {
- "pass": 196,
- "fail": 2,
+ "pass": 198,
+ "fail": 0,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -1091,8 +1091,8 @@
    "group": "Εκδηλώσεις: αναφορές λάθους (1.45)",
    "name": "Λάθος κωδικός εκδήλωσης (σύμβολα) απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Expected PERMISSION_DENIED but got unexpected error: FirebaseError: [code=invalid-argument]: 3 INVALID_ARGUMENT: Document name \"projects/demo-kontamou/databases/(default)/documents/kontamou_evrep/pan/"
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Εκδηλώσεις: αναφορές λάθους (1.45)",
@@ -1140,8 +1140,8 @@
    "group": "Εκδηλώσεις: αναφορές λάθους (1.45)",
    "name": "Ο ίδιος σβήνει την αναφορά αφού περάσει η εκδήλωση",
    "expect": "ΕΠΙΤΡΕΠΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "7 PERMISSION_DENIED: "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Εκδηλώσεις: αναφορές λάθους (1.45)",
