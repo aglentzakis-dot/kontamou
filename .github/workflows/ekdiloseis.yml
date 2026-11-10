@@ -1,0 +1,33 @@
+name: Εκδηλώσεις — καθημερινό καθάρισμα και έλεγχος
+# Χωρίς ΚΑΝΕΝΑ κλειδί βάσης: δουλεύει μόνο πάνω στα στατικά αρχεία του αποθετηρίου.
+# • κάθε μέρα: αφαιρεί όσες εκδηλώσεις πέρασαν, προσθέτει «Συνήθως γίνεται» από το ημερολόγιο πανηγυριών, ελέγχει το αρχείο
+# • σε κάθε αλλαγή του ekdiloseis.json: αυστηρός έλεγχος — αν αποτύχει, το GitHub στέλνει ειδοποίηση με email
+on:
+  schedule:
+    - cron: "23 2 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ["ekdiloseis.json", "imerologio-panigyrion.json", "symfonies-dimon.json", "ergaleia/ekdiloseis.py", ".github/workflows/ekdiloseis.yml"]
+permissions:
+  contents: write
+concurrency:
+  group: ekdiloseis
+  cancel-in-progress: false
+jobs:
+  ekd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Έλεγχος
+        if: github.event_name == 'push'
+        run: python3 ergaleia/ekdiloseis.py check
+      - name: Καθημερινό καθάρισμα και ημερολόγιο πανηγυριών
+        if: github.event_name != 'push'
+        run: |
+          python3 ergaleia/ekdiloseis.py daily
+          git config user.name "ekdiloseis-bot"
+          git config user.email "ekdiloseis-bot@users.noreply.github.com"
+          git add ekdiloseis.json imerologio-panigyrion.json
+          git diff --cached --quiet || (git commit -m "Εκδηλώσεις: καθημερινό καθάρισμα" && (git push || (git pull --rebase && git push)))
