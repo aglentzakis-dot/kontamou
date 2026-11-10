@@ -353,7 +353,7 @@ const openProd = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore
 const prodP = (extra = {}) => ({ world: "prod", trades: ["pr_honey"], exact: false, shop: false, lat: 37.962, lng: 23.754, deliv: ["pickup"], avail: "Θυμαρίσιο μέλι", ts: serverTimestamp(), ...extra });
 const prv = (extra = {}) => ({ uid: "alice", acct: "", phone: "", email: "", showPhone: false, showEmail: false, ts: serverTimestamp(), afm: "094019245", ...extra });
 const prodUp = (pe = {}, ve = {}) => () => { const db = ctx.alice(), b = writeBatch(db);
-  if (ve !== null) b.set(doc(db, "kontamou_private/alice"), prv(ve)); b.update(doc(db, "kontamou_regions/attiki/profiles/alice"), prodP(pe)); return b.commit(); };
+  if (ve !== null){ const pv = prv(ve); Object.keys(pv).forEach(k => pv[k] === undefined && delete pv[k]); b.set(doc(db, "kontamou_private/alice"), pv); } b.update(doc(db, "kontamou_regions/attiki/profiles/alice"), prodP(pe)); return b.commit(); };
 await t(G12, "Κλειστό: χρήστης δεν γίνεται παραγωγός", false, prodUp());
 await t(G12, "Ανοιχτό: παραγωγός με ΑΦΜ (ιδιωτικά) και περιοχή", true, async () => { await openProd(); return prodUp()(); });
 await t(G12, "Χωρίς ΑΦΜ απορρίπτεται", false, async () => { await openProd(); return prodUp({}, { afm: undefined })(); });
