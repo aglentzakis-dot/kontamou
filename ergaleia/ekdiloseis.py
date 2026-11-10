@@ -74,7 +74,7 @@ def problems(x, future=True):
     if not (isinstance(src, list) and 1 <= len(src) <= 5 and all(ok_src(u) for u in src)): P.append("πηγή (μόνο https, όχι κοινωνικά δίκτυα)")
     if x.get("st", "ok") not in ST: P.append("κατάσταση")
     if x.get("by", "auto") not in ("auto", "org", "dimos"): P.append("προέλευση")
-    for k in ("t", "o", "v", "d", "p"):
+    for k in ("t", "o", "v", "d", "pe", "p"):
         if PII.search(str(x.get(k, ""))): P.append("προσωπικά στοιχεία στο " + k)
     if re.search(r"επίσημ", str(x.get("t", "")), re.I): P.append("λέξη «επίσημο»")
     return P
@@ -82,7 +82,7 @@ def problems(x, future=True):
 def normalize(x, agr):
     o = {k: x[k] for k in ("id", "c", "s", "lat", "lng") if k in x}
     o["t"] = clean_txt(x.get("t"), 120); o["v"] = clean_txt(x.get("v"), 60)
-    for k, n in (("d", 60), ("p", 60), ("o", 100), ("sc", 40)):
+    for k, n in (("d", 60), ("pe", 60), ("p", 60), ("o", 100), ("sc", 40)):
         if x.get(k): o[k] = clean_txt(x[k], n)
     if x.get("e"): o["e"] = x["e"]
     o["lat"], o["lng"] = round(float(x["lat"]), 5), round(float(x["lng"]), 5)
@@ -129,7 +129,7 @@ def merge(cand_path):
             h.append({"d": today, "t": "Ακυρώθηκε σύμφωνα με την πηγή"}); tgt["st"] = "cancelled"; changed += 1
         elif diffs:
             for lab, a, b in diffs: h.append({"d": today, "t": f"Αλλαγή: {lab} ({a} → {b})"[:160]})
-            for k in ("s", "e", "v", "d", "p", "lat", "lng", "t", "o"):
+            for k in ("s", "e", "v", "d", "pe", "p", "lat", "lng", "t", "o"):
                 if k in x: tgt[k] = x[k]
                 elif k == "e": tgt.pop("e", None)
             tgt["st"] = "changed"; changed += 1
@@ -155,11 +155,11 @@ def pascha(y):                 # Ορθόδοξο Πάσχα (Meeus) σε νέο
     return datetime.date(y, m, day) + datetime.timedelta(days=13)
 def learn_calendar(x):
     if x.get("c") not in ("panig", "glenti", "ethima") or x.get("st") not in ("ok", "changed"): return
-    cal = load(F_CAL, {"items": {}}); it = cal.setdefault("items", {})
+    cal = load(F_CAL, {"items": {}}); it = cal.setdefault("items", {})          # (ο Νομός κρατιέται κι αυτός)
     s = pdate(x["s"]); key = re.sub(r"[^a-z0-9-]", "", x["id"].rsplit("-", 1)[0] if re.search(r"-\d{4}$", x["id"]) else x["id"])[:30] or hashlib.md5(x["id"].encode()).hexdigest()[:10]
     p = pascha(s.year); off = (s.date() - p).days
     rule = f"P{off:+d}" if -70 <= off <= 70 and x.get("kinito") else s.strftime("%m-%d")      # κινητή γιορτή μόνο αν σημειώθηκε ρητά
-    it[key] = {"t": x["t"], "c": x["c"], "v": x["v"], "d": x.get("d", ""), "p": x.get("p", ""), "lat": x["lat"], "lng": x["lng"],
+    it[key] = {"t": x["t"], "c": x["c"], "v": x["v"], "d": x.get("d", ""), "pe": x.get("pe", ""), "p": x.get("p", ""), "lat": x["lat"], "lng": x["lng"],
                "time": x["s"][11:] if "T" in x["s"] else "", "rule": rule, "src": x["src"][:2], "o": x.get("o", ""), "last": s.year}
     save(F_CAL, cal)
 def calendar_fill(d):
@@ -171,7 +171,7 @@ def calendar_fill(d):
             except Exception: continue
             if not (TODAY <= day <= TODAY + datetime.timedelta(days=60)) or c.get("last", 0) >= y: continue
             x = {"id": f"us-{key}-{y}"[:40], "t": c["t"], "c": c["c"], "s": day.isoformat() + ("T" + c["time"] if c.get("time") else ""),
-                 "v": c["v"], "d": c.get("d", ""), "p": c.get("p", ""), "lat": c["lat"], "lng": c["lng"], "o": c.get("o", ""), "src": c["src"], "st": "usual", "by": "auto",
+                 "v": c["v"], "d": c.get("d", ""), "pe": c.get("pe", ""), "p": c.get("p", ""), "lat": c["lat"], "lng": c["lng"], "o": c.get("o", ""), "src": c["src"], "st": "usual", "by": "auto",
                  "add": TODAY.isoformat(), "chk": TODAY.isoformat(), "h": [{"d": TODAY.isoformat(), "t": f"Συνήθως γίνεται — έγινε και το {c.get('last')}· αναμένει επιβεβαίωση"}]}
             if problems(x) or any(same_key(x, h) or h["id"] == x["id"] for h in have): continue
             have.append(x); out += 1
