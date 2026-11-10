@@ -47,7 +47,8 @@ service cloud.firestore {
       return d.keys().hasOnly(['uid','region','type','name','trades','customName','area','lat','lng','exact','shop',
                                'radius','job','years','desc','contact','hasPhone','hasEmail','hidden','adminHidden',
                                'featured','verified','proUntil','founder','refBy','created','ts','fromDromologio','dromoAt',
-                               'world','levels','modes','availDay','price','freq','supplies','animals','hours','offHol','offHide','regNo','hideWhy','verAt','verWhat'])
+                               'world','levels','modes','availDay','price','freq','supplies','animals','hours','offHol','offHide','regNo','hideWhy','verAt','verWhat',
+                               'avail','deliv','orderLink'])
         && d.uid == uid && d.region == rid
         && d.name is string && d.name.size() > 0 && d.name.size() <= 60
         && d.trades is list && d.trades.size() >= 1 && d.trades.size() <= 3
@@ -61,7 +62,14 @@ service cloud.firestore {
          || (w == 'errands' && d.trades.hasOnly(['smalltrans', 'courier', 'mv_bulky', 'e_other'].concat(xids('errands'))))
          || (w == 'culture' && d.trades.hasOnly(['k_bookshop', 'k_library', 'k_reading', 'k_club', 'k_venue', 'k_publisher', 'k_author', 'k_other'].concat(xids('culture')))
              // 1.41: συγγραφείς και λέσχες ανάγνωσης δεν έχουν ποτέ ακριβές σημείο ή κατάστημα (μόνο περιοχή)
-             && (!d.trades.hasAny(['k_author', 'k_club']) || (d.exact == false && d.shop == false))))
+             && (!d.trades.hasAny(['k_author', 'k_club']) || (d.exact == false && d.shop == false)))
+         // 1.46: Τοπικοί παραγωγοί — ΑΦΜ υποχρεωτικός (ιδιωτικά)· ακριβές σημείο μόνο για κατάστημα· φούρνοι/ζαχαροπλαστεία μόνο κατάστημα
+         || (w == 'prod' && d.trades.hasOnly(['pr_honey', 'pr_oil', 'pr_fruit', 'pr_eggs', 'pr_cheese', 'pr_wine', 'pr_legumes', 'pr_pasta', 'pr_herbs', 'pr_bakery'])
+             && d.type == 'pro' && d.exact == d.shop && (!d.trades.hasAny(['pr_bakery']) || d.shop == true)
+             && getAfter(/databases/$(database)/documents/kontamou_private/$(uid)).data.get('afm', '').matches('^[0-9]{9}$')))
+        && (w == 'prod' || (!('avail' in d) && !('deliv' in d) && !('orderLink' in d)))
+        && str(d.get('avail', ''), 120) && (!('deliv' in d) || (d.deliv is list && d.deliv.size() <= 2 && d.deliv.hasOnly(['pickup', 'ship'])))
+        && (!('orderLink' in d) || (d.orderLink is string && d.orderLink.size() <= 300 && d.orderLink.matches('^https://[^ <>"]{4,}$')))
         && (!('levels' in d) || (d.levels is list && d.levels.size() <= 5 && d.levels.hasOnly(['uni', 'adult'])))
         && (!('modes' in d) || (d.modes is list && d.modes.size() <= 3 && d.modes.hasOnly(['go', 'place', 'online'])))
         && (!('availDay' in d) || (d.availDay is string && d.availDay.size() == 10))
@@ -135,7 +143,8 @@ service cloud.firestore {
     match /kontamou_private/{uid} {
       allow read, delete: if isAdmin() || (signedIn() && me() == uid);
       allow create, update: if isAdmin() || signedIn() && me() == uid
-        && request.resource.data.keys().hasOnly(['uid','acct','phone','email','showPhone','showEmail','lic','termsAt','declAt','kidsAt','ts'])
+        && request.resource.data.keys().hasOnly(['uid','acct','phone','email','showPhone','showEmail','lic','termsAt','declAt','kidsAt','ts','afm'])
+        && (!('afm' in request.resource.data) || (request.resource.data.afm is string && request.resource.data.afm.matches('^[0-9]{9}$')))
         && request.resource.data.uid == uid
         && str(request.resource.data.get('phone', ''), 20) && str(request.resource.data.get('email', ''), 80)
         && request.resource.data.get('acct', '') in ['', request.auth.token.email]
@@ -224,7 +233,7 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['uid', 'role', 'kind', 'ref', 'other', 'stmt', 'terms', 'at'])
         && request.resource.data.uid == me()
         && request.resource.data.role in ['client', 'pro', 'deal']
-        && request.resource.data.kind in ['request', 'accept', 'need', 'answer', 'profile', 'deal', 'deal_edit', 'deal_ok', 'work', 'event']
+        && request.resource.data.kind in ['request', 'accept', 'need', 'answer', 'profile', 'deal', 'deal_edit', 'deal_ok', 'work', 'event', 'prod_decl']
         && str(request.resource.data.ref, 120) && str(request.resource.data.other, 128)
         && str(request.resource.data.stmt, 40) && str(request.resource.data.terms, 20)
         && request.resource.data.at == request.time);

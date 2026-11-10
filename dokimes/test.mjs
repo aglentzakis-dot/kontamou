@@ -347,6 +347,31 @@ await t(G11, "Τρίτη διαφορετική αναφορά (μετρητής
 await t(G11, "Αιτία παραγωγών σε αγγελία απορρίπτεται", false, async () => { await openLost(); return xreport("bob", xrep("bob", { why: "banned", until: u30 }), { banned: 1, until: u30 }); });
 await t(G11, "Μετρητής χωρίς αναφορά απορρίπτεται", false, async () => { await openLost(); return setDoc(doc(ctx.eve(), "kontamou_xcnt/lost~alice_l0"), { fake: 1, until: u30 }); });
 
+// ---------- G12: Τοπικοί παραγωγοί (1.46) ----------
+const G12 = "Τοπικοί παραγωγοί (1.46)";
+const openProd = () => env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "prod"] }));
+const prodP = (extra = {}) => ({ world: "prod", trades: ["pr_honey"], exact: false, shop: false, lat: 37.962, lng: 23.754, deliv: ["pickup"], avail: "Θυμαρίσιο μέλι", ts: serverTimestamp(), ...extra });
+const prv = (extra = {}) => ({ uid: "alice", acct: "", phone: "", email: "", showPhone: false, showEmail: false, ts: serverTimestamp(), afm: "094019245", ...extra });
+const prodUp = (pe = {}, ve = {}) => () => { const db = ctx.alice(), b = writeBatch(db);
+  if (ve !== null) b.set(doc(db, "kontamou_private/alice"), prv(ve)); b.update(doc(db, "kontamou_regions/attiki/profiles/alice"), prodP(pe)); return b.commit(); };
+await t(G12, "Κλειστό: χρήστης δεν γίνεται παραγωγός", false, prodUp());
+await t(G12, "Ανοιχτό: παραγωγός με ΑΦΜ (ιδιωτικά) και περιοχή", true, async () => { await openProd(); return prodUp()(); });
+await t(G12, "Χωρίς ΑΦΜ απορρίπτεται", false, async () => { await openProd(); return prodUp({}, { afm: undefined })(); });
+await t(G12, "ΑΦΜ με γράμματα απορρίπτεται", false, async () => { await openProd(); return prodUp({}, { afm: "09401924X" })(); });
+await t(G12, "ΑΦΜ στο ΔΗΜΟΣΙΟ προφίλ απορρίπτεται", false, async () => { await openProd(); return prodUp({ afm: "094019245" })(); });
+await t(G12, "Ακριβής θέση χωρίς κατάστημα (σπίτι) απορρίπτεται", false, async () => { await openProd(); return prodUp({ exact: true, lat: 37.96234, lng: 23.75411 })(); });
+await t(G12, "Κατάστημα / σημείο πώλησης με ακριβή θέση", true, async () => { await openProd(); return prodUp({ exact: true, shop: true, lat: 37.96234, lng: 23.75411 })(); });
+await t(G12, "Φούρνος χωρίς κατάστημα απορρίπτεται", false, async () => { await openProd(); return prodUp({ trades: ["pr_bakery"] })(); });
+await t(G12, "Φούρνος ως κατάστημα επιτρέπεται", true, async () => { await openProd(); return prodUp({ trades: ["pr_bakery"], exact: true, shop: true, lat: 37.96234, lng: 23.75411 })(); });
+await t(G12, "Κατηγορία εκτός λίστας (π.χ. μαγειρεμένο φαγητό) απορρίπτεται", false, async () => { await openProd(); return prodUp({ trades: ["h_cook"] })(); });
+await t(G12, "Σύνδεσμος παραγγελιών χωρίς https απορρίπτεται", false, async () => { await openProd(); return prodUp({ orderLink: "http://x.gr/a" })(); });
+await t(G12, "Σύνδεσμος παραγγελιών https επιτρέπεται", true, async () => { await openProd(); return prodUp({ orderLink: "https://paraggelies.glenapps.gr/#abc" })(); });
+await t(G12, "Πεδία παραγωγού σε μάστορα απορρίπτονται", false, async () => { await openProd(); return updateDoc(doc(ctx.alice(), "kontamou_regions/attiki/profiles/alice"), { avail: "x", ts: serverTimestamp() }); });
+await t(G12, "Αποδεικτικό δήλωσης κατηγορίας (αυγά)", true, () => setDoc(doc(ctx.alice(), "kontamou_acks/pd1"), { uid: "alice", role: "pro", kind: "prod_decl", ref: "alice", other: "pr_eggs", stmt: "ΠΑΡ-2026-11-10", terms: "2026-11-10", at: serverTimestamp() }));
+await t(G12, "Τρίτος δεν διαβάζει τον ΑΦΜ", false, async () => { await env.withSecurityRulesDisabled(c => setDoc(doc(c.firestore(), "kontamou_private/alice"), { uid: "alice", afm: "094019245" })); return getDoc(doc(ctx.bob(), "kontamou_private/alice")); });
+await t(G12, "Αναφορά «Πουλάει μη επιτρεπόμενο προϊόν»", true, async () => { await openProd(); const u = Timestamp.fromMillis(Date.now() + 100 * 864e5);
+  return withRate(ctx.bob(), "bob", (b, db) => { b.set(doc(db, "kontamou_xrep/prod~alice~bob"), { uid: "bob", kind: "prod", item: "alice", why: "banned", until: u, ts: serverTimestamp() }); b.set(doc(db, "kontamou_xcnt/prod~alice"), { banned: 1, until: u }); }); });
+
 const full = { hours: "09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|09:00-17:00|10:00-14:00|", animals: ["dog","cat","small","bird","fish"], modes: ["go","place","online"],
   freq: ["once","week","2week","month"], levels: ["uni","adult"], desc: "Περιγραφή ".repeat(50), price: "π.χ. 15 € / ώρα", regNo: "ΑΜ 1234 Κτηνιατρικός Σύλλογος", customName: "Όνομα καταστήματος",
   area: "Παγκράτι, Αθήνα", job: "Δουλειά", radius: 20, years: 15, supplies: true, offHol: true, offHide: false, availDay: "2026-11-05", hasPhone: true, hasEmail: true };
@@ -382,6 +407,7 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
     home: { world: "home", trades: ["cleanpro", "h_iron", "h_other"], freq: ["once","week","2week","month"], supplies: true },
     learn: { world: "learn", trades: ["l_uni", "l_en", "l_other"], levels: ["uni","adult"] },
     tech: { world: "tech", trades: ["electric", "plumb", "other"] },
+    prod: { world: "prod", trades: ["pr_honey", "pr_oil", "pr_eggs"], avail: "α".repeat(120), deliv: ["pickup", "ship"], orderLink: "https://" + "x".repeat(280) },
   };
   for (const N of [90]){                 // φύλακας: μέγιστα προφίλ περνούν ακόμα κι αν προστεθούν ~270 πράξεις στο μέλλον
     const pad = "    function pad() { return " + Array(N + 1).fill("1 == 1").join(" && ") + "; }\n";
@@ -393,8 +419,9 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
       for (const ex of [false, true]){
         await E2.clearFirestore();
         await E2.withSecurityRulesDisabled(async c => { const db = c.firestore();
-          await setDoc(doc(db, "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture"] });
+          await setDoc(doc(db, "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture", "prod"] });
           await setDoc(doc(db, "kontamou_owner/alice"), { region: "attiki" });
+          await setDoc(doc(db, "kontamou_private/alice"), { uid: "alice", afm: "094019245" });
           await setDoc(doc(db, "kontamou_regions/attiki/profiles/alice"), profile("alice")); });
         const db = E2.authenticatedContext("alice", { email: "alice@example.com", email_verified: true }).firestore();
         const d = { ...base, ...extra, ...(ex ? { exact: true, shop: w !== "learn", lat: 37.96234, lng: 23.75411 } : {}), ts: serverTimestamp() };
@@ -404,10 +431,10 @@ await t(G9, "Με ✓: αλλαγή περιγραφής κρατά το ✓", t
       }
       // δημιουργία νέου προφίλ
       await E2.clearFirestore();
-      await E2.withSecurityRulesDisabled(async c => { await setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture"] }); });
+      await E2.withSecurityRulesDisabled(async c => { await setDoc(doc(c.firestore(), "kontamou_config/worlds"), { open: ["home", "pets", "car", "learn", "petsx", "culture", "prod"] }); });
       const db = E2.authenticatedContext("eve", { email: "eve@example.com", email_verified: true }).firestore();
       let ok = true, err = "";
-      try { const b = writeBatch(db); b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" });
+      try { const b = writeBatch(db); b.set(doc(db, "kontamou_owner/eve"), { region: "attiki" }); b.set(doc(db, "kontamou_private/eve"), { uid: "eve", acct: "", phone: "", email: "", showPhone: false, showEmail: false, ts: serverTimestamp(), afm: "094019245" });
         b.set(doc(db, "kontamou_regions/attiki/profiles/eve"), { ...profile("eve"), ...base, ...extra, created: serverTimestamp(), ts: serverTimestamp() }); await assertSucceeds(b.commit()); }
       catch(e){ ok = false; err = String(e.message).slice(0, 80); }
       console.log("ΠΕΡΙΘΩΡΙΟ", N, w, "δημιουργία", ok, err);
