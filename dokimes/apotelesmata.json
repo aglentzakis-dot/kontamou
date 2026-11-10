@@ -1,6 +1,6 @@
 {
- "pass": 249,
- "fail": 1,
+ "pass": 250,
+ "fail": 0,
  "out": [
   {
    "group": "Απομόνωση χρηστών",
@@ -1434,8 +1434,8 @@
    "group": "Τοπικοί παραγωγοί (1.46)",
    "name": "Χωρίς ΑΦΜ απορρίπτεται",
    "expect": "ΑΠΟΡΡΙΠΤΕΤΑΙ",
-   "result": "ΛΑΘΟΣ",
-   "err": "Expected PERMISSION_DENIED but got unexpected error: FirebaseError: [code=invalid-argument]: Function WriteBatch.set() called with invalid data. Unsupported field value: undefined (found in field afm "
+   "result": "ΣΩΣΤΟ",
+   "err": ""
   },
   {
    "group": "Τοπικοί παραγωγοί (1.46)",
