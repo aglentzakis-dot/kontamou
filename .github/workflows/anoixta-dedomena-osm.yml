@@ -49,7 +49,12 @@ jobs:
                                   "wood": [("craft", "carpenter|joiner|cabinet_maker")], "metal": [("craft", "metal_construction|blacksmith|welder")],
                                   "electrician": [("craft", "electrician")], "plumber": [("craft", "plumber")], "hvac": [("craft", "hvac")],
                                   "pc": [("shop", "computer")], "appl": [("shop", "appliance")]},
+            # «Βόλτες & φύση»: δημόσιοι χώροι, κανένα προσωπικό δεδομένο
+            "voltes-osm.json": {"beach": [("natural", "beach")], "trail": [("route", "hiking")], "spring": [("natural", "spring")],
+                                "fall": [("waterway", "waterfall")], "view": [("tourism", "viewpoint")], "play": [("leisure", "playground")],
+                                "park": [("leisure", "park")], "fountain": [("amenity", "drinking_water")]},
           }
+          NAMELESS = {"dogpark", "beach", "spring", "fall", "view", "play", "fountain"}   # σημεία που συνήθως δεν έχουν όνομα
           URLS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
           def fetch(q):
               data = urllib.parse.urlencode({"data": q}).encode()
@@ -76,7 +81,7 @@ jobs:
                   lat = e.get("lat", (e.get("center") or {}).get("lat")); lng = e.get("lon", (e.get("center") or {}).get("lon"))
                   n = (t.get("name:el") or t.get("name") or t.get("brand") or t.get("operator") or "").strip()
                   if lat is None or lng is None: continue
-                  if not n and k != "dogpark": continue
+                  if not n and k not in NAMELESS: continue
                   if not (34 < lat < 42 and 19 < lng < 30): continue
                   a = " ".join(x for x in [t.get("addr:street", ""), t.get("addr:housenumber", "")] if x).strip()
                   city = t.get("addr:city", "")
