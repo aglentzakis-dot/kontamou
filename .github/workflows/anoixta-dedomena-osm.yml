@@ -49,6 +49,9 @@ jobs:
                                   "wood": [("craft", "carpenter|joiner|cabinet_maker")], "metal": [("craft", "metal_construction|blacksmith|welder")],
                                   "electrician": [("craft", "electrician")], "plumber": [("craft", "plumber")], "hvac": [("craft", "hvac")],
                                   "pc": [("shop", "computer")], "appl": [("shop", "appliance")]},
+            # «Εκδηλώσεις»: μόνιμοι χώροι πολιτισμού (αχνοί στον χάρτη — δεν είναι εκδηλώσεις)
+            "xoroi-politismou-osm.json": {"theatre": [("amenity", "theatre")], "cinema": [("amenity", "cinema")], "museum": [("tourism", "museum")],
+                                          "arch": [("historic", "archaeological_site")], "arts": [("amenity", "arts_centre")], "community": [("amenity", "community_centre")]},
             # «Βόλτες & φύση»: δημόσιοι χώροι, κανένα προσωπικό δεδομένο
             "voltes-osm.json": {"beach": [("natural", "beach")], "trail": [("route", "hiking")], "spring": [("natural", "spring")],
                                 "fall": [("waterway", "waterfall")], "view": [("tourism", "viewpoint")], "play": [("leisure", "playground")],
