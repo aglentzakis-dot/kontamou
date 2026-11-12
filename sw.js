@@ -14,7 +14,7 @@ function gaNet(net,fromCache,ev){var p=Promise.resolve(net);try{ev&&ev.waitUntil
   return new Promise(function(ok){var done=false,t;function fin(r){if(!done){done=true;clearTimeout(t);ok(r)}}
     t=setTimeout(function(){fc().then(function(c){if(c){gaSlow=Date.now()+30000;fin(c)}})},GA_MS);
     p.then(function(r){if(r&&r.status>=500)fc().then(function(c){fin(c||r)});else fin(r)},function(){fc().then(function(c){fin(c||Response.error())})});});}
-const CACHE = "kontamou-1.83";
+const CACHE = "kontamou-1.84";
 const SHELL = ["./", "./index.html","./plaisio.js", "./koino/glenread-apostoli.js", "./metafora-rythmisi.js", "./metafora-lipsi.js", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-512-maskable.png", "./apple-touch-icon.png", "./othoni-enarxis.js", "./othoni-enarxis.webp", "./pineza-g.png", "./lang-en.js"];
 // Βιβλιοθήκες με σταθερή έκδοση: φυλάγονται μία φορά
 const LIBS = ["cdnjs.cloudflare.com", "www.gstatic.com"];
