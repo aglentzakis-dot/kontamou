@@ -1,5 +1,196 @@
 {
- "updated": "2026-11-11",
+ "updated": "2026-11-12",
  "source": "Δημόσιες πηγές (Δήμοι, σύλλογοι, ανοιχτά δεδομένα) — με δικά μας λόγια και σύνδεσμο προς την πηγή",
- "items": []
+ "items": [
+  {
+   "id": "theatro-larisa-20261115",
+   "c": "theatro",
+   "s": "2026-11-15T12:00",
+   "lat": 39.63674,
+   "lng": 22.41662,
+   "t": "«Ο Κύκλος με την Κιμωλία» της Παιδικής-Εφηβικής Σκηνής, θέατρο «Κώστας Τσιάνος»",
+   "v": "Λάρισα",
+   "d": "Δήμος Λαρισαίων",
+   "pe": "Λάρισα",
+   "p": "Θεσσαλία",
+   "o": "ΔΗ.ΠΕ.ΘΕ. Λάρισας (Θεσσαλικό Θέατρο)",
+   "src": [
+    "https://www.larissa.gov.gr/o-kyklos-me-tin-kimolia-treis-teleftaies-kyriakatikes-parastaseis-anoichtes-gia-to-koino/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "synavl-trikala-20261115",
+   "c": "synavl",
+   "s": "2026-11-15T18:00",
+   "lat": 39.55613,
+   "lng": 21.76794,
+   "t": "1ο Διεθνές Χορωδιακό Φεστιβάλ Τρικάλων στο Πνευματικό Κέντρο, ελεύθερη είσοδος",
+   "v": "Τρίκαλα",
+   "d": "Δήμος Τρικκαίων",
+   "pe": "Τρίκαλα",
+   "p": "Θεσσαλία",
+   "o": "Π.Ε.ΔΙ.ΧΟ. με τον Δήμο Τρικκαίων",
+   "src": [
+    "https://trikalacity.gr/event/tin-kyriaki-15-noemvrioy-to-1o-diethnes-chorodiako-festival-trikalon/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "festival-larisa-20261119",
+   "c": "festival",
+   "s": "2026-11-19",
+   "lat": 39.63674,
+   "lng": 22.41662,
+   "t": "11ο Φεστιβάλ Open Nights με θέμα τη φωτιά (εικαστικά, χορός, μουσική, εργαστήρια)",
+   "v": "Λάρισα",
+   "d": "Δήμος Λαρισαίων",
+   "pe": "Λάρισα",
+   "p": "Θεσσαλία",
+   "o": "Ομάδα OFF ART και Δήμος Λαρισαίων",
+   "e": "2026-11-29",
+   "src": [
+    "https://www.larissa.gov.gr/erchetai-to-11o-festival-open-nights-apo-tis-19-os-tis-29-noemvriou-ston-mylo-tou-pappa-kai-ton-polychoro-wisedog/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "theatro-larisa-20261122",
+   "c": "theatro",
+   "s": "2026-11-22T12:00",
+   "lat": 39.63674,
+   "lng": 22.41662,
+   "t": "«Ο Κύκλος με την Κιμωλία» της Παιδικής-Εφηβικής Σκηνής, θέατρο «Κώστας Τσιάνος»",
+   "v": "Λάρισα",
+   "d": "Δήμος Λαρισαίων",
+   "pe": "Λάρισα",
+   "p": "Θεσσαλία",
+   "o": "ΔΗ.ΠΕ.ΘΕ. Λάρισας (Θεσσαλικό Θέατρο)",
+   "src": [
+    "https://www.larissa.gov.gr/o-kyklos-me-tin-kimolia-treis-teleftaies-kyriakatikes-parastaseis-anoichtes-gia-to-koino/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "politis-thiva-20261125",
+   "c": "politis",
+   "s": "2026-11-25T18:30",
+   "lat": 38.31876,
+   "lng": 23.32067,
+   "t": "Παρουσίαση βιβλίου για την Παγκόσμια Ημέρα εξάλειψης της βίας κατά των γυναικών",
+   "v": "Θήβα",
+   "d": "Δήμος Θηβαίων",
+   "pe": "Βοιωτία",
+   "p": "Στερεά Ελλάδα",
+   "o": "Συμβουλευτικό Κέντρο Γυναικών Δήμου Θηβαίων",
+   "src": [
+    "https://thiva.gr/%CE%B3%CF%85%CE%BD%CE%B1%CE%B9%CE%BA%CE%BF%CE%BA%CF%84%CE%BF%CE%BD%CE%AF%CE%B5%CF%82-%CF%80%CE%BF%CF%85-%CF%83%CF%85%CE%B3%CE%BA%CE%BB%CF%8C%CE%BD%CE%B9%CF%83%CE%B1%CE%BD-%CF%84%CE%BF/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "theatro-trikala-20261127",
+   "c": "theatro",
+   "s": "2026-11-27T21:00",
+   "lat": 39.55613,
+   "lng": 21.76794,
+   "t": "Θεατρικός μονόλογος «Βρωμιά» του Robert Schneider στο Κτήριο Παπαστεριάδη",
+   "v": "Τρίκαλα",
+   "d": "Δήμος Τρικκαίων",
+   "pe": "Τρίκαλα",
+   "p": "Θεσσαλία",
+   "e": "2026-11-29",
+   "src": [
+    "https://trikalacity.gr/event/to-theatriko-ergo-vromia-toy-robert-schneider-sta-trikala/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "theatro-larisa-20261129",
+   "c": "theatro",
+   "s": "2026-11-29T12:00",
+   "lat": 39.63674,
+   "lng": 22.41662,
+   "t": "«Ο Κύκλος με την Κιμωλία» της Παιδικής-Εφηβικής Σκηνής, θέατρο «Κώστας Τσιάνος»",
+   "v": "Λάρισα",
+   "d": "Δήμος Λαρισαίων",
+   "pe": "Λάρισα",
+   "p": "Θεσσαλία",
+   "o": "ΔΗ.ΠΕ.ΘΕ. Λάρισας (Θεσσαλικό Θέατρο)",
+   "src": [
+    "https://www.larissa.gov.gr/o-kyklos-me-tin-kimolia-treis-teleftaies-kyriakatikes-parastaseis-anoichtes-gia-to-koino/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "synavl-trikala-20261212",
+   "c": "synavl",
+   "s": "2026-12-12T19:00",
+   "lat": 39.55613,
+   "lng": 21.76794,
+   "t": "Μουσικός διαγωνισμός «Νέοι Δημιουργοί Live» για νέους, στο Πνευματικό Κέντρο",
+   "v": "Τρίκαλα",
+   "d": "Δήμος Τρικκαίων",
+   "pe": "Τρίκαλα",
+   "p": "Θεσσαλία",
+   "o": "Σύλλογος Φίλων της Δημοτικής Φιλαρμονικής Τρικάλων",
+   "src": [
+    "https://trikalacity.gr/event/moysikos-diagonismos-neoi-dimioyrgoi-live-sta-trikala-parallili-drasi-toy-myloy-ton-xotikon/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  },
+  {
+   "id": "ethima-larisa-20261230",
+   "c": "ethima",
+   "s": "2026-12-30",
+   "lat": 39.63674,
+   "lng": 22.41662,
+   "t": "Γιορτινή παρέλαση με άρματα και χορευτικές ομάδες στους κεντρικούς δρόμους",
+   "v": "Λάρισα",
+   "d": "Δήμος Λαρισαίων",
+   "pe": "Λάρισα",
+   "p": "Θεσσαλία",
+   "o": "Δήμος Λαρισαίων",
+   "src": [
+    "https://www.larissa.gov.gr/dimos-larisaion-i-larisa-ston-rythmo-tis-giortinis-parelasis-2026-kalesma-symmetochis-sto-pio-giortino-event-tis-thessalias/"
+   ],
+   "st": "ok",
+   "by": "auto",
+   "add": "2026-11-12",
+   "chk": "2026-11-12",
+   "h": []
+  }
+ ]
 }
