@@ -49,6 +49,18 @@ jobs:
                                   "wood": [("craft", "carpenter|joiner|cabinet_maker")], "metal": [("craft", "metal_construction|blacksmith|welder")],
                                   "electrician": [("craft", "electrician")], "plumber": [("craft", "plumber")], "hvac": [("craft", "hvac")],
                                   "pc": [("shop", "computer")], "appl": [("shop", "appliance")]},
+            # «Σπίτι & κήπος»: φυτώρια, ανθοπωλεία, γεωπονικά, κηπουροί, έπιπλα/διακόσμηση, καθαριστήρια, ταπετσέρηδες
+            "spiti-osm.json": {"nursery": [("shop", "garden_centre")], "florist": [("shop", "florist")], "agro": [("shop", "agrarian")], "gardener": [("craft", "gardener")],
+                               "furn": [("shop", "furniture|bed|kitchen")], "deco": [("shop", "interior_decoration|curtain|carpet|lighting|houseware")],
+                               "laundry": [("shop", "dry_cleaning|laundry")], "uph": [("craft", "upholsterer")], "pest": [("craft", "pest_control")]},
+            # «Μαθήματα»: μόνο σχολές για ενήλικες/όλες τις ηλικίες (ΟΧΙ φροντιστήρια παιδιών — κανόνας «καμία υπηρεσία για παιδιά»)
+            "mathimata-osm.json": {"lang": [("amenity", "language_school")], "music": [("amenity", "music_school")], "dance": [("amenity", "dancing_school"), ("leisure", "dance")]},
+            # «Βιβλία & Πολιτισμός» (επιπλέον των βιβλιοπωλείων/βιβλιοθηκών): γκαλερί, δισκοπωλεία, μουσικά όργανα
+            "politismos2-osm.json": {"gallery": [("tourism", "gallery"), ("shop", "art")], "music": [("shop", "music|musical_instrument")]},
+            # «Τοπικοί παραγωγοί»: μόνο ΚΑΤΑΣΤΗΜΑΤΑ και αγορές (όχι σπίτια ιδιωτών)
+            "paragogoi-osm.json": {"farm": [("shop", "farm")], "greengrocer": [("shop", "greengrocer")], "bakery": [("shop", "bakery|pastry|confectionery")],
+                                   "cheese": [("shop", "cheese|dairy")], "wine": [("shop", "wine|alcohol")], "deli": [("shop", "deli")], "honey": [("shop", "honey")],
+                                   "market": [("amenity", "marketplace")]},
             # «Εκδηλώσεις»: μόνιμοι χώροι πολιτισμού (αχνοί στον χάρτη — δεν είναι εκδηλώσεις)
             "xoroi-politismou-osm.json": {"theatre": [("amenity", "theatre")], "cinema": [("amenity", "cinema")], "museum": [("tourism", "museum")],
                                           "arch": [("historic", "archaeological_site")], "arts": [("amenity", "arts_centre")], "community": [("amenity", "community_centre")]},
