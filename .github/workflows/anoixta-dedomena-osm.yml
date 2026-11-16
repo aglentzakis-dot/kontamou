@@ -54,9 +54,9 @@ jobs:
                                "furn": [("shop", "furniture|bed|kitchen")], "deco": [("shop", "interior_decoration|curtain|carpet|lighting|houseware")],
                                "laundry": [("shop", "dry_cleaning|laundry")], "uph": [("craft", "upholsterer")], "pest": [("craft", "pest_control")]},
             # «Μαθήματα»: μόνο σχολές για ενήλικες/όλες τις ηλικίες (ΟΧΙ φροντιστήρια παιδιών — κανόνας «καμία υπηρεσία για παιδιά»)
-            "mathimata-osm.json": {"lang": [("amenity", "language_school")], "music": [("amenity", "music_school")], "dance": [("amenity", "dancing_school"), ("leisure", "dance")]},
+            "mathimata-osm.json": {"lang": [("amenity", "language_school")], "mschool": [("amenity", "music_school")], "dance": [("amenity", "dancing_school"), ("leisure", "dance")]},
             # «Βιβλία & Πολιτισμός» (επιπλέον των βιβλιοπωλείων/βιβλιοθηκών): γκαλερί, δισκοπωλεία, μουσικά όργανα
-            "politismos2-osm.json": {"gallery": [("tourism", "gallery"), ("shop", "art")], "music": [("shop", "music|musical_instrument")]},
+            "politismos2-osm.json": {"gallery": [("tourism", "gallery"), ("shop", "art")], "mshop": [("shop", "music|musical_instrument")]},
             # «Τοπικοί παραγωγοί»: μόνο ΚΑΤΑΣΤΗΜΑΤΑ και αγορές (όχι σπίτια ιδιωτών)
             "paragogoi-osm.json": {"farm": [("shop", "farm")], "greengrocer": [("shop", "greengrocer")], "bakery": [("shop", "bakery|pastry|confectionery")],
                                    "cheese": [("shop", "cheese|dairy")], "wine": [("shop", "wine|alcohol")], "deli": [("shop", "deli")], "honey": [("shop", "honey")],
