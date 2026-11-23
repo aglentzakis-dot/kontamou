@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22",
+ "updated": "2026-11-23",
  "source": "Δημόσιες πηγές (Δήμοι, σύλλογοι, ανοιχτά δεδομένα) — με δικά μας λόγια και σύνδεσμο προς την πηγή",
  "items": [
   {
@@ -61,48 +61,6 @@
    "e": "2027-01-06",
    "src": [
     "https://trikalacity.gr/rekor-me-206-dorean-ekdiloseis-ston-15o-mylo-ton-xotikon/"
-   ],
-   "st": "ok",
-   "by": "auto",
-   "add": "2026-11-19",
-   "chk": "2026-11-19",
-   "h": []
-  },
-  {
-   "id": "politis-tsagkarada-20261121",
-   "c": "politis",
-   "s": "2026-11-21",
-   "lat": 39.3925,
-   "lng": 23.1703,
-   "t": "Ημερίδα «Πήλιο 2040» για τη βιώσιμη ανάπτυξη του τόπου, με τιμητική εκδήλωση",
-   "v": "Τσαγκαράδα",
-   "d": "Δήμος Ζαγοράς-Μουρεσίου",
-   "pe": "Μαγνησία",
-   "p": "Θεσσαλία",
-   "o": "Δήμος Ζαγοράς-Μουρεσίου",
-   "src": [
-    "https://www.dimos-zagoras-mouresiou.gr/news/imerida-pilio-2040-apo-ti-sofia-toy-topoy-sti-stratigiki-toy-ayrio-timitiki-ekdilosi-gia-tin"
-   ],
-   "st": "ok",
-   "by": "auto",
-   "add": "2026-11-19",
-   "chk": "2026-11-19",
-   "h": []
-  },
-  {
-   "id": "politis-trikala-20261121",
-   "c": "politis",
-   "s": "2026-11-21T18:30",
-   "lat": 39.55613,
-   "lng": 21.76794,
-   "t": "Μουσικοφιλολογική βραδιά για τα 100 χρόνια από τη γέννηση του Μάνου Χατζιδάκι, Μουσείο Τσιτσάνη",
-   "v": "Τρίκαλα",
-   "d": "Δήμος Τρικκαίων",
-   "pe": "Τρίκαλα",
-   "p": "Θεσσαλία",
-   "o": "Φ.Ι.ΛΟ.Σ. Τρικάλων και Δήμος Τρικκαίων",
-   "src": [
-    "https://trikalacity.gr/event/moysikofilologiki-ekdilosi-afieroma-ston-mano-chatzidaki-apo-ton-f-i-lo-s-kai-ton-d-trikkaion/"
    ],
    "st": "ok",
    "by": "auto",
